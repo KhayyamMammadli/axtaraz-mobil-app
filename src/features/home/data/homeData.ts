@@ -18,9 +18,9 @@ export const categories = [
 ];
 
 export const businesses = [
-  { id: "business-1", name: "template 2", listings: "0 elan" },
   { id: "business-2", name: "Test MMC", listings: "0 elan" },
   { id: "business-3", name: "TEst 2", listings: "0 elan" },
+  { id: "business-1", name: "template 2", listings: "0 elan" },
 ];
 
 const ownershipCover = "https://storage.axtar.az/uploads/ownerships_main/min/2026/06/05/e7aac09e3bdeefa0c19f2791ddba60dd.png";
