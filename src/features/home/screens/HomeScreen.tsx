@@ -135,7 +135,7 @@ export function HomeScreen() {
               onPress={() => Alert.alert(business.name, "Biznes profili növbəti mərhələdə açılacaq.")}
             >
               <View style={styles.businessImageWrap}>
-                <Image source={{ uri: ownershipCover }} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+                <Image source={{ uri: ownershipCover }} style={styles.businessCoverImage} resizeMode="cover" />
                 <View style={styles.businessImageTint} />
                 <Text style={styles.businessCoverInitial}>{business.name.slice(0, 1).toUpperCase()}</Text>
                 <View style={styles.premiumBadge}>
@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
   businessCard: { width: 152, borderWidth: 1, borderColor: colors.line, borderRadius: 15, overflow: "hidden", backgroundColor: colors.white },
   businessCardFirst: { borderColor: "#FFD2D7" },
   businessImageWrap: { height: 77, backgroundColor: "#22232A", alignItems: "center", justifyContent: "center", overflow: "hidden" },
+  businessCoverImage: { position: "absolute", width: "100%", height: "100%" },
   businessImageTint: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(250,58,77,0.14)" },
   businessCoverInitial: { color: "rgba(255,255,255,0.23)", fontSize: 65, lineHeight: 75, fontWeight: "900", position: "absolute", right: 9, bottom: -12 },
   premiumBadge: { position: "absolute", left: 9, top: 8, flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 7, paddingVertical: 4, borderRadius: 7, backgroundColor: colors.gold },
