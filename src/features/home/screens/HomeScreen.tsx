@@ -20,6 +20,12 @@ type BottomTabId = "home" | "favorites" | "login";
 
 const promoImage = "https://axtar.az/img/hand.svg";
 
+const homeBlogs = [
+  { id: "post-3", category: "Elektronika", title: "Test", excerpt: "test", date: "16.08.2026", listings: "143 uyğun elan", image: "https://storage.axtar.az/uploads/posts/min/2026/08/16/6a81c8c682955-8c473ea6eaaec3447d728283aea346a7.png" },
+  { id: "post-7", category: "Bloq kateqoriyası", title: "test blog 7", excerpt: "SEO", date: "10.06.2026", listings: "259 uyğun elan", image: "https://storage.axtar.az/uploads/posts/min/2026/06/10/6a292ee80429a-a242d5f7bd988b2edbdfeb0b1931e8dd.png" },
+  { id: "post-6", category: "Bloq kateqoriyası", title: "blog test 6", excerpt: "test", date: "10.06.2026", listings: "222 uyğun elan", image: "https://storage.axtar.az/uploads/posts/min/2026/06/10/6a29275c18122-c2d40615727189a2200b6088299fd16b.png" },
+];
+
 export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
@@ -228,6 +234,22 @@ export function HomeScreen() {
             <Ionicons name="arrow-forward" size={14} color={colors.brand} />
           </Pressable>
         </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.blogRow}>
+          {homeBlogs.map((blog) => (
+            <Pressable key={blog.id} style={styles.blogCard} onPress={() => Alert.alert(blog.title, "Blog səhifəsi növbəti mərhələdə açılacaq.")}>
+              <Image source={{ uri: blog.image }} style={styles.blogImage} resizeMode="cover" />
+              <View style={styles.blogBody}>
+                <Text style={styles.blogCategory}>{blog.category}</Text>
+                <Text style={styles.blogTitle} numberOfLines={1}>{blog.title}</Text>
+                <Text style={styles.blogExcerpt} numberOfLines={1}>{blog.excerpt}</Text>
+                <View style={styles.blogMeta}>
+                  <Text style={styles.blogDate}>{blog.date}</Text>
+                  <Text style={styles.blogListings}>{blog.listings}</Text>
+                </View>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
         <Text style={styles.footerNote}>Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.</Text>
       </ScrollView>
 
@@ -322,6 +344,16 @@ const styles = StyleSheet.create({
   emptyTitle: { marginTop: 8, color: colors.ink, fontWeight: "700", fontSize: 14 },
   emptyText: { marginTop: 3, color: colors.muted, fontSize: 11 },
   blogHeading: { marginTop: 25, marginBottom: 4, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  blogRow: { paddingHorizontal: 15, paddingTop: 10, gap: 10 },
+  blogCard: { width: 252, overflow: "hidden", borderRadius: 14, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white },
+  blogImage: { width: "100%", height: 124, backgroundColor: colors.soft },
+  blogBody: { padding: 11 },
+  blogCategory: { color: colors.brand, fontSize: 9, fontWeight: "700" },
+  blogTitle: { color: colors.ink, fontSize: 14, fontWeight: "800", marginTop: 5 },
+  blogExcerpt: { color: colors.muted, fontSize: 11, marginTop: 3 },
+  blogMeta: { marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  blogDate: { color: colors.muted, fontSize: 9 },
+  blogListings: { color: colors.brand, fontSize: 9, fontWeight: "700" },
   footerNote: { paddingHorizontal: 24, paddingTop: 18, color: colors.muted, textAlign: "center", fontSize: 10, lineHeight: 15 },
   bottomBar: { minHeight: 60, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
   bottomItem: { flex: 1, height: 52, alignItems: "center", justifyContent: "center", gap: 4 },
