@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Axtar.az",
+    "slug": "axtaraz-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "az.axtar.mobile"
+    },
+    "android": {
+      "package": "az.axtar.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#fa3a4d"
+      }
+    }
+  }
+}
