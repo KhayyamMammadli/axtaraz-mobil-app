@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Alert,
+  Dimensions,
   Image,
   Pressable,
   ScrollView,
@@ -16,7 +17,7 @@ import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData
 import { colors } from "../../../theme/colors";
 
 type FeedTabId = (typeof feedTabs)[number]["id"];
-type BottomTabId = "home" | "favorites" | "login";
+type BottomTabId = "home" | "favorites" | "messages" | "profile";
 
 const promoImage = "https://axtar.az/img/hand.svg";
 
@@ -31,6 +32,7 @@ export function HomeScreen() {
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  const businessCardWidth = (Dimensions.get("window").width - 42) / 2;
 
   const visibleListings = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("az");
@@ -46,8 +48,9 @@ export function HomeScreen() {
     setActiveBottomTab(tab);
     const labels: Record<BottomTabId, string> = {
       home: "Ana səhifə",
-      favorites: "Seçdiklərim",
-      login: "Daxil ol",
+      favorites: "Seçilmişlər",
+      messages: "Mesajlarım",
+      profile: "Profil",
     };
     if (tab !== "home") Alert.alert(labels[tab], "Bu bölmə növbəti mərhələdə əlavə olunacaq.");
   };
@@ -55,21 +58,19 @@ export function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Text style={styles.logo}>axtar.az</Text>
-        <Pressable style={styles.menuButton} accessibilityLabel="Kataloq menyusu" onPress={() => Alert.alert("Kataloq", "Kateqoriyalar növbəti mərhələdə açılacaq.")}>
-          <Ionicons name="menu" size={22} color={colors.ink} />
+        <Pressable style={styles.catalogButton} accessibilityLabel="Kataloq" onPress={() => Alert.alert("Kataloq", "Kateqoriyalar növbəti mərhələdə açılacaq.")}>
+          <Ionicons name="list-outline" size={21} color={colors.white} />
         </Pressable>
-        <View style={styles.headerActions}>
-          <Pressable style={styles.headerIcon} accessibilityLabel="Seçdiklərim" onPress={() => chooseBottomTab("favorites")}>
-            <Ionicons name="heart-outline" size={21} color={colors.ink} />
-          </Pressable>
-          <Pressable style={styles.headerIcon} accessibilityLabel="Mesajlarım" onPress={() => Alert.alert("Mesajlarım", "Daxil olduqdan sonra mesajlarınızı görə bilərsiniz.")}>
-            <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.ink} />
-          </Pressable>
-          <Pressable style={styles.loginButton} onPress={() => chooseBottomTab("login")}>
-            <Text style={styles.loginText}>Daxil ol</Text>
+        <View style={styles.searchBox}>
+          <Ionicons name="search" size={18} color={colors.muted} />
+          <TextInput value={query} onChangeText={setQuery} placeholder="Axtar..." placeholderTextColor={colors.subtle} returnKeyType="search" style={styles.searchInput} accessibilityLabel="Elan axtar" />
+          <Pressable style={styles.locationButton} onPress={() => Alert.alert("Bölgələr", "Bölgə seçimi növbəti mərhələdə açılacaq.")} accessibilityLabel="Bölgə seç">
+            <Ionicons name="location-outline" size={19} color={colors.muted} />
           </Pressable>
         </View>
+        <Pressable style={styles.menuButton} accessibilityLabel="Menyu" onPress={() => Alert.alert("Menyu", "Menyu növbəti mərhələdə açılacaq.")}>
+          <Ionicons name="menu" size={23} color={colors.ink} />
+        </Pressable>
       </View>
 
       <ScrollView
@@ -78,57 +79,19 @@ export function HomeScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.searchArea}>
-          <View style={styles.searchRow}>
-            <Pressable style={styles.catalogButton} onPress={() => Alert.alert("Kataloq", "Kateqoriyalar növbəti mərhələdə açılacaq.")}>
-              <Ionicons name="list-outline" size={17} color={colors.white} />
-              <Text style={styles.catalogText}>Kataloq</Text>
-            </Pressable>
-            <View style={styles.searchBox}>
-              <Ionicons name="search" size={18} color={colors.muted} />
-              <TextInput
-                value={query}
-                onChangeText={setQuery}
-                placeholder="Axtar..."
-                placeholderTextColor={colors.subtle}
-                returnKeyType="search"
-                style={styles.searchInput}
-                accessibilityLabel="Elan axtar"
-              />
-              {query.length > 0 ? (
-                <Pressable onPress={() => setQuery("")} accessibilityLabel="Axtarışı təmizlə">
-                  <Ionicons name="close-circle" size={18} color={colors.subtle} />
-                </Pressable>
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.searchActions}>
-            <Pressable style={styles.regionButton} onPress={() => Alert.alert("Bölgələr", "Bölgə seçimi növbəti mərhələdə açılacaq.")}>
-              <Ionicons name="location-outline" size={16} color={colors.muted} />
-              <Text style={styles.regionText}>Bölgələr</Text>
-              <Ionicons name="chevron-down" size={15} color={colors.ink} />
-            </Pressable>
-            <Pressable style={styles.newButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")}>
-              <Ionicons name="add" size={19} color={colors.brand} />
-              <Text style={styles.newButtonText}>Yeni</Text>
-            </Pressable>
-          </View>
-        </View>
-
         <View style={styles.sectionHeading}>
           <View style={styles.headingTitleRow}>
             <Text style={styles.crown}>👑</Text>
             <Text style={styles.sectionTitle}>Premium Bizneslər</Text>
           </View>
           <Pressable style={styles.seeAll} onPress={() => Alert.alert("Premium Bizneslər", "Bütün bizneslər növbəti mərhələdə açılacaq.")}>
-            <Text style={styles.seeAllText}>Hamısına göstər</Text>
-            <Ionicons name="arrow-up-outline" size={14} color={colors.brand} />
+            <Ionicons name="arrow-up" size={20} color={colors.brand} />
           </Pressable>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.businessRow}>
           {businesses.map((business) => (
-            <Pressable key={business.id} style={styles.businessCard} onPress={() => Alert.alert(business.name, "Biznes səhifəsi növbəti mərhələdə açılacaq.")}>
+            <Pressable key={business.id} style={[styles.businessCard, { width: businessCardWidth }]} onPress={() => Alert.alert(business.name, "Biznes səhifəsi növbəti mərhələdə açılacaq.")}>
               <View style={styles.businessCover}>
                 <Image source={{ uri: ownershipCover }} style={styles.businessCoverImage} resizeMode="cover" />
               </View>
@@ -174,37 +137,11 @@ export function HomeScreen() {
                 accessibilityState={{ selected: active }}
               >
                 <Ionicons name={tab.icon} size={17} color={colors.gold} />
-                <Text style={[styles.feedTabText, active && styles.feedTabTextActive]}>{tab.label === "Tövsiyə" ? "Tövsiyyə edilənlər" : tab.label}</Text>
+                <Text style={[styles.feedTabText, active && styles.feedTabTextActive]}>{tab.label === "Tövsiyə" ? "Tövsiyə" : tab.label}</Text>
               </Pressable>
             );
           })}
         </ScrollView>
-
-        <View style={styles.promoCard}>
-          <View style={styles.promoStripes}>
-            {Array.from({ length: 16 }, (_, index) => <View key={index} style={[styles.stripe, { left: index * 24 - 24 }]} />)}
-          </View>
-          <View style={styles.promoCopy}>
-            <Text style={styles.promoTitle}>Axtar.az'da elan yerləşdir, satışların artsın.</Text>
-            <Text style={styles.promoSubtitle}>Yeni alıcılara çatmaq üçün elanını paylaş.</Text>
-            <Pressable style={styles.promoButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")}>
-              <Ionicons name="add" size={17} color={colors.white} />
-              <Text style={styles.promoButtonText}>Yeni</Text>
-            </Pressable>
-          </View>
-          <Image source={{ uri: promoImage }} style={styles.promoImage} resizeMode="contain" />
-        </View>
-
-        <View style={styles.listingHeading}>
-          <View>
-            <Text style={styles.sectionTitle}>Elanlar</Text>
-            <Text style={styles.sectionSubtitle}>Premium elanlar</Text>
-          </View>
-          <Pressable style={styles.seeAll} onPress={() => Alert.alert("Elanlar", "Bütün elanlar növbəti mərhələdə açılacaq.")}>
-            <Text style={styles.seeAllText}>Daha çoxuna bax</Text>
-            <Ionicons name="arrow-forward" size={14} color={colors.brand} />
-          </Pressable>
-        </View>
 
         {visibleListings.length > 0 ? (
           <View style={styles.listingGrid}>
@@ -223,6 +160,21 @@ export function HomeScreen() {
             <Text style={styles.emptyText}>Axtarış sözünü dəyişib yenidən yoxlayın.</Text>
           </View>
         )}
+
+        <View style={styles.promoCard}>
+          <View style={styles.promoStripes}>
+            {Array.from({ length: 16 }, (_, index) => <View key={index} style={[styles.stripe, { left: index * 24 - 24 }]} />)}
+          </View>
+          <View style={styles.promoCopy}>
+            <Text style={styles.promoTitle}>Axtar.az'da elan yerləşdir, satışların artsın.</Text>
+            <Text style={styles.promoSubtitle}>Yeni alıcılara çatmaq üçün elanını paylaş.</Text>
+            <Pressable style={styles.promoButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")}>
+              <Ionicons name="add" size={17} color={colors.white} />
+              <Text style={styles.promoButtonText}>Yeni</Text>
+            </Pressable>
+          </View>
+          <Image source={{ uri: promoImage }} style={styles.promoImage} resizeMode="contain" />
+        </View>
 
         <View style={styles.blogHeading}>
           <View>
@@ -255,11 +207,12 @@ export function HomeScreen() {
 
       <View style={styles.bottomBar}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
-        <BottomItem icon="heart-outline" label="Seçdiklərim" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
+        <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
         <Pressable style={styles.addButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")} accessibilityRole="button" accessibilityLabel="Yeni elan">
-          <Ionicons name="add" size={26} color={colors.white} />
+          <Ionicons name="add" size={27} color={colors.brand} />
         </Pressable>
-        <BottomItem icon="person-outline" label="Daxil ol" active={activeBottomTab === "login"} onPress={() => chooseBottomTab("login")} />
+        <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" active={activeBottomTab === "messages"} onPress={() => chooseBottomTab("messages")} />
+        <BottomItem icon="person-circle-outline" label="Profil" active={activeBottomTab === "profile"} onPress={() => chooseBottomTab("profile")} />
       </View>
     </SafeAreaView>
   );
@@ -278,26 +231,17 @@ function BottomItem({ icon, label, active, onPress }: BottomItemProps) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
-  header: { minHeight: 58, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#F0F0F0" },
-  logo: { color: colors.brand, fontSize: 23, fontWeight: "900", letterSpacing: -1.1 },
-  menuButton: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.soft, alignItems: "center", justifyContent: "center", marginLeft: 10 },
-  headerActions: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "flex-end", gap: 7 },
-  headerIcon: { width: 30, height: 34, alignItems: "center", justifyContent: "center" },
-  loginButton: { height: 34, paddingHorizontal: 13, borderRadius: 18, backgroundColor: colors.brand, alignItems: "center", justifyContent: "center" },
-  loginText: { color: colors.white, fontSize: 11, fontWeight: "700" },
+  header: { minHeight: 66, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#FFF9F7" },
+
+  menuButton: { width: 34, height: 38, alignItems: "center", justifyContent: "center" },
+  locationButton: { width: 40, height: 34, alignItems: "center", justifyContent: "center", borderLeftWidth: 1, borderLeftColor: colors.line },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 18 },
+  scrollContent: { paddingBottom: 18, backgroundColor: "#FFF9F7" },
   searchArea: { paddingHorizontal: 15, paddingTop: 12, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
   searchRow: { flexDirection: "row", alignItems: "center", gap: 9 },
-  catalogButton: { height: 42, paddingHorizontal: 12, borderRadius: 22, backgroundColor: colors.brand, flexDirection: "row", alignItems: "center", gap: 6 },
-  catalogText: { color: colors.white, fontSize: 11, fontWeight: "700" },
-  searchBox: { flex: 1, minWidth: 0, height: 42, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 12, borderRadius: 22, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white },
-  searchInput: { flex: 1, minWidth: 0, color: colors.ink, fontSize: 13, paddingVertical: 0 },
-  searchActions: { flexDirection: "row", gap: 8, marginTop: 8 },
-  regionButton: { flex: 1, height: 36, borderRadius: 18, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 7 },
-  regionText: { flex: 1, color: colors.ink, fontSize: 11, fontWeight: "500" },
-  newButton: { height: 36, minWidth: 92, paddingHorizontal: 12, borderRadius: 19, borderWidth: 1.5, borderColor: colors.brand, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 3 },
-  newButtonText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
+  catalogButton: { width: 42, height: 42, borderRadius: 22, backgroundColor: colors.brand, alignItems: "center", justifyContent: "center" },
+  searchBox: { flex: 1, minWidth: 0, height: 42, flexDirection: "row", alignItems: "center", gap: 8, paddingLeft: 12, borderRadius: 22, borderWidth: 1, borderColor: colors.line, backgroundColor: "#FFF9F7" },
+  searchInput: { flex: 1, minWidth: 0, color: colors.ink, fontSize: 14, paddingVertical: 0 },
   sectionHeading: { marginTop: 14, marginBottom: 10, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headingTitleRow: { flexDirection: "row", alignItems: "center", gap: 5 },
   crown: { fontSize: 16 },
@@ -305,29 +249,29 @@ const styles = StyleSheet.create({
   seeAll: { flexDirection: "row", alignItems: "center", gap: 3 },
   seeAllText: { color: colors.brand, fontSize: 10, fontWeight: "700" },
   businessRow: { paddingHorizontal: 15, gap: 12, paddingBottom: 2 },
-  businessCard: { width: 286, overflow: "hidden", borderRadius: 16, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line },
-  businessCover: { height: 120, backgroundColor: "#080808", overflow: "hidden" },
+  businessCard: { overflow: "hidden", borderRadius: 14, backgroundColor: "#FFF9F7" },
+  businessCover: { height: 102, backgroundColor: "#080808", overflow: "hidden", borderRadius: 13 },
   businessCoverImage: { width: "100%", height: "100%" },
-  businessActions: { minHeight: 43, paddingLeft: 92, paddingRight: 9, flexDirection: "row", alignItems: "center", justifyContent: "flex-end" },
-  businessLogoWrap: { position: "absolute", left: 13, top: -43, width: 82, height: 82, borderRadius: 42, borderWidth: 5, borderColor: colors.white, overflow: "hidden", backgroundColor: colors.white },
+  businessActions: { minHeight: 39, paddingLeft: 45, paddingRight: 3, flexDirection: "row", alignItems: "center", justifyContent: "flex-end" },
+  businessLogoWrap: { position: "absolute", left: 4, top: -34, width: 58, height: 58, borderRadius: 30, borderWidth: 3, borderColor: colors.white, overflow: "hidden", backgroundColor: colors.white },
   businessLogo: { width: "100%", height: "100%" },
-  businessActionButtons: { flexDirection: "row", alignItems: "center", gap: 8 },
-  starButton: { width: 34, height: 34, borderRadius: 10, alignItems: "center", justifyContent: "center", backgroundColor: colors.gold },
-  followButton: { width: 77, height: 34, borderRadius: 10, borderWidth: 1, borderColor: "#FFD4DA", alignItems: "center", justifyContent: "center" },
+  businessActionButtons: { flexDirection: "row", alignItems: "center", gap: 5 },
+  starButton: { width: 29, height: 29, borderRadius: 9, alignItems: "center", justifyContent: "center", backgroundColor: colors.gold },
+  followButton: { width: 50, height: 29, borderRadius: 10, borderWidth: 1, borderColor: "#FFD4DA", alignItems: "center", justifyContent: "center" },
   followText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
-  businessInfo: { minHeight: 78, paddingHorizontal: 12, paddingTop: 2 },
-  businessName: { color: colors.ink, fontSize: 19, fontWeight: "800", letterSpacing: -0.4 },
-  listingCount: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8, paddingHorizontal: 9, paddingVertical: 5, borderRadius: 7, backgroundColor: colors.soft },
+  businessInfo: { minHeight: 59, paddingHorizontal: 7, paddingTop: 0 },
+  businessName: { color: colors.ink, fontSize: 15, fontWeight: "800", letterSpacing: -0.4 },
+  listingCount: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 5, marginTop: 6, paddingHorizontal: 2, paddingVertical: 2 },
   businessCount: { color: colors.muted, fontSize: 11, fontWeight: "600" },
-  businessMeta: { height: 43, borderTopWidth: 1, borderTopColor: "#F0F1F3", flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingHorizontal: 6 },
-  metaDivider: { width: 1, height: 20, backgroundColor: colors.line },
+  businessMeta: { height: 34, flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingHorizontal: 6 },
+  metaDivider: { width: 0 },
   onlineDot: { width: 14, height: 14, borderRadius: 8, backgroundColor: colors.green, borderWidth: 4, borderColor: "#E5F8EE" },
-  feedTabs: { marginTop: 15, paddingHorizontal: 15, gap: 14, borderBottomWidth: 1, borderBottomColor: colors.line },
-  feedTab: { minHeight: 39, flexDirection: "row", alignItems: "center", gap: 5, borderBottomWidth: 2, borderBottomColor: "transparent", paddingHorizontal: 2 },
+  feedTabs: { marginTop: 12, paddingHorizontal: 15, gap: 16, borderBottomWidth: 1, borderBottomColor: colors.line },
+  feedTab: { minHeight: 43, flexDirection: "row", alignItems: "center", gap: 5, borderBottomWidth: 2, borderBottomColor: "transparent", paddingHorizontal: 2 },
   feedTabActive: { borderBottomColor: colors.brand },
-  feedTabText: { color: colors.ink, fontSize: 10, fontWeight: "500" },
+  feedTabText: { color: colors.ink, fontSize: 11, fontWeight: "500" },
   feedTabTextActive: { fontWeight: "700" },
-  promoCard: { minHeight: 174, marginTop: 18, marginHorizontal: 15, borderRadius: 18, overflow: "hidden", backgroundColor: "#FFE2E5", justifyContent: "center" },
+  promoCard: { minHeight: 174, marginTop: 25, marginHorizontal: 15, borderRadius: 18, overflow: "hidden", backgroundColor: "#FFE2E5", justifyContent: "center" },
   promoStripes: { ...StyleSheet.absoluteFillObject, overflow: "hidden" },
   stripe: { position: "absolute", top: -40, width: 1, height: 260, backgroundColor: "rgba(255,255,255,0.55)", transform: [{ rotate: "35deg" }] },
   promoCopy: { width: "74%", paddingLeft: 16, paddingVertical: 14, zIndex: 2 },
@@ -355,9 +299,9 @@ const styles = StyleSheet.create({
   blogDate: { color: colors.muted, fontSize: 9 },
   blogListings: { color: colors.brand, fontSize: 9, fontWeight: "700" },
   footerNote: { paddingHorizontal: 24, paddingTop: 18, color: colors.muted, textAlign: "center", fontSize: 10, lineHeight: 15 },
-  bottomBar: { minHeight: 60, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
-  bottomItem: { flex: 1, height: 52, alignItems: "center", justifyContent: "center", gap: 4 },
-  bottomLabel: { color: colors.muted, fontSize: 9, fontWeight: "600", maxWidth: "100%" },
+  bottomBar: { minHeight: 66, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
+  bottomItem: { flex: 1, height: 56, alignItems: "center", justifyContent: "center", gap: 4 },
+  bottomLabel: { color: colors.muted, fontSize: 8, fontWeight: "600", maxWidth: "100%" },
   bottomLabelActive: { color: colors.brand, fontWeight: "700" },
-  addButton: { width: 45, height: 45, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: colors.brand, marginHorizontal: 5, marginTop: -17, borderWidth: 4, borderColor: colors.white },
+  addButton: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF9F7", marginHorizontal: 5, marginTop: -20, borderWidth: 2, borderColor: "#E64B5D" },
 });
