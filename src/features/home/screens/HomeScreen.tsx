@@ -24,7 +24,6 @@ import { ListingDetailScreen } from "./ListingDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
-import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type FeedTabId = (typeof feedTabs)[number]["id"];
 type BottomTabId = "home" | "favorites" | "messages" | "profile";
@@ -136,7 +135,6 @@ export function HomeScreen() {
             <Ionicons name="location-outline" size={19} color={colors.muted} />
           </Pressable>
         </View>
-        <LanguagePicker />
         <Pressable style={styles.menuButton} accessibilityLabel={t("Menyu")} onPress={() => setMenuVisible(true)}>
           <Ionicons name="menu" size={23} color={colors.ink} />
         </Pressable>
