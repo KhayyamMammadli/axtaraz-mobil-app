@@ -42,7 +42,7 @@ export function AuthScreen({ onHome, onLoginSuccess }: Props) {
   };
 
   const submitLogin = () => {
-    const normalizedPhone = phone.replace(/\\D/g, "");
+    const normalizedPhone = phone.split("").filter((character) => character >= "0" && character <= "9").join("");
     if (normalizedPhone !== "0501234567" || password !== "axtar123") {
       Alert.alert(t("Demo giriş"), t("Nömrə və ya şifrə yanlışdır. Demo məlumatlarından istifadə edin."));
       return;
