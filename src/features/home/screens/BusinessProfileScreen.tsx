@@ -14,6 +14,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme/colors";
+import { GalleryViewerModal } from "../components/GalleryViewerModal";
+import { ownershipCover } from "../data/homeData";
 
 type Props = {
   businessName: string;
@@ -34,6 +36,7 @@ const tabs: TabItem[] = [
 const categories = ["Bütün təkliflər (1)", "Nəqliyyat", "Elektronika"];
 const businessPhone = "+0509956663";
 const offerImage = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=85";
+const businessGalleryImages = [ownershipCover, offerImage];
 
 export function BusinessProfileScreen({ businessName, onBack }: Props) {
   const [activeTab, setActiveTab] = useState<BusinessTab>("about");
@@ -42,6 +45,8 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [hoursExpanded, setHoursExpanded] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [galleryVisible, setGalleryVisible] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
   const insets = useSafeAreaInsets();
 
   const showOffer = useMemo(() => {
@@ -242,8 +247,9 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
           <View style={styles.content}>
             <Text style={styles.sectionTitle}>Qalereya</Text>
             <View style={styles.galleryGrid}>
-              <GalleryTile />
-              <GalleryTile />
+              {businessGalleryImages.map((image, index) => (
+                <GalleryTile key={image} image={image} onPress={() => { setGalleryIndex(index); setGalleryVisible(true); }} />
+              ))}
             </View>
           </View>
         ) : null}
@@ -423,20 +429,12 @@ function OfferSection({
   );
 }
 
-function GalleryTile() {
+function GalleryTile({ image, onPress }: { image: string; onPress: () => void }) {
   return (
-    <View style={styles.galleryTile}>
-      <View style={styles.galleryMark}>
-        <View style={styles.smallWindmill}>
-          <View style={[styles.windmillBlade, styles.bladeTop]} />
-          <View style={[styles.windmillBlade, styles.bladeRight]} />
-          <View style={[styles.windmillBlade, styles.bladeBottom]} />
-          <View style={[styles.windmillBlade, styles.bladeLeft]} />
-          <View style={styles.windmillBase} />
-        </View>
-        <Text style={styles.galleryBrand}>Kentus{"\n"}Farm</Text>
-      </View>
-    </View>
+    <Pressable onPress={onPress} style={styles.galleryTile} accessibilityRole="button" accessibilityLabel="Şəkli tam ekranda aç">
+      <Image source={{ uri: image }} style={styles.galleryTileImage} resizeMode="cover" />
+      <View style={styles.galleryTileOverlay}><Ionicons name="expand-outline" size={18} color="#FFFFFF" /></View>
+    </Pressable>
   );
 }
 
@@ -530,7 +528,9 @@ const styles = StyleSheet.create({
   noResults: { minHeight: 170, alignItems: "center", justifyContent: "center", gap: 8 },
   noResultsText: { color: "#737B8C", fontSize: 13 },
   galleryGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 12 },
-  galleryTile: { width: "48%", height: 150, borderRadius: 14, backgroundColor: "#F0F1F3", alignItems: "center", justifyContent: "center" },
+  galleryTile: { width: "48%", height: 150, borderRadius: 14, backgroundColor: "#F0F1F3", overflow: "hidden" },
+  galleryTileImage: { width: "100%", height: "100%" },
+  galleryTileOverlay: { position: "absolute", right: 8, bottom: 8, width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.55)" },
   ratingCard: { minHeight: 74, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 16, borderRadius: 14, backgroundColor: "#FFFFFF" },
   ratingValue: { color: "#171A22", fontSize: 19, fontWeight: "800" },
   ratingCaption: { color: "#71798A", fontSize: 13 },
