@@ -3,6 +3,7 @@ import {
   Alert,
   Image,
   Linking,
+  Modal,
   Pressable,
   ScrollView,
   Share,
@@ -27,7 +28,7 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
   const [hoursExpanded, setHoursExpanded] = useState(false);
   const [moreVisible, setMoreVisible] = useState(false);
   const insets = useSafeAreaInsets();
-  const galleryImages = [listing.image];
+  const galleryImages = listing.images?.length ? listing.images : [listing.image];
   const related = listings.filter((item) => item.id !== listing.id).slice(0, 2);
 
   const openUrl = async (url: string) => {
@@ -67,14 +68,14 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.content, { paddingBottom: 110 + insets.bottom }]}
+        contentContainerStyle={[styles.content, { paddingBottom: 82 + insets.bottom }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
           <Pressable onPress={() => setGalleryVisible(true)} style={StyleSheet.absoluteFill} accessibilityRole="button" accessibilityLabel="Şəkillərə bax">
             <Image source={{ uri: listing.image }} style={styles.heroImage} resizeMode="cover" />
           </Pressable>
-          <View style={styles.imageCount}><Ionicons name="images-outline" size={14} color="#FFFFFF" /><Text style={styles.imageCountText}>1 / {galleryImages.length}</Text></View>
+          <View style={styles.imageCount}><Ionicons name="images-outline" size={14} color="#FFFFFF" /><Text style={styles.imageCountText}>{galleryImages.length ? 1 : 0} / {galleryImages.length}</Text></View>
           <Pressable onPress={() => setFavorite((value) => !value)} style={styles.heroFavorite} accessibilityLabel="Seçilmişlərə əlavə et">
             <Ionicons name={favorite ? "heart" : "heart-outline"} size={22} color={favorite ? colors.brand : colors.ink} />
           </Pressable>
@@ -133,9 +134,12 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
           <View style={styles.ownerActions}><Text style={styles.metaText}>Digər elanlar: 4</Text><Pressable onPress={() => Alert.alert("Elanlar", "İstifadəçinin digər elanları açılacaq.")}><Text style={styles.moreText}>Hamısına bax</Text></Pressable></View>
         </View>
 
-        <Pressable onPress={() => openUrl("https://maps.google.com/?q=Baku")} style={styles.mapCard}>
-          <View style={styles.mapPattern}><Ionicons name="location" size={31} color={colors.brand} /></View>
-          <View style={styles.mapCopy}><Text style={styles.sectionTitle}>Ünvan</Text><Text style={styles.metaText}>{listing.location}, Azərbaycan</Text></View>
+        <Pressable onPress={() => openUrl(`https://maps.google.com/?q=${encodeURIComponent(`${listing.location}, Azərbaycan`)}`)} style={styles.mapCard} accessibilityRole="button" accessibilityLabel={`Xəritədə ${listing.location} ünvanını aç`}>
+          <View style={styles.mapPreview}>
+            <Image source={{ uri: "https://staticmap.openstreetmap.de/staticmap.php?center=40.4093,49.8671&zoom=11&size=640x300&markers=40.4093,49.8671,red-pushpin" }} style={styles.mapImage} resizeMode="cover" />
+            <View style={styles.mapPin}><Ionicons name="location" size={22} color={colors.brand} /></View>
+          </View>
+          <View style={styles.mapCopy}><Text style={styles.sectionTitle}>Ünvan</Text><Text style={styles.metaText}>{listing.location}, Azərbaycan</Text><Text style={styles.mapHint}>Xəritədə aç</Text></View>
           <Ionicons name="open-outline" size={18} color={colors.muted} />
         </Pressable>
 
@@ -151,6 +155,7 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
       </View>
 
       <GalleryViewerModal visible={galleryVisible} images={galleryImages} onClose={() => setGalleryVisible(false)} onCall={() => openUrl("tel:+994552458979")} isFavorite={favorite} onToggleFavorite={() => setFavorite((value) => !value)} />
+      <Modal visible={moreVisible} transparent animationType="slide" onRequestClose={() => setMoreVisible(false)}>
       {moreVisible ? <View style={styles.sheetBackdrop}>
         <Pressable style={StyleSheet.absoluteFill} onPress={() => setMoreVisible(false)} />
         <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 14) }]}>
@@ -161,6 +166,7 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
           <SheetAction icon="megaphone-outline" label="Reklam alətləri" onPress={() => { setMoreVisible(false); Alert.alert("Reklam alətləri", "Bu elan üçün tanıtım seçimləri."); }} />
         </View>
       </View> : null}
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -226,15 +232,18 @@ const styles = StyleSheet.create({
   followButton: { minWidth: 70, height: 34, alignItems: "center", justifyContent: "center", borderRadius: 10, borderWidth: 1, borderColor: colors.brand },
   followText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
   ownerActions: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderColor: "#EEF0F3" },
-  mapCard: { marginHorizontal: 13, marginTop: 12, padding: 12, borderRadius: 15, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "#E9EBEF" },
-  mapPattern: { width: 52, height: 52, borderRadius: 12, backgroundColor: "#EAF0E9", alignItems: "center", justifyContent: "center" },
+  mapCard: { marginHorizontal: 13, marginTop: 12, padding: 10, borderRadius: 15, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "#E9EBEF" },
+  mapPreview: { width: 86, height: 68, overflow: "hidden", borderRadius: 11, backgroundColor: "#EAF0E9", alignItems: "center", justifyContent: "center" },
+  mapImage: { ...StyleSheet.absoluteFillObject },
+  mapPin: { width: 32, height: 32, borderRadius: 16, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center", elevation: 2 },
   mapCopy: { flex: 1, gap: 4 },
+  mapHint: { color: colors.brand, fontSize: 11, fontWeight: "700" },
   relatedSection: { marginTop: 20, paddingHorizontal: 13 },
   relatedHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
   relatedCount: { color: colors.muted, fontSize: 11 },
   relatedGrid: { flexDirection: "row", gap: 10 },
   relatedItem: { width: "48.5%" },
-  bottomActions: { minHeight: 75, paddingHorizontal: 14, paddingTop: 10, flexDirection: "row", gap: 11, backgroundColor: "#FFFFFF", borderTopWidth: 1, borderColor: "#E9EBEF" },
+  bottomActions: { minHeight: 70, paddingHorizontal: 14, paddingTop: 8, flexDirection: "row", gap: 11, backgroundColor: "#FFFFFF", borderTopWidth: 1, borderColor: "#E9EBEF" },
   callButton: { flex: 1, minHeight: 52, borderRadius: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, backgroundColor: colors.brand },
   callText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" },
   messageButton: { flex: 1, minHeight: 52, borderRadius: 14, borderWidth: 1.5, borderColor: colors.brand, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, backgroundColor: "#FFFFFF" },
