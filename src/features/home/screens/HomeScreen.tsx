@@ -18,7 +18,8 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { ListingCard } from "../components/ListingCard";
 import { CatalogModal } from "../components/CatalogModal";
 import { MenuModal } from "../components/MenuModal";
-import { BusinessProfileScreen } from "./BusinessProfileScreen";\nimport { ListingDetailScreen } from "./ListingDetailScreen";
+import { BusinessProfileScreen } from "./BusinessProfileScreen";
+import { ListingDetailScreen } from "./ListingDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 
@@ -37,7 +38,8 @@ export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);\n  const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
+  const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
+  const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
