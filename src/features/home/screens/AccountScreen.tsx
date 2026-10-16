@@ -53,11 +53,12 @@ const tabInfo: { id: AccountTab; title: string; icon: keyof typeof Ionicons.glyp
 type Props = {
   onHome: () => void;
   onLogout: () => void;
+  onMessages: () => void;
   onSelectListing: (listing: (typeof listings)[number]) => void;
   onSelectBusiness: (business: (typeof businesses)[number]) => void;
 };
 
-export function AccountScreen({ onHome, onLogout, onSelectListing, onSelectBusiness }: Props) {
+export function AccountScreen({ onHome, onLogout, onMessages, onSelectListing, onSelectBusiness }: Props) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<AccountTab>("info");
@@ -309,7 +310,7 @@ export function AccountScreen({ onHome, onLogout, onSelectListing, onSelectBusin
         <BottomItem icon="home" label="Ana səhifə" onPress={onHome} />
         <BottomItem icon="heart" label="Seçilmişlər" onPress={() => Alert.alert(t("Seçilmişlər"), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."))} />
         <View style={styles.bottomAdd}><Ionicons name="add" size={27} color={colors.brand} /></View>
-        <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" onPress={() => Alert.alert(t("Mesajlarım"), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."))} />
+        <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" onPress={onMessages} />
         <BottomItem icon="person-circle-outline" label="Kabinetim" active onPress={() => setTab("info")} />
       </View>
 
