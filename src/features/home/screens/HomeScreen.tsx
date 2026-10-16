@@ -20,6 +20,7 @@ import { CatalogModal } from "../components/CatalogModal";
 import { MenuModal } from "../components/MenuModal";
 import { BusinessProfileScreen } from "./BusinessProfileScreen";
 import { AuthScreen } from "./AuthScreen";
+import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
@@ -44,6 +45,7 @@ export function HomeScreen() {
   const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
   const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
   const [authVisible, setAuthVisible] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
@@ -89,7 +91,7 @@ export function HomeScreen() {
   const chooseBottomTab = (tab: BottomTabId) => {
     setActiveBottomTab(tab);
     if (tab === "profile") {
-      setAuthVisible(true);
+      if (!isAuthenticated) setAuthVisible(true);
       return;
     }
     const labels: Record<BottomTabId, string> = {
@@ -110,7 +112,23 @@ export function HomeScreen() {
   }
 
   if (authVisible) {
-    return <AuthScreen onHome={() => { setAuthVisible(false); setActiveBottomTab("home"); }} />;
+    return (
+      <AuthScreen
+        onHome={() => { setAuthVisible(false); setActiveBottomTab("home"); }}
+        onLoginSuccess={() => { setIsAuthenticated(true); setAuthVisible(false); setActiveBottomTab("profile"); }}
+      />
+    );
+  }
+
+  if (isAuthenticated) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <AccountScreen
+          onHome={() => { setIsAuthenticated(false); setActiveBottomTab("home"); }}
+          onLogout={() => { setIsAuthenticated(false); setAuthVisible(true); }}
+        />
+      </SafeAreaView>
+    );
   }
 
   return (
