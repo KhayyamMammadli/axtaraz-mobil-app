@@ -14,13 +14,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
-import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type AuthPage = "login" | "register" | "forgot";
 type Props = { onHome: () => void };
 
 export function AuthScreen({ onHome }: Props) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const [page, setPage] = useState<AuthPage>("login");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -101,7 +100,6 @@ export function AuthScreen({ onHome }: Props) {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView style={styles.keyboard} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <View style={styles.topActions}><LanguagePicker /></View>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: 105 + insets.bottom }]}
@@ -208,7 +206,7 @@ export function AuthScreen({ onHome }: Props) {
             </View>
           </View>
           {page === "register" || page === "forgot" ? (
-            <View style={styles.footer}><Text style={styles.footerText}>{t("Müəllif hüquqları qorunur — 2026")}</Text><Text style={styles.language}><Ionicons name="globe-outline" size={13} color={colors.muted} /> {language.toUpperCase()}</Text></View>
+            <View style={styles.footer}><Text style={styles.footerText}>{t("Müəllif hüquqları qorunur — 2026")}</Text></View>
           ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
@@ -324,7 +322,6 @@ const styles = StyleSheet.create({
   switchButtonText: { color: "#303849", fontSize: 13, fontWeight: "600" },
   footer: { marginTop: "auto", paddingHorizontal: 15, paddingVertical: 12, flexDirection: "row", justifyContent: "space-between" },
   footerText: { color: "#171A22", fontSize: 10 },
-  language: { color: colors.muted, fontSize: 10 },
   bottomBar: { position: "absolute", left: 0, right: 0, bottom: 0, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "rgba(255,255,255,0.98)", borderTopWidth: 1, borderTopColor: "#EEF0F3" },
   bottomItem: { width: "18%", height: 54, alignItems: "center", justifyContent: "center", gap: 2 },
   bottomLabel: { color: "#596477", fontSize: 8, fontWeight: "500" },
