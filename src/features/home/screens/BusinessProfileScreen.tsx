@@ -16,6 +16,8 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { colors } from "../../../theme/colors";
 import { GalleryViewerModal } from "../components/GalleryViewerModal";
 import { ownershipCover } from "../data/homeData";
+import { useI18n } from "../../../i18n/I18nProvider";
+import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type Props = {
   businessName: string;
@@ -39,6 +41,7 @@ const offerImage = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7
 const businessGalleryImages = [ownershipCover, offerImage];
 
 export function BusinessProfileScreen({ businessName, onBack }: Props) {
+  const { t, language } = useI18n();
   const [activeTab, setActiveTab] = useState<BusinessTab>("about");
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [search, setSearch] = useState("");
@@ -50,24 +53,24 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
   const insets = useSafeAreaInsets();
 
   const showOffer = useMemo(() => {
-    const matchesSearch = !search.trim() || "BMW".toLocaleLowerCase("az").includes(search.trim().toLocaleLowerCase("az"));
+    const matchesSearch = !search.trim() || t("BMW").toLocaleLowerCase(language).includes(search.trim().toLocaleLowerCase(language));
     const matchesCategory = selectedCategory !== "Elektronika";
     return matchesSearch && matchesCategory;
-  }, [search, selectedCategory]);
+  }, [search, selectedCategory, language, t]);
 
   const openLink = async (url: string) => {
     try {
       await Linking.openURL(url);
     } catch {
-      Alert.alert("Açılmadı", "Bu əməliyyat üçün uyğun tətbiq tapılmadı.");
+      Alert.alert(t("Açılmadı"), t("Bu əməliyyat üçün uyğun tətbiq tapılmadı."));
     }
   };
 
   const shareBusiness = async () => {
     try {
-      await Share.share({ message: `${businessName} — Axtar.az biznes profili\nhttps://axtar.az` });
+      await Share.share({ message: `${t(businessName)} — Axtar.az biznes profili\nhttps://axtar.az` });
     } catch {
-      Alert.alert("Paylaşmaq mümkün olmadı", "Bir az sonra yenidən yoxlayın.");
+      Alert.alert(t("Paylaşmaq mümkün olmadı"), t("Bir az sonra yenidən yoxlayın."));
     }
   };
 
@@ -76,11 +79,12 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.topBar}>
-        <Pressable onPress={onBack} style={styles.topButton} accessibilityRole="button" accessibilityLabel="Geri">
+        <Pressable onPress={onBack} style={styles.topButton} accessibilityRole="button" accessibilityLabel={t("Geri")}>
           <Ionicons name="arrow-back" size={23} color="#171A22" />
         </Pressable>
-        <Text style={styles.topTitle} numberOfLines={1}>Biznes profili</Text>
-        <Pressable onPress={shareBusiness} style={styles.topButton} accessibilityRole="button" accessibilityLabel="Biznesi paylaş">
+        <Text style={styles.topTitle} numberOfLines={1}>{t("Biznes profili")}</Text>
+        <LanguagePicker />
+        <Pressable onPress={shareBusiness} style={styles.topButton} accessibilityRole="button" accessibilityLabel={t("Biznesi paylaş")}>
           <Ionicons name="share-social" size={21} color="#171A22" />
         </Pressable>
       </View>
@@ -131,9 +135,9 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
 
           <Text style={styles.businessName}>{businessName}</Text>
           <View style={styles.statsRow}>
-            <Text style={styles.statText}>1 elan</Text>
+            <Text style={styles.statText}>{t("1 elan")}</Text>
             <Text style={styles.statDot}>·</Text>
-            <Text style={styles.statText}>202 baxış</Text>
+            <Text style={styles.statText}>{t("202 baxış")}</Text>
             <Text style={styles.statDot}>·</Text>
             <Text style={styles.statText}>{isFollowing ? "1 izləyici" : "0 izləyici"}</Text>
           </View>
@@ -157,7 +161,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
               >
                 <Ionicons name={tab.icon} size={21} color={active ? colors.brand : "#303649"} />
                 <Text style={[styles.tabLabel, active && styles.activeTabLabel]} numberOfLines={1}>
-                  {tab.label}
+                  {t(tab.label)}
                 </Text>
               </Pressable>
             );
@@ -167,7 +171,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
         {activeTab === "about" ? (
           <View style={styles.content}>
             <View style={styles.aboutCard}>
-              <Text style={styles.cardTitle}>Haqqımızda</Text>
+              <Text style={styles.cardTitle}>{t("Haqqımızda")}</Text>
               <Text style={styles.aboutText}>
                 Məqsədimiz: keyfiyyətli elektronika və peşəkar xidmət. Mağazamızda məişət texnikası,
                 aksesuarlar və geniş çeşidli avadanlıqlar sizi gözləyir. Öncəliyimiz — məhsulun
@@ -191,12 +195,12 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
                 <Text style={styles.hoursText}>Çərşənbə axşamı, Çərşənbə, Cümə, Şənbə{"\n"}09:00 - 20:00</Text>
                 {hoursExpanded ? (
                   <View style={styles.hoursList}>
-                    <Text style={styles.hoursDetail}>Bazar ertəsi · Bağlı</Text>
-                    <Text style={styles.hoursDetail}>Çərşənbə axşamı · 09:00–20:00</Text>
-                    <Text style={styles.hoursDetail}>Çərşənbə · 09:00–20:00</Text>
-                    <Text style={styles.hoursDetail}>Cümə axşamı · Bağlı</Text>
-                    <Text style={styles.hoursDetail}>Cümə və şənbə · 09:00–20:00</Text>
-                    <Text style={styles.hoursDetail}>Bazar · Bağlı</Text>
+                    <Text style={styles.hoursDetail}>{t("Bazar ertəsi · Bağlı")}</Text>
+                    <Text style={styles.hoursDetail}>{t("Çərşənbə axşamı · 09:00–20:00")}</Text>
+                    <Text style={styles.hoursDetail}>{t("Çərşənbə · 09:00–20:00")}</Text>
+                    <Text style={styles.hoursDetail}>{t("Cümə axşamı · Bağlı")}</Text>
+                    <Text style={styles.hoursDetail}>{t("Cümə və şənbə · 09:00–20:00")}</Text>
+                    <Text style={styles.hoursDetail}>{t("Bazar · Bağlı")}</Text>
                   </View>
                 ) : null}
               </View>
@@ -208,7 +212,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
               accessibilityRole="button"
             >
               <Ionicons name="location" size={23} color="#17213B" />
-              <Text style={styles.locationText}>Qeyd edilməyib</Text>
+              <Text style={styles.locationText}>{t("Qeyd edilməyib")}</Text>
               <Ionicons name="open-outline" size={19} color="#758097" />
             </Pressable>
 
@@ -245,7 +249,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
 
         {activeTab === "gallery" ? (
           <View style={styles.content}>
-            <Text style={styles.sectionTitle}>Qalereya</Text>
+            <Text style={styles.sectionTitle}>{t("Qalereya")}</Text>
             <View style={styles.galleryGrid}>
               {businessGalleryImages.map((image, index) => (
                 <GalleryTile key={image} image={image} onPress={() => { setGalleryIndex(index); setGalleryVisible(true); }} />
@@ -259,7 +263,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
             <View style={styles.ratingCard}>
               <Ionicons name="star" size={25} color="#FFC84A" />
               <Text style={styles.ratingValue}>4.8</Text>
-              <Text style={styles.ratingCaption}>230 rəy</Text>
+              <Text style={styles.ratingCaption}>{t("230 rəy")}</Text>
             </View>
             <EmptyTab icon="chatbubble-ellipses-outline" title="Rəylər" body="Müştəri rəyləri bu bölmədə göstəriləcək." />
           </View>
@@ -273,19 +277,19 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
           onPress={() => openLink("tel:+0509956663")}
           style={styles.callButton}
           accessibilityRole="button"
-          accessibilityLabel="Zəng et"
+          accessibilityLabel={t("Zəng et")}
         >
           <Ionicons name="call" size={19} color="#FFFFFF" />
-          <Text style={styles.callButtonText}>Zəng et</Text>
+          <Text style={styles.callButtonText}>{t("Zəng et")}</Text>
         </Pressable>
         <Pressable
           onPress={() => openLink("sms:+0509956663")}
           style={styles.messageButton}
           accessibilityRole="button"
-          accessibilityLabel="Mesaj yaz"
+          accessibilityLabel={t("Mesaj yaz")}
         >
           <Ionicons name="chatbubble" size={19} color={colors.brand} />
-          <Text style={styles.messageButtonText}>Mesaj yaz</Text>
+          <Text style={styles.messageButtonText}>{t("Mesaj yaz")}</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -303,6 +307,7 @@ function ContactLine({
   color: string;
   onPress: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <Pressable onPress={onPress} style={styles.contactLine} accessibilityRole="button">
       <Ionicons name={icon} size={24} color={color} />
@@ -312,12 +317,13 @@ function ContactLine({
 }
 
 function GalleryPreview({ onPress }: { onPress: () => void }) {
+  const { t } = useI18n();
   return (
     <View style={styles.gallerySection}>
       <View style={styles.sectionHeading}>
-        <Text style={styles.sectionTitle}>Qalereya</Text>
+        <Text style={styles.sectionTitle}>{t("Qalereya")}</Text>
         <Pressable onPress={onPress} accessibilityRole="button">
-          <Text style={styles.viewAll}>Hamısına bax</Text>
+          <Text style={styles.viewAll}>{t("Hamısına bax")}</Text>
         </Pressable>
       </View>
       <Pressable onPress={onPress} style={styles.galleryPreview}>
@@ -353,18 +359,19 @@ function OfferSection({
   isSaved: boolean;
   onToggleSaved: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <View style={styles.offerSection}>
-      <Text style={styles.sectionTitle}>Təkliflər</Text>
+      <Text style={styles.sectionTitle}>{t("Təkliflər")}</Text>
       <View style={styles.searchBox}>
         <TextInput
           value={search}
           onChangeText={onSearch}
-          placeholder="Təkliflərdə axtar..."
+          placeholder={t("Təkliflərdə axtar...")}
           placeholderTextColor="#778096"
           style={styles.searchInput}
           returnKeyType="search"
-          accessibilityLabel="Biznes təkliflərində axtar"
+          accessibilityLabel={t("Biznes təkliflərində axtar")}
         />
         <Ionicons name="search" size={20} color="#17213B" />
       </View>
@@ -384,7 +391,7 @@ function OfferSection({
                 size={17}
                 color={active ? colors.brand : "#323B50"}
               />
-              <Text style={[styles.categoryChipText, active && styles.categoryChipTextActive]}>{category}</Text>
+              <Text style={[styles.categoryChipText, active && styles.categoryChipTextActive]}>{t(category)}</Text>
             </Pressable>
           );
         })}
@@ -394,7 +401,7 @@ function OfferSection({
           <View style={styles.offerCard}>
             <View style={styles.offerImageWrap}>
               <Image source={{ uri: offerImage }} style={styles.offerImage} resizeMode="cover" />
-              <View style={styles.offerBadge}><Text style={styles.offerBadgeText}>İTKİN</Text></View>
+              <View style={styles.offerBadge}><Text style={styles.offerBadgeText}>{t("İTKİN")}</Text></View>
               <Pressable
                 onPress={onToggleSaved}
                 style={styles.favoriteButton}
@@ -406,12 +413,12 @@ function OfferSection({
             </View>
             <View style={styles.offerInfo}>
               <Text style={styles.offerPrice}>23 000 ₼</Text>
-              <Text style={styles.offerName}>BMW</Text>
+              <Text style={styles.offerName}>{t("BMW")}</Text>
               <View style={styles.offerMeta}>
                 <Ionicons name="location" size={14} color="#647084" />
-                <Text style={styles.offerMetaText}>Bakı</Text>
+                <Text style={styles.offerMetaText}>{t("Bakı")}</Text>
                 <Text style={styles.offerMetaDivider}>|</Text>
-                <Text style={styles.offerMetaText}>1 ay əvvəl</Text>
+                <Text style={styles.offerMetaText}>{t("1 ay əvvəl")}</Text>
                 <View style={styles.offerBadges}>
                   <Ionicons name="trophy" size={16} color="#FFC84A" />
                   <Ionicons name="diamond" size={16} color="#FFC84A" />
@@ -423,7 +430,7 @@ function OfferSection({
         ) : (
           <View style={styles.noResults}>
             <Ionicons name="search-outline" size={27} color="#A0A6B2" />
-            <Text style={styles.noResultsText}>Uyğun təklif tapılmadı</Text>
+            <Text style={styles.noResultsText}>{t("Uyğun təklif tapılmadı")}</Text>
           </View>
         )}
       </View>
@@ -433,7 +440,7 @@ function OfferSection({
 
 function GalleryTile({ image, onPress }: { image: string; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} style={styles.galleryTile} accessibilityRole="button" accessibilityLabel="Şəkli tam ekranda aç">
+    <Pressable onPress={onPress} style={styles.galleryTile} accessibilityRole="button" accessibilityLabel={t("Şəkli tam ekranda aç")}>
       <Image source={{ uri: image }} style={styles.galleryTileImage} resizeMode="cover" />
       <View style={styles.galleryTileOverlay}><Ionicons name="expand-outline" size={18} color="#FFFFFF" /></View>
     </Pressable>
@@ -441,11 +448,12 @@ function GalleryTile({ image, onPress }: { image: string; onPress: () => void })
 }
 
 function EmptyTab({ icon, title, body }: { icon: keyof typeof Ionicons.glyphMap; title: string; body: string }) {
+  const { t } = useI18n();
   return (
     <View style={styles.emptyTab}>
       <View style={styles.emptyIcon}><Ionicons name={icon} size={26} color={colors.brand} /></View>
-      <Text style={styles.emptyTitle}>{title}</Text>
-      <Text style={styles.emptyBody}>{body}</Text>
+      <Text style={styles.emptyTitle}>{t(title)}</Text>
+      <Text style={styles.emptyBody}>{t(body)}</Text>
     </View>
   );
 }
