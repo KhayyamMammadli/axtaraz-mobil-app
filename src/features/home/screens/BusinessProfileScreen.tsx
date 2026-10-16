@@ -381,42 +381,44 @@ function OfferSection({
           );
         })}
       </ScrollView>
-      {showOffer ? (
-        <View style={styles.offerCard}>
-          <View style={styles.offerImageWrap}>
-            <Image source={{ uri: offerImage }} style={styles.offerImage} resizeMode="cover" />
-            <View style={styles.offerBadge}><Text style={styles.offerBadgeText}>İTKİN</Text></View>
-            <Pressable
-              onPress={onToggleSaved}
-              style={styles.favoriteButton}
-              accessibilityRole="button"
-              accessibilityLabel={isSaved ? "Seçilmişlərdən çıxar" : "Seçilmişlərə əlavə et"}
-            >
-              <Ionicons name={isSaved ? "heart" : "heart-outline"} size={21} color={isSaved ? colors.brand : "#323B50"} />
-            </Pressable>
-          </View>
-          <View style={styles.offerInfo}>
-            <Text style={styles.offerPrice}>23 000 ₼</Text>
-            <Text style={styles.offerName}>BMW</Text>
-            <View style={styles.offerMeta}>
-              <Ionicons name="location" size={14} color="#647084" />
-              <Text style={styles.offerMetaText}>Bakı</Text>
-              <Text style={styles.offerMetaDivider}>|</Text>
-              <Text style={styles.offerMetaText}>1 ay əvvəl</Text>
-              <View style={styles.offerBadges}>
-                <Ionicons name="trophy" size={16} color="#FFC84A" />
-                <Ionicons name="diamond" size={16} color="#FFC84A" />
-                <Ionicons name="flash" size={16} color="#FFC84A" />
+      <View style={styles.offerGrid}>
+        {showOffer ? (
+          <View style={styles.offerCard}>
+            <View style={styles.offerImageWrap}>
+              <Image source={{ uri: offerImage }} style={styles.offerImage} resizeMode="cover" />
+              <View style={styles.offerBadge}><Text style={styles.offerBadgeText}>İTKİN</Text></View>
+              <Pressable
+                onPress={onToggleSaved}
+                style={styles.favoriteButton}
+                accessibilityRole="button"
+                accessibilityLabel={isSaved ? "Seçilmişlərdən çıxar" : "Seçilmişlərə əlavə et"}
+              >
+                <Ionicons name={isSaved ? "heart" : "heart-outline"} size={21} color={isSaved ? colors.brand : "#323B50"} />
+              </Pressable>
+            </View>
+            <View style={styles.offerInfo}>
+              <Text style={styles.offerPrice}>23 000 ₼</Text>
+              <Text style={styles.offerName}>BMW</Text>
+              <View style={styles.offerMeta}>
+                <Ionicons name="location" size={14} color="#647084" />
+                <Text style={styles.offerMetaText}>Bakı</Text>
+                <Text style={styles.offerMetaDivider}>|</Text>
+                <Text style={styles.offerMetaText}>1 ay əvvəl</Text>
+                <View style={styles.offerBadges}>
+                  <Ionicons name="trophy" size={16} color="#FFC84A" />
+                  <Ionicons name="diamond" size={16} color="#FFC84A" />
+                  <Ionicons name="flash" size={16} color="#FFC84A" />
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      ) : (
-        <View style={styles.noResults}>
-          <Ionicons name="search-outline" size={27} color="#A0A6B2" />
-          <Text style={styles.noResultsText}>Uyğun təklif tapılmadı</Text>
-        </View>
-      )}
+        ) : (
+          <View style={styles.noResults}>
+            <Ionicons name="search-outline" size={27} color="#A0A6B2" />
+            <Text style={styles.noResultsText}>Uyğun təklif tapılmadı</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 }
@@ -511,7 +513,8 @@ const styles = StyleSheet.create({
   categoryChipActive: { backgroundColor: "#FFF0F1" },
   categoryChipText: { color: "#303A50", fontSize: 12, fontWeight: "700" },
   categoryChipTextActive: { color: colors.brand },
-  offerCard: { width: 286, maxWidth: "100%", overflow: "hidden", borderRadius: 14, borderWidth: 1, borderColor: "#E7EAF0", backgroundColor: "#FFFFFF", elevation: 1 },
+  offerGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, alignItems: "flex-start" },
+  offerCard: { width: "48%", overflow: "hidden", borderRadius: 14, borderWidth: 1, borderColor: "#E7EAF0", backgroundColor: "#FFFFFF", elevation: 1 },
   offerImageWrap: { width: "100%", aspectRatio: 1, position: "relative", backgroundColor: "#ECEFF3" },
   offerImage: { width: "100%", height: "100%" },
   offerBadge: { position: "absolute", left: 9, top: 9, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 7, backgroundColor: "#FFFFFF" },
