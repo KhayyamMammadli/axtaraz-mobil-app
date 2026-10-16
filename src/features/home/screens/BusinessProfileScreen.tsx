@@ -307,7 +307,6 @@ function ContactLine({
   color: string;
   onPress: () => void;
 }) {
-  const { t } = useI18n();
   return (
     <Pressable onPress={onPress} style={styles.contactLine} accessibilityRole="button">
       <Ionicons name={icon} size={24} color={color} />
@@ -439,6 +438,7 @@ function OfferSection({
 }
 
 function GalleryTile({ image, onPress }: { image: string; onPress: () => void }) {
+  const { t } = useI18n();
   return (
     <Pressable onPress={onPress} style={styles.galleryTile} accessibilityRole="button" accessibilityLabel={t("Şəkli tam ekranda aç")}>
       <Image source={{ uri: image }} style={styles.galleryTileImage} resizeMode="cover" />
