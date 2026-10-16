@@ -11,6 +11,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { catalogCategories, type CatalogCategory } from "../data/catalogData";
+import { useI18n } from "../../../i18n/I18nProvider";
+import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type Props = {
   visible: boolean;
@@ -19,6 +21,7 @@ type Props = {
 };
 
 export function CatalogModal({ visible, onClose, onSelect }: Props) {
+  const { t, language } = useI18n();
   const [path, setPath] = useState<CatalogCategory[]>([]);
   const [search, setSearch] = useState("");
 
@@ -33,13 +36,13 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
     ? path[path.length - 1].children ?? []
     : catalogCategories;
   const visibleCategories = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase("az");
+    const query = search.trim().toLocaleLowerCase(language);
     return query
       ? currentCategories.filter((category) =>
-          category.name.toLocaleLowerCase("az").includes(query),
+          t(category.name).toLocaleLowerCase(language).includes(query),
         )
       : currentCategories;
-  }, [currentCategories, search]);
+  }, [currentCategories, search, language, t]);
 
   const goBack = () => {
     if (path.length) {
@@ -56,7 +59,7 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
       setSearch("");
       return;
     }
-    onSelect([...path, category].map((item) => item.name).join(" / "));
+    onSelect([...path, category].map((item) => t(item.name)).join(" / "));
   };
 
   return (
@@ -81,30 +84,31 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
             />
           </Pressable>
           <View style={styles.headerTitleWrap}>
-            <Text style={styles.headerEyebrow}>Axtar.az</Text>
+            <Text style={styles.headerEyebrow}>{t("Axtar.az")}</Text>
             <Text style={styles.headerTitle} numberOfLines={1}>
-              {path.length ? path[path.length - 1].name : "Kataloq"}
+              {path.length ? t(path[path.length - 1].name) : t("Kataloq")}
             </Text>
           </View>
+          <LanguagePicker />
           <Pressable
             onPress={onClose}
             style={styles.doneButton}
             accessibilityRole="button"
-            accessibilityLabel="Bağla"
+            accessibilityLabel={t("Bağla")}
           >
-            <Text style={styles.doneText}>Bağla</Text>
+            <Text style={styles.doneText}>{t("Bağla")}</Text>
           </Pressable>
         </View>
 
         {path.length > 0 ? (
           <View style={styles.breadcrumb}>
             <Text style={styles.breadcrumbText} numberOfLines={1}>
-              {["Bütün kateqoriyalar", ...path.map((item) => item.name)].join("  ›  ")}
+              {["Bütün kateqoriyalar", ...path.map((item) => t(item.name))].join("  ›  ")}
             </Text>
           </View>
         ) : (
           <View style={styles.intro}>
-            <Text style={styles.introTitle}>Kateqoriya seçin</Text>
+            <Text style={styles.introTitle}>{t("Kateqoriya seçin")}</Text>
             <Text style={styles.introSubtitle}>
               Elanlara rahat baxmaq üçün bölməni seçin
             </Text>
@@ -116,17 +120,17 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
           <TextInput
             value={search}
             onChangeText={setSearch}
-            placeholder="Kateqoriya axtar"
+            placeholder={t("Kateqoriya axtar")}
             placeholderTextColor="#969BA8"
             returnKeyType="search"
             style={styles.searchInput}
-            accessibilityLabel="Kateqoriya axtar"
+            accessibilityLabel={t("Kateqoriya axtar")}
           />
           {search.length > 0 ? (
             <Pressable
               onPress={() => setSearch("")}
               hitSlop={10}
-              accessibilityLabel="Axtarışı təmizlə"
+              accessibilityLabel={t("Axtarışı təmizlə")}
             >
               <Ionicons name="close-circle" size={19} color="#A5A9B4" />
             </Pressable>
@@ -182,8 +186,8 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
           {visibleCategories.length === 0 ? (
             <View style={styles.emptyState}>
               <Ionicons name="search-outline" size={28} color="#A1A6B2" />
-              <Text style={styles.emptyTitle}>Kateqoriya tapılmadı</Text>
-              <Text style={styles.emptyText}>Axtarış sözünü dəyişin.</Text>
+              <Text style={styles.emptyTitle}>{t("Kateqoriya tapılmadı")}</Text>
+              <Text style={styles.emptyText}>{t("Axtarış sözünü dəyişin.")}</Text>
             </View>
           ) : null}
         </ScrollView>
