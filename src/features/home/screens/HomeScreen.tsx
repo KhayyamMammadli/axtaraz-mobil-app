@@ -265,7 +265,7 @@ export function HomeScreen() {
         </View>
         <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.blogRow}>
           {homeBlogs.map((blog) => (
-            <Pressable key={blog.id} style={styles.blogCard} onPress={() => Alert.alert(blog.title, "Blog səhifəsi növbəti mərhələdə açılacaq.")}>
+            <Pressable key={blog.id} style={styles.blogCard} onPress={() => Alert.alert(t(blog.title), t("Blog səhifəsi növbəti mərhələdə açılacaq."))}>
               <Image source={{ uri: blog.image }} style={styles.blogImage} resizeMode="cover" />
               <View style={styles.blogBody}>
                 <Text style={styles.blogCategory}>{t(blog.category)}</Text>
