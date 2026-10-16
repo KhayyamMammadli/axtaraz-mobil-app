@@ -16,13 +16,13 @@ import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
 
 type AuthPage = "login" | "register" | "forgot";
-type Props = { onHome: () => void };
+type Props = { onHome: () => void; onLoginSuccess: () => void };
 
-export function AuthScreen({ onHome }: Props) {
+export function AuthScreen({ onHome, onLoginSuccess }: Props) {
   const { t } = useI18n();
   const [page, setPage] = useState<AuthPage>("login");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("0501234567");
+  const [password, setPassword] = useState("axtar123");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
@@ -42,15 +42,12 @@ export function AuthScreen({ onHome }: Props) {
   };
 
   const submitLogin = () => {
-    if (!phone.trim() || !password) {
-      Alert.alert(t("Məlumatları tamamlayın"), t("Mobil nömrə və şifrəni daxil edin."));
+    const normalizedPhone = phone.replace(/\\D/g, "");
+    if (normalizedPhone !== "0501234567" || password !== "axtar123") {
+      Alert.alert(t("Demo giriş"), t("Nömrə və ya şifrə yanlışdır. Demo məlumatlarından istifadə edin."));
       return;
     }
-    if (!captcha) {
-      Alert.alert(t("Təsdiq tələb olunur"), t("Davam etmək üçün “Mən robot deyiləm” seçimini edin."));
-      return;
-    }
-    Alert.alert(t("Giriş"), t("Giriş xidməti hələ backend-ə qoşulmayıb."));
+    onLoginSuccess();
   };
 
   const submitRegister = () => {
@@ -163,18 +160,25 @@ export function AuthScreen({ onHome }: Props) {
               <InputField label="SMS kodu" icon="key-outline" value={otp} onChangeText={setOtp} placeholder={t("6 rəqəmli kod")} keyboardType="number-pad" />
             ) : null}
 
-            <Pressable
-              onPress={() => setCaptcha((value) => !value)}
-              style={styles.captcha}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: captcha }}
-            >
-              <View style={[styles.checkbox, captcha && styles.checkboxChecked]}>
-                {captcha ? <Ionicons name="checkmark" size={17} color="#FFFFFF" /> : null}
+            {page === "login" ? (
+              <View style={styles.demoHint}>
+                <Ionicons name="information-circle-outline" size={18} color={colors.action} />
+                <Text style={styles.demoHintText}>{t("Demo hesabı:")} 050 123 45 67 · axtar123</Text>
               </View>
-              <Text style={styles.captchaText}>{t("Mən robot deyiləm")}</Text>
-              <View style={styles.captchaBrand}><Ionicons name="refresh-circle" size={27} color="#4285F4" /><Text style={styles.captchaCaption}>{t("reCAPTCHA")}</Text></View>
-            </Pressable>
+            ) : (
+              <Pressable
+                onPress={() => setCaptcha((value) => !value)}
+                style={styles.captcha}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: captcha }}
+              >
+                <View style={[styles.checkbox, captcha && styles.checkboxChecked]}>
+                  {captcha ? <Ionicons name="checkmark" size={17} color="#FFFFFF" /> : null}
+                </View>
+                <Text style={styles.captchaText}>{t("Mən robot deyiləm")}</Text>
+                <View style={styles.captchaBrand}><Ionicons name="refresh-circle" size={27} color="#4285F4" /><Text style={styles.captchaCaption}>{t("reCAPTCHA")}</Text></View>
+              </Pressable>
+            )}
 
             {page === "login" ? (
               <View style={styles.loginOptions}>
@@ -301,6 +305,8 @@ const styles = StyleSheet.create({
   label: { color: "#171A22", fontSize: 14, fontWeight: "600", marginBottom: 7 },
   inputWrap: { height: 52, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", gap: 10, borderWidth: 1, borderColor: "#DDE1E8", borderRadius: 13, backgroundColor: "#FFFFFF" },
   input: { flex: 1, minWidth: 0, paddingVertical: 0, color: "#171A22", fontSize: 15 },
+  demoHint: { minHeight: 44, marginBottom: 18, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 12, backgroundColor: "#EFF4FF" },
+  demoHintText: { flex: 1, color: "#35415A", fontSize: 12, lineHeight: 18 },
   captcha: { height: 76, marginHorizontal: 20, marginTop: 2, marginBottom: 20, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", gap: 11, borderWidth: 1, borderColor: "#D9D9D9", backgroundColor: "#FAFAFA", elevation: 1 },
   checkbox: { width: 23, height: 23, borderWidth: 2, borderColor: "#596171", borderRadius: 3, backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
   checkboxChecked: { borderColor: colors.brand, backgroundColor: colors.brand },
