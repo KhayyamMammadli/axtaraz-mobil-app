@@ -22,6 +22,7 @@ import { BusinessProfileScreen } from "./BusinessProfileScreen";
 import { AuthScreen } from "./AuthScreen";
 import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
+import { BlogDetailScreen } from "./BlogDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
@@ -44,6 +45,7 @@ export function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
   const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
+  const [selectedBlog, setSelectedBlog] = useState<(typeof homeBlogs)[number] | null>(null);
   const [authVisible, setAuthVisible] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -103,6 +105,16 @@ export function HomeScreen() {
     if (tab !== "home") Alert.alert(t(labels[tab]), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."));
   };
 
+  if (selectedBlog) {
+    return (
+      <BlogDetailScreen
+        blog={selectedBlog}
+        images={homeBlogs.map((blog) => blog.image)}
+        onBack={() => setSelectedBlog(null)}
+      />
+    );
+  }
+
   if (selectedListing) {
     return <ListingDetailScreen listing={selectedListing} onBack={() => setSelectedListing(null)} onSelectListing={setSelectedListing} />;
   }
@@ -126,6 +138,8 @@ export function HomeScreen() {
         <AccountScreen
           onHome={() => { setIsAuthenticated(false); setActiveBottomTab("home"); }}
           onLogout={() => { setIsAuthenticated(false); setAuthVisible(true); }}
+          onSelectListing={setSelectedListing}
+          onSelectBusiness={setSelectedBusiness}
         />
       </SafeAreaView>
     );
@@ -281,7 +295,7 @@ export function HomeScreen() {
         </View>
         <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.blogRow}>
           {homeBlogs.map((blog) => (
-            <Pressable key={blog.id} style={styles.blogCard} onPress={() => Alert.alert(t(blog.title), t("Blog səhifəsi növbəti mərhələdə açılacaq."))}>
+            <Pressable key={blog.id} style={styles.blogCard} onPress={() => setSelectedBlog(blog)}>
               <Image source={{ uri: blog.image }} style={styles.blogImage} resizeMode="cover" />
               <View style={styles.blogBody}>
                 <Text style={styles.blogCategory}>{t(blog.category)}</Text>
