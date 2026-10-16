@@ -150,6 +150,7 @@ export function AccountScreen({ onHome, onLogout }: Props) {
       </View>
 
       <View style={styles.tabsCard}>
+        <View style={styles.tabRow}>
         {tabInfo.map((item) => {
           const active = item.id === tab;
           return (
@@ -165,6 +166,8 @@ export function AccountScreen({ onHome, onLogout }: Props) {
             </Pressable>
           );
         })}
+
+        </View>
         <View style={styles.tabRule} />
         {tab !== "info" ? (
           <View style={styles.viewToggle}>
@@ -535,6 +538,7 @@ const styles = StyleSheet.create({
   topSpacer: { flex: 1 },
   logoutButton: { width: 42, height: 42, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: colors.soft },
   tabsCard: { marginHorizontal: 14, marginTop: 10, padding: 10, borderRadius: 22, backgroundColor: "#FFFFFF" },
+  tabRow: { flexDirection: "row", gap: 7 },
   tabButton: { flex: 1, minHeight: 76, paddingHorizontal: 3, paddingVertical: 10, alignItems: "center", justifyContent: "center", gap: 6, borderRadius: 15, backgroundColor: "#F3F4F6" },
   tabButtonActive: { backgroundColor: colors.brand },
   tabLabel: { color: "#576071", fontSize: 10, textAlign: "center", fontWeight: "600" },
