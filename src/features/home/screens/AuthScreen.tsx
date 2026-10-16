@@ -287,7 +287,6 @@ function BottomItem({ icon, label, active, onPress }: { icon: keyof typeof Ionic
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#FFFFFF" },
-  topActions: { position: "absolute", zIndex: 3, top: 7, right: 16 },
   keyboard: { flex: 1 },
   scroll: { flex: 1 },
   scrollContent: { flexGrow: 1 },
