@@ -50,13 +50,11 @@ export function HomeScreen() {
     const animateChrome = (hidden: boolean) => {
       if (bottomBarHidden.current === hidden) return;
       bottomBarHidden.current = hidden;
-      Animated.parallel([
-        Animated.timing(headerHeight, {
-          toValue: hidden ? 66 + insets.bottom : 0,
-          duration: 180,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      Animated.timing(bottomBarTranslateY, {
+        toValue: hidden ? 66 + insets.bottom : 0,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
     };
 
     if (shouldShow) animateChrome(false);
