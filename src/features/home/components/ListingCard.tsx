@@ -4,9 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
 import type { Listing } from "../data/homeData";
 
-type Props = { listing: Listing; onFavoriteChange?: (id: string, saved: boolean) => void };
+type Props = { listing: Listing; onFavoriteChange?: (id: string, saved: boolean) => void; onPress?: () => void };
 
-export function ListingCard({ listing, onFavoriteChange }: Props) {
+export function ListingCard({ listing, onFavoriteChange, onPress }: Props) {
   const [saved, setSaved] = useState(false);
 
   const toggleFavorite = () => {
@@ -16,7 +16,7 @@ export function ListingCard({ listing, onFavoriteChange }: Props) {
   };
 
   return (
-    <View style={styles.card}>
+    <Pressable onPress={onPress} disabled={!onPress} style={styles.card} accessibilityRole={onPress ? "button" : undefined}>
       <View style={styles.imageWrap}>
         <Image source={{ uri: listing.image }} style={styles.image} resizeMode="cover" />
         <View style={styles.badges}>
