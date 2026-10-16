@@ -120,7 +120,7 @@ export function HomeScreen() {
           </Pressable>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.businessRow}>
+        <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.businessRow}>
           {businesses.map((business) => (
             <Pressable key={business.id} style={[styles.businessCard, { width: businessCardWidth }]} onPress={() => Alert.alert(business.name, "Biznes səhifəsi növbəti mərhələdə açılacaq.")}>
               <View style={styles.businessCover}>
@@ -157,7 +157,7 @@ export function HomeScreen() {
         </ScrollView>
 
         <View style={styles.stickyFeedHeader}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.feedTabs}>
+        <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.feedTabs}>
           {feedTabs.map((tab) => {
             const active = activeFeed === tab.id;
             return (
@@ -219,7 +219,7 @@ export function HomeScreen() {
             <Ionicons name="arrow-forward" size={14} color={colors.brand} />
           </Pressable>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.blogRow}>
+        <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.blogRow}>
           {homeBlogs.map((blog) => (
             <Pressable key={blog.id} style={styles.blogCard} onPress={() => Alert.alert(blog.title, "Blog səhifəsi növbəti mərhələdə açılacaq.")}>
               <Image source={{ uri: blog.image }} style={styles.blogImage} resizeMode="cover" />
