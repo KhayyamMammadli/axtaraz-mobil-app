@@ -18,7 +18,7 @@ import { businesses, listings, ownershipCover } from "../data/homeData";
 
 type AccountTab = "info" | "listings" | "businesses" | "blogs";
 type ViewMode = "grid" | "list";
-type ListingStatus = "active" | "review" | "work" | "rejected";
+type ListingStatus = "active" | "initialReview" | "expired" | "review" | "rejected" | "cancelled";
 
 type AccountListing = {
   id: string;
@@ -33,7 +33,7 @@ type AccountListing = {
 const initialListings: AccountListing[] = [
   { id: "my-1", title: "Haval H6", price: "34 ₼", image: listings[0].image, status: "active", location: "Bakı", age: "4 ay əvvəl" },
   { id: "my-2", title: "BMW X5", price: "51 000 ₼", image: listings[1].image, status: "active", location: "Bakı", age: "4 ay əvvəl" },
-  { id: "my-3", title: "İşlənmiş telefon", price: "123 ₼", image: listings[2].image, status: "review", location: "Sumqayıt", age: "Bu gün" },
+  { id: "my-3", title: "İşlənmiş telefon", price: "123 ₼", image: listings[2].image, status: "initialReview", location: "Sumqayıt", age: "Bu gün" },
   { id: "my-4", title: "Ofis üçün avadanlıq", price: "850 ₼", image: listings[3].image, status: "rejected", location: "Bakı", age: "Dünən" },
 ];
 
@@ -224,13 +224,27 @@ export function AccountScreen({ onHome, onLogout }: Props) {
         {tab === "listings" ? (
           <View>
             <Text style={styles.sectionHeading}>{t("Elanlarım")}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-              {(["active", "review", "work", "rejected"] as const).map((status) => {
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterTabs}>
+              {([
+                { status: "active", label: "Aktiv elanlarım", icon: "megaphone-outline" },
+                { status: "initialReview", label: "İlkin yoxlanışda", icon: "time-outline" },
+                { status: "expired", label: "Vaxtı bitmişlər", icon: "hourglass-outline" },
+                { status: "review", label: "Yoxlanışda", icon: "search-outline" },
+                { status: "rejected", label: "Xətalı", icon: "close-circle-outline" },
+                { status: "cancelled", label: "Ləğv edilib", icon: "ban-outline" },
+              ] as const).map(({ status, label, icon }) => {
+                const active = listingFilter === status;
                 const count = myListings.filter((item) => item.status === status).length;
-                const label = status === "active" ? "Aktiv elanlar" : status === "review" ? "İlkin yoxlanışda" : status === "work" ? "İşlər" : "Xətalı";
                 return (
-                  <Pressable key={status} onPress={() => setListingFilter(status)} style={[styles.filterChip, listingFilter === status && styles.filterChipActive]}>
-                    <Text style={[styles.filterText, listingFilter === status && styles.filterTextActive]}>{t(label)} ({count})</Text>
+                  <Pressable
+                    key={status}
+                    onPress={() => setListingFilter(status)}
+                    style={[styles.filterTab, active && styles.filterTabActive]}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: active }}
+                  >
+                    <Ionicons name={icon} size={19} color={active ? colors.brand : colors.muted} />
+                    <Text style={[styles.filterText, active && styles.filterTextActive]}>{t(label)} ({count})</Text>
                   </Pressable>
                 );
               })}
@@ -580,10 +594,10 @@ const styles = StyleSheet.create({
   infoValue: { color: colors.ink, fontSize: 17, lineHeight: 24, fontWeight: "500" },
   sectionHeading: { marginLeft: 2, marginTop: 12, marginBottom: 14, color: colors.ink, fontSize: 19, fontWeight: "700" },
   sectionRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
-  filters: { gap: 9, paddingBottom: 14 },
-  filterChip: { minHeight: 40, paddingHorizontal: 13, borderRadius: 12, backgroundColor: "#FFFFFF", justifyContent: "center", borderWidth: 1, borderColor: colors.line },
-  filterChipActive: { backgroundColor: colors.paleBrand, borderColor: "#FFD7DB" },
-  filterText: { color: colors.muted, fontSize: 12, fontWeight: "600" },
+  filterTabs: { flexDirection: "row", alignItems: "stretch", borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line, paddingHorizontal: 2, marginBottom: 14 },
+  filterTab: { minHeight: 58, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 5, marginRight: 18, borderBottomWidth: 3, borderBottomColor: "transparent" },
+  filterTabActive: { borderBottomColor: colors.brand },
+  filterText: { color: colors.muted, fontSize: 13, fontWeight: "600" },
   filterTextActive: { color: colors.brand },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   list: { gap: 12 },
