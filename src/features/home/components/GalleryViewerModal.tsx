@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
+import { useI18n } from "../../../i18n/I18nProvider";
 
 type Props = {
   visible: boolean;
@@ -34,6 +35,7 @@ export function GalleryViewerModal({
   isFavorite = false,
   onToggleFavorite,
 }: Props) {
+  const { t } = useI18n();
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [zoom, setZoom] = useState(1);
   const listRef = useRef<ScrollView>(null);
@@ -62,26 +64,26 @@ export function GalleryViewerModal({
       <StatusBar hidden />
       <View style={styles.screen}>
         <View style={styles.toolbar}>
-          <Pressable style={styles.control} onPress={() => setZoom((value) => Math.max(1, value - 0.5))} accessibilityLabel="Kiçilt">
+          <Pressable style={styles.control} onPress={() => setZoom((value) => Math.max(1, value - 0.5))} accessibilityLabel={t("Kiçilt")}>
             <Ionicons name="remove" size={22} color="#FFFFFF" />
           </Pressable>
-          <Pressable style={styles.control} onPress={() => setZoom(1)} accessibilityLabel="Ölçünü sıfırla">
+          <Pressable style={styles.control} onPress={() => setZoom(1)} accessibilityLabel={t("Ölçünü sıfırla")}>
             <Text style={styles.zoomText}>{Math.round(zoom * 100)}%</Text>
           </Pressable>
-          <Pressable style={styles.control} onPress={() => setZoom((value) => Math.min(3, value + 0.5))} accessibilityLabel="Böyüt">
+          <Pressable style={styles.control} onPress={() => setZoom((value) => Math.min(3, value + 0.5))} accessibilityLabel={t("Böyüt")}>
             <Ionicons name="add" size={22} color="#FFFFFF" />
           </Pressable>
           {onCall ? (
-            <Pressable style={styles.control} onPress={onCall} accessibilityLabel="Zəng et">
+            <Pressable style={styles.control} onPress={onCall} accessibilityLabel={t("Zəng et")}>
               <Ionicons name="call-outline" size={20} color="#FFFFFF" />
             </Pressable>
           ) : null}
           {onToggleFavorite ? (
-            <Pressable style={styles.control} onPress={onToggleFavorite} accessibilityLabel="Seçilmişlər">
+            <Pressable style={styles.control} onPress={onToggleFavorite} accessibilityLabel={t("Seçilmişlər")}>
               <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={21} color={isFavorite ? colors.brand : "#FFFFFF"} />
             </Pressable>
           ) : null}
-          <Pressable style={styles.control} onPress={close} accessibilityLabel="Bağla">
+          <Pressable style={styles.control} onPress={close} accessibilityLabel={t("Bağla")}>
             <Ionicons name="close" size={25} color="#FFFFFF" />
           </Pressable>
         </View>
