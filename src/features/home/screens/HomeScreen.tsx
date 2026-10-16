@@ -18,7 +18,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { ListingCard } from "../components/ListingCard";
 import { CatalogModal } from "../components/CatalogModal";
 import { MenuModal } from "../components/MenuModal";
-import { BusinessProfileScreen } from "./BusinessProfileScreen";
+import { BusinessProfileScreen } from "./BusinessProfileScreen";\nimport { ListingDetailScreen } from "./ListingDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 
@@ -37,7 +37,7 @@ export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
+  const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);\n  const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
@@ -205,7 +205,7 @@ export function HomeScreen() {
             {Array.from({ length: Math.ceil(visibleListings.length / 2) }, (_, rowIndex) => (
               <View key={`listing-row-${rowIndex}`} style={styles.listingRow}>
                 {visibleListings.slice(rowIndex * 2, rowIndex * 2 + 2).map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} onFavoriteChange={toggleSaved} />
+                  <ListingCard key={listing.id} listing={listing} onFavoriteChange={toggleSaved} onPress={() => setSelectedListing(listing)} />
                 ))}
               </View>
             ))}
