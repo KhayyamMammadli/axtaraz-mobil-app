@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   View,
+  type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -38,7 +39,7 @@ type Props = {
 
 export function MenuModal({ visible, onClose }: Props) {
   const [page, setPage] = useState<MenuPage>("menu");
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -240,7 +241,7 @@ function SocialIcon({
   );
 }
 
-function PaymentMark({ label, style }: { label: string; style: object }) {
+function PaymentMark({ label, style }: { label: string; style: ViewStyle }) {
   return (
     <View style={[styles.paymentMark, style]}>
       <Text style={styles.paymentText}>{label}</Text>
