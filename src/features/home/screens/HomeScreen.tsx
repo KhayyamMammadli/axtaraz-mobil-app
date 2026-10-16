@@ -23,6 +23,7 @@ import { AuthScreen } from "./AuthScreen";
 import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { BlogDetailScreen } from "./BlogDetailScreen";
+import { MessagesScreen } from "./MessagesScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
@@ -46,6 +47,7 @@ export function HomeScreen() {
   const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
   const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<(typeof homeBlogs)[number] | null>(null);
+  const [messagesVisible, setMessagesVisible] = useState(false);
   const [authVisible, setAuthVisible] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -92,6 +94,10 @@ export function HomeScreen() {
 
   const chooseBottomTab = (tab: BottomTabId) => {
     setActiveBottomTab(tab);
+    if (tab === "messages") {
+      setMessagesVisible(true);
+      return;
+    }
     if (tab === "profile") {
       if (!isAuthenticated) setAuthVisible(true);
       return;
@@ -123,6 +129,15 @@ export function HomeScreen() {
     return <BusinessProfileScreen businessName={selectedBusiness.name} onBack={() => setSelectedBusiness(null)} />;
   }
 
+  if (messagesVisible) {
+    return (
+      <MessagesScreen
+        onBack={() => { setMessagesVisible(false); setActiveBottomTab(isAuthenticated ? "profile" : "home"); }}
+        onOpenListing={(listing) => { setMessagesVisible(false); setSelectedListing(listing); }}
+      />
+    );
+  }
+
   if (authVisible) {
     return (
       <AuthScreen
@@ -140,6 +155,7 @@ export function HomeScreen() {
           onLogout={() => { setIsAuthenticated(false); setAuthVisible(true); }}
           onSelectListing={setSelectedListing}
           onSelectBusiness={setSelectedBusiness}
+          onMessages={() => { setActiveBottomTab("messages"); setMessagesVisible(true); }}
         />
       </SafeAreaView>
     );
