@@ -266,6 +266,8 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
         ) : null}
       </ScrollView>
 
+      <GalleryViewerModal visible={galleryVisible} images={businessGalleryImages} initialIndex={galleryIndex} onClose={() => setGalleryVisible(false)} onCall={() => openLink("tel:+0509956663")} isFavorite={isSaved} onToggleFavorite={() => setIsSaved((current) => !current)} />
+
       <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
           onPress={() => openLink("tel:+0509956663")}
