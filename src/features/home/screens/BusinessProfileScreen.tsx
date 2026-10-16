@@ -165,7 +165,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
               <Text style={styles.cardTitle}>Haqqımızda</Text>
               <Text style={styles.aboutText}>
                 Məqsədimiz: keyfiyyətli elektronika və peşəkar xidmət. Mağazamızda məişət texnikası,
-                aksesuarlar və geniş çeşidli avadanlıqlar sizi gözləyir. Önceliyimiz — məhsulun
+                aksesuarlar və geniş çeşidli avadanlıqlar sizi gözləyir. Öncəliyimiz — məhsulun
                 keyfiyyəti və məmnuniyyətiniz. Xeyirli olsun!
               </Text>
             </View>
