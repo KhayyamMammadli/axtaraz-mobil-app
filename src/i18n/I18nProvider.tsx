@@ -3,7 +3,7 @@ import { createContext, useContext, useMemo, useState, type PropsWithChildren } 
 export type Language = "az" | "en" | "ru";
 type Translation = { en: string; ru: string };
 
-const translations: Record<string, Translation> = {
+// Add every new user-facing Azerbaijani string here with both English and Russian translations. Azerbaijani is the source/default language.\nconst translations: Record<string, Translation> = {
   "Ana səhifə": { en: "Home", ru: "Главная" },
   "Seçilmişlər": { en: "Favorites", ru: "Избранное" },
   "Mesajlarım": { en: "Messages", ru: "Сообщения" },
@@ -346,6 +346,16 @@ const translations: Record<string, Translation> = {
   "AZE": {"en":"ENG","ru":"РУС"},
   "Şikayət": {"en":"Report","ru":"Жалоба"},
   "Report": {"en":"Report","ru":"Жалоба"},
+  "Bölgə seç": { en: "Choose a region", ru: "Выбрать регион" },
+  "Müəllif hüquqları qorunur — 2026": { en: "All rights reserved — 2026", ru: "Все права защищены — 2026" },
+  "Daşınmaz əmlak": { en: "Real estate", ru: "Недвижимость" },
+  "Geyimlər": { en: "Clothing", ru: "Одежда" },
+  "Ev və bağ": { en: "Home and garden", ru: "Дом и сад" },
+  "Test": { en: "Test", ru: "Тест" },
+  "test blog 7": { en: "Test blog 7", ru: "Тестовый блог 7" },
+  "blog test 6": { en: "Blog test 6", ru: "Тестовый блог 6" },
+  "SEO": { en: "SEO", ru: "SEO" },
+
 };
 type I18nValue = { language: Language; setLanguage: (language: Language) => void; t: (text: string) => string };
 const I18nContext = createContext<I18nValue>({
