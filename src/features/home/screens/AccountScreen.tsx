@@ -464,11 +464,18 @@ function ProfileEditModal({ visible, profile, onChange, onClose, onSave }: {
   onSave: () => void;
 }) {
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.modalBackdrop}>
-        <ScrollView contentContainerStyle={styles.modalScroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.modalCard}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <View style={styles.sheetBackdrop}>
+        <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("Bağla")} />
+        <ScrollView
+          style={styles.sheetScroll}
+          contentContainerStyle={[styles.sheetCard, { paddingBottom: Math.max(24, insets.bottom + 12) }]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+            <View style={styles.sheetHandle} />
             <View style={styles.modalHeader}><Text style={styles.modalTitle}>{t("Məlumatlarını yenilə")}</Text><Pressable onPress={onClose}><Ionicons name="close" size={24} color={colors.ink} /></Pressable></View>
             <View style={styles.avatarRowSmall}><View style={styles.avatarSmall}><Ionicons name="person" size={28} color="#16181D" /></View><Pressable style={styles.photoButtonSmall} onPress={() => Alert.alert(t("Profil şəkli"), t("Şəkil yükləmə demo versiyada əlçatan deyil."))}><Text style={styles.photoButtonText}>{t("Şəkli dəyiş")}</Text></Pressable></View>
             <FormField label={t("Adınız")} value={profile.firstName} onChangeText={(firstName) => onChange({ ...profile, firstName })} />
@@ -491,11 +498,18 @@ function PasswordModal({ visible, values, onChange, onClose, onSave }: {
   onSave: () => void;
 }) {
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.modalBackdrop}>
-        <ScrollView contentContainerStyle={styles.modalScroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.modalCard}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <View style={styles.sheetBackdrop}>
+        <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} accessibilityRole="button" accessibilityLabel={t("Bağla")} />
+        <ScrollView
+          style={styles.sheetScroll}
+          contentContainerStyle={[styles.sheetCard, { paddingBottom: Math.max(24, insets.bottom + 12) }]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+            <View style={styles.sheetHandle} />
             <View style={styles.modalHeader}><Text style={styles.modalTitle}>{t("Şifrəni yenilə")}</Text><Pressable onPress={onClose}><Ionicons name="close" size={24} color={colors.ink} /></Pressable></View>
             <FormField label={t("Hazırkı şifrə")} value={values.current} onChangeText={(current) => onChange({ ...values, current })} secureTextEntry />
             <FormField label={t("Yeni şifrə")} value={values.next} onChangeText={(next) => onChange({ ...values, next })} secureTextEntry />
@@ -618,9 +632,10 @@ const styles = StyleSheet.create({
   bottomLabel: { color: colors.muted, fontSize: 9, fontWeight: "500" },
   bottomLabelActive: { color: colors.brand },
   bottomAdd: { width: 62, height: 62, marginTop: -22, borderRadius: 32, borderWidth: 2, borderColor: colors.brand, alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF" },
-  modalBackdrop: { flex: 1, justifyContent: "center", paddingHorizontal: 20, backgroundColor: "rgba(17,24,39,0.38)" },
-  modalScroll: { flexGrow: 1, justifyContent: "center", paddingVertical: 20 },
-  modalCard: { padding: 20, borderRadius: 24, backgroundColor: "#FFFFFF" },
+  sheetBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(17,24,39,0.38)" },
+  sheetScroll: { flexGrow: 0, maxHeight: "86%", backgroundColor: "#FFFFFF", borderTopLeftRadius: 26, borderTopRightRadius: 26, overflow: "hidden" },
+  sheetCard: { paddingTop: 12, paddingHorizontal: 20 },
+  sheetHandle: { width: 38, height: 5, alignSelf: "center", marginBottom: 14, borderRadius: 3, backgroundColor: "#D6D9DF" },
   modalHeader: { minHeight: 38, marginBottom: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   modalTitle: { color: colors.ink, fontSize: 20, fontWeight: "700" },
   avatarRowSmall: { minHeight: 100, flexDirection: "row", alignItems: "center", gap: 20, marginBottom: 10 },
