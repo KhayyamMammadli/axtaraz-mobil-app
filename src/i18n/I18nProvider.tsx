@@ -356,8 +356,6 @@ const translations: Record<string, Translation> = {
   "test blog 7": { en: "Test blog 7", ru: "Тестовый блог 7" },
   "blog test 6": { en: "Blog test 6", ru: "Тестовый блог 6" },
   "SEO": { en: "SEO", ru: "SEO" },
-
-};
   "Bütün xanaları doldurun.": { en: "Please fill in all fields.", ru: "Заполните все поля." },
   "Məlumatlar yeniləndi": { en: "Information updated", ru: "Данные обновлены" },
   "Profil məlumatlarınız yadda saxlanıldı.": { en: "Your profile information has been saved.", ru: "Данные профиля сохранены." },
@@ -432,6 +430,8 @@ const translations: Record<string, Translation> = {
   "Test MMC": { en: "Test LLC", ru: "Тест ООО" },
   "TEst 2": { en: "Test 2", ru: "Тест 2" },
   "template 2": { en: "Template 2", ru: "Шаблон 2" },
+};
+
 type I18nValue = { language: Language; setLanguage: (language: Language) => void; t: (text: string) => string };
 const I18nContext = createContext<I18nValue>({
   language: "az",
