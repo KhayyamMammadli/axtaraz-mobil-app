@@ -483,7 +483,6 @@ function ProfileEditModal({ visible, profile, onChange, onClose, onSave }: {
             <FormField label={t("Telefon nömrəsi")} value={profile.phone} onChangeText={(phone) => onChange({ ...profile, phone })} keyboardType="phone-pad" />
             <FormField label={t("E-poçt ünvanı")} value={profile.email} onChangeText={(email) => onChange({ ...profile, email })} keyboardType="email-address" />
             <ModalActions cancelLabel={t("İmtina et")} saveLabel={t("Yadda saxla")} onCancel={onClose} onSave={onSave} />
-          </View>
         </ScrollView>
       </View>
     </Modal>
@@ -515,7 +514,6 @@ function PasswordModal({ visible, values, onChange, onClose, onSave }: {
             <FormField label={t("Yeni şifrə")} value={values.next} onChangeText={(next) => onChange({ ...values, next })} secureTextEntry />
             <FormField label={t("Şifrə təkrarı")} value={values.confirm} onChangeText={(confirm) => onChange({ ...values, confirm })} secureTextEntry />
             <ModalActions cancelLabel={t("İmtina et")} saveLabel={t("Yadda saxla")} onCancel={onClose} onSave={onSave} />
-          </View>
         </ScrollView>
       </View>
     </Modal>
