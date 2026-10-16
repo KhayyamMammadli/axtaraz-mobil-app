@@ -18,6 +18,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { ListingCard } from "../components/ListingCard";
 import { CatalogModal } from "../components/CatalogModal";
 import { MenuModal } from "../components/MenuModal";
+import { BusinessProfileScreen } from "./BusinessProfileScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 
@@ -36,6 +37,7 @@ export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
@@ -89,6 +91,10 @@ export function HomeScreen() {
     if (tab !== "home") Alert.alert(labels[tab], "Bu bölmə növbəti mərhələdə əlavə olunacaq.");
   };
 
+  if (selectedBusiness) {
+    return <BusinessProfileScreen businessName={selectedBusiness.name} onBack={() => setSelectedBusiness(null)} />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ScrollView
@@ -140,7 +146,7 @@ export function HomeScreen() {
 
         <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.businessRow}>
           {businesses.map((business) => (
-            <Pressable key={business.id} style={[styles.businessCard, { width: businessCardWidth }]} onPress={() => Alert.alert(business.name, "Biznes səhifəsi növbəti mərhələdə açılacaq.")}>
+            <Pressable key={business.id} style={[styles.businessCard, { width: businessCardWidth }]} onPress={() => setSelectedBusiness(business)}>
               <View style={styles.businessCover}>
                 <Image source={{ uri: ownershipCover }} style={styles.businessCoverImage} resizeMode="cover" />
               </View>
