@@ -237,8 +237,6 @@ export function HomeScreen() {
         </ScrollView>
         <Text style={styles.footerNote}>Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.</Text>
       </ScrollView>
-
-      </ScrollView>
       <Animated.View style={[styles.bottomBar, { height: 66 + insets.bottom, paddingBottom: insets.bottom, transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
