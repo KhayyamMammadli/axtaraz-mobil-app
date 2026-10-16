@@ -208,7 +208,7 @@ export function AuthScreen({ onHome }: Props) {
             </View>
           </View>
           {page === "register" || page === "forgot" ? (
-            <View style={styles.footer}><Text style={styles.footerText}>{t("Müəllif hüquqları qorunur — 2026")}</Text><Text style={styles.language}><Ionicons name="globe-outline" size={13} color={colors.muted} /> {t("AZE")}</Text></View>
+            <View style={styles.footer}><Text style={styles.footerText}>{t("Müəllif hüquqları qorunur — 2026")}</Text><Text style={styles.language}><Ionicons name="globe-outline" size={13} color={colors.muted} /> {language.toUpperCase()}</Text></View>
           ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
@@ -219,7 +219,7 @@ export function AuthScreen({ onHome }: Props) {
           <Ionicons name="add" size={27} color={colors.brand} />
         </Pressable>
         <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" onPress={() => Alert.alert(t("Mesajlarım"), t("Bu bölməyə baxmaq üçün giriş edin."))} />
-        <BottomItem icon="person-circle-outline" label="Profil" active onPress={() => goTo("login")} />
+        <BottomItem icon="person-circle-outline" label="Daxil ol" active onPress={() => goTo("login")} />
       </View>
     </SafeAreaView>
   );
