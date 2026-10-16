@@ -17,7 +17,6 @@ import { GalleryViewerModal } from "../components/GalleryViewerModal";
 import { listings, type Listing } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
-import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type Props = { listing: Listing; onBack: () => void; onSelectListing: (listing: Listing) => void };
 
@@ -63,7 +62,6 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
         <Pressable onPress={shareListing} style={styles.headerButton} accessibilityLabel={t("Paylaş")}>
           <Ionicons name="share-social-outline" size={20} color={colors.ink} />
         </Pressable>
-        <LanguagePicker />
         <Pressable onPress={() => setMoreVisible(true)} style={styles.headerButton} accessibilityLabel={t("Daha çox")}>
           <Ionicons name="ellipsis-horizontal" size={22} color={colors.ink} />
         </Pressable>
