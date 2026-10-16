@@ -423,6 +423,8 @@ const translations: Record<string, Translation> = {
   "265 uyğun elan": { en: "265 matching listings", ru: "265 подходящих объявлений" },
   "227 uyğun elan": { en: "227 matching listings", ru: "227 подходящих объявлений" },
 
+  "İmtina et": { en: "Cancel", ru: "Отмена" },
+
 type I18nValue = { language: Language; setLanguage: (language: Language) => void; t: (text: string) => string };
 const I18nContext = createContext<I18nValue>({
   language: "az",
