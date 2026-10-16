@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ListingCard } from "../components/ListingCard";
 import { CatalogModal } from "../components/CatalogModal";
+import { MenuModal } from "../components/MenuModal";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 
@@ -34,6 +35,7 @@ const homeBlogs = [
 export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
@@ -109,7 +111,7 @@ export function HomeScreen() {
             <Ionicons name="location-outline" size={19} color={colors.muted} />
           </Pressable>
         </View>
-        <Pressable style={styles.menuButton} accessibilityLabel="Menyu" onPress={() => Alert.alert("Menyu", "Menyu növbəti mərhələdə açılacaq.")}>
+        <Pressable style={styles.menuButton} accessibilityLabel="Menyu" onPress={() => setMenuVisible(true)}>
           <Ionicons name="menu" size={23} color={colors.ink} />
         </Pressable>
       </View>
@@ -261,6 +263,7 @@ export function HomeScreen() {
           setCatalogVisible(false);
         }}
       />
+      <MenuModal visible={menuVisible} onClose={() => setMenuVisible(false)} />
       <Animated.View style={[styles.bottomBar, { height: 66 + insets.bottom, paddingBottom: insets.bottom, transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
