@@ -70,13 +70,15 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
         contentContainerStyle={[styles.content, { paddingBottom: 110 + insets.bottom }]}
         showsVerticalScrollIndicator={false}
       >
-        <Pressable onPress={() => setGalleryVisible(true)} style={styles.hero} accessibilityRole="button" accessibilityLabel="Şəkillərə bax">
-          <Image source={{ uri: listing.image }} style={styles.heroImage} resizeMode="cover" />
+        <View style={styles.hero}>
+          <Pressable onPress={() => setGalleryVisible(true)} style={StyleSheet.absoluteFill} accessibilityRole="button" accessibilityLabel="Şəkillərə bax">
+            <Image source={{ uri: listing.image }} style={styles.heroImage} resizeMode="cover" />
+          </Pressable>
           <View style={styles.imageCount}><Ionicons name="images-outline" size={14} color="#FFFFFF" /><Text style={styles.imageCountText}>1 / {galleryImages.length}</Text></View>
           <Pressable onPress={() => setFavorite((value) => !value)} style={styles.heroFavorite} accessibilityLabel="Seçilmişlərə əlavə et">
             <Ionicons name={favorite ? "heart" : "heart-outline"} size={22} color={favorite ? colors.brand : colors.ink} />
           </Pressable>
-        </Pressable>
+        </View>
 
         <View style={styles.mainCard}>
           <View style={styles.priceRow}>
