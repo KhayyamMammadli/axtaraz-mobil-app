@@ -144,7 +144,7 @@ export function HomeScreen() {
         {selectedCategory ? (
           <View style={styles.selectedCategoryRow}>
             <Ionicons name="checkmark-circle" size={17} color={colors.brand} />
-            <Text style={styles.selectedCategoryText} numberOfLines={1}>{selectedCategory}</Text>
+            <Text style={styles.selectedCategoryText} numberOfLines={1}>{selectedCategory.split(" / ").map((category) => t(category)).join(" / ")}</Text>
             <Pressable
               onPress={() => setSelectedCategory("")}
               hitSlop={8}
