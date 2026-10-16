@@ -14,7 +14,7 @@ import {
   type NativeSyntheticEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ListingCard } from "../components/ListingCard";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
@@ -37,7 +37,7 @@ export function HomeScreen() {
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const businessCardWidth = (Dimensions.get("window").width - 42) / 2;
   const bottomBarTranslateY = useRef(new Animated.Value(0)).current;
-  const headerHeight = useRef(new Animated.Value(66)).current;
+  const insets = useSafeAreaInsets();
   const lastScrollY = useRef(0);
   const bottomBarHidden = useRef(false);
 
@@ -52,12 +52,7 @@ export function HomeScreen() {
       bottomBarHidden.current = hidden;
       Animated.parallel([
         Animated.timing(headerHeight, {
-          toValue: hidden ? 0 : 66,
-          duration: 180,
-          useNativeDriver: false,
-        }),
-        Animated.timing(bottomBarTranslateY, {
-          toValue: hidden ? 78 : 0,
+          toValue: hidden ? 66 + insets.bottom : 0,
           duration: 180,
           useNativeDriver: true,
         }),
@@ -92,8 +87,16 @@ export function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-      <Animated.View style={[styles.headerClip, { height: headerHeight }]}>
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <ScrollView
+        style={styles.scroll}
+        stickyHeaderIndices={[3]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
       <View style={styles.header}>
         <Pressable style={styles.catalogButton} accessibilityLabel="Kataloq" onPress={() => Alert.alert("Kataloq", "Kateqoriyalar növbəti mərhələdə açılacaq.")}>
           <Ionicons name="list-outline" size={21} color={colors.white} />
@@ -109,16 +112,6 @@ export function HomeScreen() {
           <Ionicons name="menu" size={23} color={colors.ink} />
         </Pressable>
       </View>
-      </Animated.View>
-      <ScrollView
-        style={styles.scroll}
-        stickyHeaderIndices={[2]}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
         <View style={styles.sectionHeading}>
           <View style={styles.headingTitleRow}>
             <Text style={styles.crown}>👑</Text>
@@ -247,7 +240,8 @@ export function HomeScreen() {
         <Text style={styles.footerNote}>Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.</Text>
       </ScrollView>
 
-      <Animated.View style={[styles.bottomBar, { transform: [{ translateY: bottomBarTranslateY }] }]}>
+      </ScrollView>
+      <Animated.View style={[styles.bottomBar, { height: 66 + insets.bottom, paddingBottom: insets.bottom, transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
         <Pressable style={styles.addButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")} accessibilityRole="button" accessibilityLabel="Yeni elan">
@@ -273,13 +267,13 @@ function BottomItem({ icon, label, active, onPress }: BottomItemProps) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
-  headerClip: { overflow: "hidden", backgroundColor: "#FFF9F7" },
+
   header: { height: 66, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#FFF9F7" },
 
   menuButton: { width: 34, height: 38, alignItems: "center", justifyContent: "center" },
   locationButton: { width: 40, height: 34, alignItems: "center", justifyContent: "center", borderLeftWidth: 1, borderLeftColor: colors.line },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 88, backgroundColor: "#FFF9F7" },
+  scrollContent: { paddingBottom: 120, backgroundColor: "#FFF9F7" },
   searchArea: { paddingHorizontal: 15, paddingTop: 12, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
   searchRow: { flexDirection: "row", alignItems: "center", gap: 9 },
   catalogButton: { width: 42, height: 42, borderRadius: 22, backgroundColor: colors.brand, alignItems: "center", justifyContent: "center" },
@@ -343,7 +337,7 @@ const styles = StyleSheet.create({
   blogDate: { color: colors.muted, fontSize: 9 },
   blogListings: { color: colors.brand, fontSize: 9, fontWeight: "700" },
   footerNote: { paddingHorizontal: 24, paddingTop: 18, color: colors.muted, textAlign: "center", fontSize: 10, lineHeight: 15 },
-  bottomBar: { position: "absolute", left: 0, right: 0, bottom: 0, minHeight: 66, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
+  bottomBar: { position: "absolute", left: 0, right: 0, bottom: 0, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
   bottomItem: { flex: 1, height: 56, alignItems: "center", justifyContent: "center", gap: 4 },
   bottomLabel: { color: colors.muted, fontSize: 8, fontWeight: "600", maxWidth: "100%" },
   bottomLabelActive: { color: colors.brand, fontWeight: "700" },
