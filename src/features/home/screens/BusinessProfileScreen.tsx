@@ -10,7 +10,6 @@ import {
   Text,
   TextInput,
   View,
-  type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -45,10 +44,11 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
   const [isSaved, setIsSaved] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const showOffer = useMemo(
-    () => !search.trim() || "BMW".toLocaleLowerCase("az").includes(search.trim().toLocaleLowerCase("az")),
-    [search],
-  );
+  const showOffer = useMemo(() => {
+    const matchesSearch = !search.trim() || "BMW".toLocaleLowerCase("az").includes(search.trim().toLocaleLowerCase("az"));
+    const matchesCategory = selectedCategory !== "Elektronika";
+    return matchesSearch && matchesCategory;
+  }, [search, selectedCategory]);
 
   const openLink = async (url: string) => {
     try {
