@@ -512,7 +512,6 @@ function FormField({ label, value, onChangeText, secureTextEntry, keyboardType }
   secureTextEntry?: boolean;
   keyboardType?: "default" | "email-address" | "phone-pad";
 }) {
-  const { t } = useI18n();
   return (
     <View style={styles.formField}>
       <Text style={styles.formLabel}>{label}</Text>
@@ -575,9 +574,9 @@ const styles = StyleSheet.create({
   listingCard: { width: "48%", borderRadius: 15, overflow: "hidden", borderWidth: 1, borderColor: colors.line, backgroundColor: "#FFFFFF", elevation: 2 },
   cardImageWrap: { width: "100%", aspectRatio: 1.14, backgroundColor: colors.soft },
   listingImage: { width: "100%", height: "100%" },
-  cardActions: { position: "absolute", top: 9, left: 9, flexDirection: "row", gap: 7 },
+  cardActions: { position: "absolute", top: 9, left: 9, right: 9, flexDirection: "row", alignItems: "center", gap: 7 },
   actionIcon: { width: 34, height: 34, borderRadius: 18, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.96)" },
-  heartIcon: { position: "absolute", right: -120, width: 34, height: 34, borderRadius: 18, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.96)" },
+  heartIcon: { marginLeft: "auto", width: 34, height: 34, borderRadius: 18, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.96)" },
   cardCopy: { padding: 10, gap: 4 },
   rowPrice: { color: colors.brand, fontSize: 17, fontWeight: "800" },
   rowTitle: { color: colors.ink, fontSize: 14, fontWeight: "600" },
