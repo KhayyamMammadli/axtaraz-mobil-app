@@ -17,7 +17,6 @@ import { colors } from "../../../theme/colors";
 import { GalleryViewerModal } from "../components/GalleryViewerModal";
 import { ownershipCover } from "../data/homeData";
 import { useI18n } from "../../../i18n/I18nProvider";
-import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type Props = {
   businessName: string;
@@ -83,7 +82,6 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
           <Ionicons name="arrow-back" size={23} color="#171A22" />
         </Pressable>
         <Text style={styles.topTitle} numberOfLines={1}>{t("Biznes profili")}</Text>
-        <LanguagePicker />
         <Pressable onPress={shareBusiness} style={styles.topButton} accessibilityRole="button" accessibilityLabel={t("Biznesi paylaş")}>
           <Ionicons name="share-social" size={21} color="#171A22" />
         </Pressable>
