@@ -23,6 +23,8 @@ import { AuthScreen } from "./AuthScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
+import { useI18n } from "../../../i18n/I18nProvider";
+import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type FeedTabId = (typeof feedTabs)[number]["id"];
 type BottomTabId = "home" | "favorites" | "messages" | "profile";
@@ -36,6 +38,7 @@ const homeBlogs = [
 ];
 
 export function HomeScreen() {
+  const { t, language } = useI18n();
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -75,10 +78,10 @@ export function HomeScreen() {
   };
 
   const visibleListings = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase("az");
+    const normalizedQuery = query.trim().toLocaleLowerCase(language);
     if (!normalizedQuery) return listings;
-    return listings.filter((item) => item.title.toLocaleLowerCase("az").includes(normalizedQuery));
-  }, [query]);
+    return listings.filter((item) => t(item.title).toLocaleLowerCase(language).includes(normalizedQuery));
+  }, [query, language, t]);
 
   const toggleSaved = (id: string, saved: boolean) => {
     setSavedIds((current) => saved ? [...current, id] : current.filter((savedId) => savedId !== id));
@@ -96,7 +99,7 @@ export function HomeScreen() {
       messages: "Mesajlarım",
       profile: "Profil",
     };
-    if (tab !== "home") Alert.alert(labels[tab], "Bu bölmə növbəti mərhələdə əlavə olunacaq.");
+    if (tab !== "home") Alert.alert(t(labels[tab]), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."));
   };
 
   if (selectedListing) {
@@ -123,17 +126,18 @@ export function HomeScreen() {
         keyboardShouldPersistTaps="handled"
       >
       <View style={styles.header}>
-        <Pressable style={styles.catalogButton} accessibilityLabel="Kataloq" onPress={() => setCatalogVisible(true)}>
+        <Pressable style={styles.catalogButton} accessibilityLabel={t("Kataloq")} onPress={() => setCatalogVisible(true)}>
           <Ionicons name="list-outline" size={21} color={colors.white} />
         </Pressable>
         <View style={styles.searchBox}>
           <Ionicons name="search" size={18} color={colors.muted} />
-          <TextInput value={query} onChangeText={setQuery} placeholder="Axtar..." placeholderTextColor={colors.subtle} returnKeyType="search" style={styles.searchInput} accessibilityLabel="Elan axtar" />
-          <Pressable style={styles.locationButton} onPress={() => Alert.alert("Bölgələr", "Bölgə seçimi növbəti mərhələdə açılacaq.")} accessibilityLabel="Bölgə seç">
+          <TextInput value={query} onChangeText={setQuery} placeholder={t("Axtar...")} placeholderTextColor={colors.subtle} returnKeyType="search" style={styles.searchInput} accessibilityLabel={t("Elan axtar")} />
+          <Pressable style={styles.locationButton} onPress={() => Alert.alert(t("Bölgələr"), t("Bölgə seçimi növbəti mərhələdə açılacaq."))} accessibilityLabel={t("Bölgə seç")}>
             <Ionicons name="location-outline" size={19} color={colors.muted} />
           </Pressable>
         </View>
-        <Pressable style={styles.menuButton} accessibilityLabel="Menyu" onPress={() => setMenuVisible(true)}>
+        <LanguagePicker />
+        <Pressable style={styles.menuButton} accessibilityLabel={t("Menyu")} onPress={() => setMenuVisible(true)}>
           <Ionicons name="menu" size={23} color={colors.ink} />
         </Pressable>
       </View>
@@ -144,7 +148,7 @@ export function HomeScreen() {
             <Pressable
               onPress={() => setSelectedCategory("")}
               hitSlop={8}
-              accessibilityLabel="Kateqoriyanı sil"
+              accessibilityLabel={t("Kateqoriyanı sil")}
             >
               <Ionicons name="close-circle" size={18} color={colors.muted} />
             </Pressable>
@@ -153,9 +157,9 @@ export function HomeScreen() {
         <View style={styles.sectionHeading}>
           <View style={styles.headingTitleRow}>
             <Text style={styles.crown}>👑</Text>
-            <Text style={styles.sectionTitle}>Premium Bizneslər</Text>
+            <Text style={styles.sectionTitle}>{t("Premium Bizneslər")}</Text>
           </View>
-          <Pressable style={styles.seeAll} onPress={() => Alert.alert("Premium Bizneslər", "Bütün bizneslər növbəti mərhələdə açılacaq.")}>
+          <Pressable style={styles.seeAll} onPress={() => Alert.alert(t("Premium Bizneslər"), t("Bütün bizneslər növbəti mərhələdə açılacaq."))}>
             <Ionicons name="arrow-up" size={20} color={colors.brand} />
           </Pressable>
         </View>
@@ -172,8 +176,8 @@ export function HomeScreen() {
                 </View>
                 <View style={styles.businessActionButtons}>
                   <View style={styles.starButton}><Ionicons name="star" size={16} color={colors.white} /></View>
-                  <Pressable style={styles.followButton} onPress={() => Alert.alert("İzlə", "Biznesi izləmək üçün daxil olun.")}>
-                    <Text style={styles.followText}>İzlə</Text>
+                  <Pressable style={styles.followButton} onPress={() => Alert.alert(t("İzlə"), t("Biznesi izləmək üçün daxil olun."))}>
+                    <Text style={styles.followText}>{t("İzlə")}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -181,7 +185,7 @@ export function HomeScreen() {
                 <Text style={styles.businessName} numberOfLines={1}>{business.name}</Text>
                 <View style={styles.listingCount}>
                   <Ionicons name="grid-outline" size={13} color={colors.muted} />
-                  <Text style={styles.businessCount}>{business.listings}</Text>
+                  <Text style={styles.businessCount}>{t(business.listings)}</Text>
                 </View>
               </View>
               <View style={styles.businessMeta}>
@@ -209,7 +213,7 @@ export function HomeScreen() {
                 accessibilityState={{ selected: active }}
               >
                 <Ionicons name={tab.icon} size={17} color={colors.gold} />
-                <Text style={[styles.feedTabText, active && styles.feedTabTextActive]}>{tab.label === "Tövsiyə" ? "Tövsiyə" : tab.label}</Text>
+                <Text style={[styles.feedTabText, active && styles.feedTabTextActive]}>{t(tab.label)}</Text>
               </Pressable>
             );
           })}
@@ -229,8 +233,8 @@ export function HomeScreen() {
         ) : (
           <View style={styles.emptyState}>
             <Ionicons name="search-outline" size={28} color={colors.subtle} />
-            <Text style={styles.emptyTitle}>Elan tapılmadı</Text>
-            <Text style={styles.emptyText}>Axtarış sözünü dəyişib yenidən yoxlayın.</Text>
+            <Text style={styles.emptyTitle}>{t("Elan tapılmadı")}</Text>
+            <Text style={styles.emptyText}>{t("Axtarış sözünü dəyişib yenidən yoxlayın.")}</Text>
           </View>
         )}
 
@@ -239,11 +243,11 @@ export function HomeScreen() {
             {Array.from({ length: 16 }, (_, index) => <View key={index} style={[styles.stripe, { left: index * 24 - 24 }]} />)}
           </View>
           <View style={styles.promoCopy}>
-            <Text style={styles.promoTitle}>Axtar.az'da elan yerləşdir, satışların artsın.</Text>
-            <Text style={styles.promoSubtitle}>Yeni alıcılara çatmaq üçün elanını paylaş.</Text>
-            <Pressable style={styles.promoButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")}>
+            <Text style={styles.promoTitle}>{t("Axtar.az'da elan yerləşdir, satışların artsın.")}</Text>
+            <Text style={styles.promoSubtitle}>{t("Yeni alıcılara çatmaq üçün elanını paylaş.")}</Text>
+            <Pressable style={styles.promoButton} onPress={() => Alert.alert(t("Yeni elan"), t("Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq."))}>
               <Ionicons name="add" size={17} color={colors.white} />
-              <Text style={styles.promoButtonText}>Yeni</Text>
+              <Text style={styles.promoButtonText}>{t("Yeni")}</Text>
             </Pressable>
           </View>
           <Image source={{ uri: promoImage }} style={styles.promoImage} resizeMode="contain" />
@@ -251,11 +255,11 @@ export function HomeScreen() {
 
         <View style={styles.blogHeading}>
           <View>
-            <Text style={styles.sectionTitle}>Bloglar</Text>
-            <Text style={styles.sectionSubtitle}>Daha düzgün qərar verməyiniz üçün faydalı bloglar</Text>
+            <Text style={styles.sectionTitle}>{t("Bloglar")}</Text>
+            <Text style={styles.sectionSubtitle}>{t("Daha düzgün qərar verməyiniz üçün faydalı bloglar")}</Text>
           </View>
-          <Pressable style={styles.seeAll} onPress={() => Alert.alert("Bloglar", "Bloglar növbəti mərhələdə açılacaq.")}>
-            <Text style={styles.seeAllText}>Hamısına bax</Text>
+          <Pressable style={styles.seeAll} onPress={() => Alert.alert(t("Bloglar"), t("Bloglar növbəti mərhələdə açılacaq."))}>
+            <Text style={styles.seeAllText}>{t("Hamısına bax")}</Text>
             <Ionicons name="arrow-forward" size={14} color={colors.brand} />
           </Pressable>
         </View>
@@ -264,18 +268,18 @@ export function HomeScreen() {
             <Pressable key={blog.id} style={styles.blogCard} onPress={() => Alert.alert(blog.title, "Blog səhifəsi növbəti mərhələdə açılacaq.")}>
               <Image source={{ uri: blog.image }} style={styles.blogImage} resizeMode="cover" />
               <View style={styles.blogBody}>
-                <Text style={styles.blogCategory}>{blog.category}</Text>
-                <Text style={styles.blogTitle} numberOfLines={1}>{blog.title}</Text>
-                <Text style={styles.blogExcerpt} numberOfLines={1}>{blog.excerpt}</Text>
+                <Text style={styles.blogCategory}>{t(blog.category)}</Text>
+                <Text style={styles.blogTitle} numberOfLines={1}>{t(blog.title)}</Text>
+                <Text style={styles.blogExcerpt} numberOfLines={1}>{t(blog.excerpt)}</Text>
                 <View style={styles.blogMeta}>
                   <Text style={styles.blogDate}>{blog.date}</Text>
-                  <Text style={styles.blogListings}>{blog.listings}</Text>
+                  <Text style={styles.blogListings}>{t(blog.listings)}</Text>
                 </View>
               </View>
             </Pressable>
           ))}
         </ScrollView>
-        <Text style={styles.footerNote}>Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.</Text>
+        <Text style={styles.footerNote}>{t("Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.")}</Text>
       </ScrollView>
       <CatalogModal
         visible={catalogVisible}
@@ -289,7 +293,7 @@ export function HomeScreen() {
       <Animated.View style={[styles.bottomBar, { height: 66 + insets.bottom, paddingBottom: insets.bottom, transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
-        <Pressable style={styles.addButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")} accessibilityRole="button" accessibilityLabel="Yeni elan">
+        <Pressable style={styles.addButton} onPress={() => Alert.alert(t("Yeni elan"), t("Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq."))} accessibilityRole="button" accessibilityLabel={t("Yeni elan")}>
           <Ionicons name="add" size={27} color={colors.brand} />
         </Pressable>
         <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" active={activeBottomTab === "messages"} onPress={() => chooseBottomTab("messages")} />
@@ -302,10 +306,11 @@ export function HomeScreen() {
 type BottomItemProps = { icon: keyof typeof Ionicons.glyphMap; label: string; active: boolean; onPress: () => void };
 
 function BottomItem({ icon, label, active, onPress }: BottomItemProps) {
+  const { t } = useI18n();
   return (
     <Pressable onPress={onPress} style={styles.bottomItem} accessibilityRole="tab" accessibilityState={{ selected: active }}>
       <Ionicons name={icon} size={20} color={active ? colors.brand : colors.muted} />
-      <Text style={[styles.bottomLabel, active && styles.bottomLabelActive]} numberOfLines={1}>{label}</Text>
+      <Text style={[styles.bottomLabel, active && styles.bottomLabelActive]} numberOfLines={1}>{t(label)}</Text>
     </Pressable>
   );
 }
