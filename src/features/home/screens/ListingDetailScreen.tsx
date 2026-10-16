@@ -16,10 +16,13 @@ import { ListingCard } from "../components/ListingCard";
 import { GalleryViewerModal } from "../components/GalleryViewerModal";
 import { listings, type Listing } from "../data/homeData";
 import { colors } from "../../../theme/colors";
+import { useI18n } from "../../../i18n/I18nProvider";
+import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type Props = { listing: Listing; onBack: () => void; onSelectListing: (listing: Listing) => void };
 
 export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props) {
+  const { t } = useI18n();
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -34,33 +37,34 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
     try {
       await Linking.openURL(url);
     } catch {
-      Alert.alert("Açılmadı", "Bu əməliyyat üçün uyğun tətbiq tapılmadı.");
+      Alert.alert(t("Açılmadı"), t("Bu əməliyyat üçün uyğun tətbiq tapılmadı."));
     }
   };
 
   const shareListing = async () => {
     try {
-      await Share.share({ message: `${listing.title} — ${listing.price}\nhttps://axtar.az` });
+      await Share.share({ message: `${t(listing.title)} — ${t(listing.price)}\nhttps://axtar.az` });
     } catch {
-      Alert.alert("Paylaşmaq mümkün olmadı", "Bir az sonra yenidən yoxlayın.");
+      Alert.alert(t("Paylaşmaq mümkün olmadı"), t("Bir az sonra yenidən yoxlayın."));
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.header}>
-        <Pressable onPress={onBack} style={styles.headerButton} accessibilityLabel="Geri">
+        <Pressable onPress={onBack} style={styles.headerButton} accessibilityLabel={t("Geri")}>
           <Ionicons name="arrow-back" size={23} color={colors.ink} />
         </Pressable>
         <View style={styles.crumb}>
-          <Text style={styles.crumbText}>Elanlar</Text>
+          <Text style={styles.crumbText}>{t("Elanlar")}</Text>
           <Ionicons name="chevron-forward" size={13} color={colors.subtle} />
           <Text style={styles.crumbCurrent} numberOfLines={1}>{listing.title}</Text>
         </View>
-        <Pressable onPress={shareListing} style={styles.headerButton} accessibilityLabel="Paylaş">
+        <Pressable onPress={shareListing} style={styles.headerButton} accessibilityLabel={t("Paylaş")}>
           <Ionicons name="share-social-outline" size={20} color={colors.ink} />
         </Pressable>
-        <Pressable onPress={() => setMoreVisible(true)} style={styles.headerButton} accessibilityLabel="Daha çox">
+        <LanguagePicker />
+        <Pressable onPress={() => setMoreVisible(true)} style={styles.headerButton} accessibilityLabel={t("Daha çox")}>
           <Ionicons name="ellipsis-horizontal" size={22} color={colors.ink} />
         </Pressable>
       </View>
@@ -71,11 +75,11 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <Pressable onPress={() => setGalleryVisible(true)} style={StyleSheet.absoluteFill} accessibilityRole="button" accessibilityLabel="Şəkillərə bax">
+          <Pressable onPress={() => setGalleryVisible(true)} style={StyleSheet.absoluteFill} accessibilityRole="button" accessibilityLabel={t("Şəkillərə bax")}>
             <Image source={{ uri: listing.image }} style={styles.heroImage} resizeMode="cover" />
           </Pressable>
           <View style={styles.imageCount}><Ionicons name="images-outline" size={14} color="#FFFFFF" /><Text style={styles.imageCountText}>1 / {galleryImages.length}</Text></View>
-          <Pressable onPress={() => setFavorite((value) => !value)} style={styles.heroFavorite} accessibilityLabel="Seçilmişlərə əlavə et">
+          <Pressable onPress={() => setFavorite((value) => !value)} style={styles.heroFavorite} accessibilityLabel={t("Seçilmişlərə əlavə et")}>
             <Ionicons name={favorite ? "heart" : "heart-outline"} size={22} color={favorite ? colors.brand : colors.ink} />
           </Pressable>
         </View>
@@ -86,11 +90,11 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
             {listing.badge ? <View style={styles.premiumBadge}><Ionicons name="diamond" size={13} color={colors.gold} /><Text style={styles.premiumText}>{listing.badge}</Text></View> : null}
           </View>
           <Text style={styles.title}>{listing.title}</Text>
-          <View style={styles.locationLine}><Ionicons name="location" size={16} color={colors.muted} /><Text style={styles.metaText}>{listing.location}</Text><Text style={styles.metaDivider}>·</Text><Text style={styles.metaText}>{listing.age}</Text></View>
+          <View style={styles.locationLine}><Ionicons name="location" size={16} color={colors.muted} /><Text style={styles.metaText}>{t(listing.location)}</Text><Text style={styles.metaDivider}>·</Text><Text style={styles.metaText}>{t(listing.age)}</Text></View>
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Elan haqqında</Text>
+          <Text style={styles.sectionTitle}>{t("Elan haqqında")}</Text>
           <Text style={styles.description} numberOfLines={descriptionExpanded ? undefined : 3}>
             Keyfiyyətli və etibarlı məhsul. Ətraflı məlumat və qiymət üçün bizimlə əlaqə saxlayın. Bakı şəhəri və ətraf ərazilərə çatdırılma mümkündür.
           </Text>
@@ -114,40 +118,40 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Əlaqə məlumatları</Text>
+          <Text style={styles.sectionTitle}>{t("Əlaqə məlumatları")}</Text>
           <Pressable onPress={() => openUrl("tel:+994552458979")} style={styles.contactRow}>
             <View style={[styles.contactIcon, { backgroundColor: "#EAF8F0" }]}><Ionicons name="call" size={19} color="#159B64" /></View>
-            <View style={styles.contactCopy}><Text style={styles.contactLabel}>Telefon</Text><Text style={styles.contactValue}>{phoneExpanded ? "+994 55 245 89 79" : "Nömrəni göstər"}</Text></View>
+            <View style={styles.contactCopy}><Text style={styles.contactLabel}>{t("Telefon")}</Text><Text style={styles.contactValue}>{phoneExpanded ? "+994 55 245 89 79" : "Nömrəni göstər"}</Text></View>
             <Ionicons name={phoneExpanded ? "eye-off-outline" : "eye-outline"} size={20} color={colors.muted} />
           </Pressable>
           <Pressable onPress={() => setPhoneExpanded((value) => !value)} style={styles.revealTap}><Text style={styles.moreText}>{phoneExpanded ? "Nömrəni gizlət" : "Telefon nömrəsini göstər"}</Text></Pressable>
           <Pressable onPress={() => setHoursExpanded((value) => !value)} style={[styles.contactRow, styles.rowDivider]}>
             <View style={[styles.contactIcon, { backgroundColor: "#F2F4F7" }]}><Ionicons name="time-outline" size={20} color={colors.ink} /></View>
-            <View style={styles.contactCopy}><Text style={styles.contactLabel}>İş saatları</Text><Text style={styles.contactValue}>Həftə içi · 09:00–18:00</Text>{hoursExpanded ? <Text style={styles.hoursHint}>Şənbə 10:00–16:00 · Bazar bağlıdır</Text> : null}</View>
+            <View style={styles.contactCopy}><Text style={styles.contactLabel}>{t("İş saatları")}</Text><Text style={styles.contactValue}>{t("Həftə içi · 09:00–18:00")}</Text>{hoursExpanded ? <Text style={styles.hoursHint}>{t("Şənbə 10:00–16:00 · Bazar bağlıdır")}</Text> : null}</View>
             <Ionicons name={hoursExpanded ? "chevron-up" : "chevron-down"} size={19} color={colors.muted} />
           </Pressable>
         </View>
 
         <View style={styles.card}>
-          <View style={styles.ownerTop}><View style={styles.ownerAvatar}><Ionicons name="person" size={22} color={colors.brand} /></View><View style={styles.ownerCopy}><Text style={styles.ownerName}>Alpha Alpha</Text><Text style={styles.metaText}>Axtar.az üzvü</Text></View><Pressable style={styles.followButton} onPress={() => Alert.alert("İzlə", "İzləmək üçün hesabınıza daxil olun.")}><Text style={styles.followText}>İzlə</Text></Pressable></View>
-          <View style={styles.ownerActions}><Text style={styles.metaText}>Digər elanlar: 4</Text><Pressable onPress={() => Alert.alert("Elanlar", "İstifadəçinin digər elanları açılacaq.")}><Text style={styles.moreText}>Hamısına bax</Text></Pressable></View>
+          <View style={styles.ownerTop}><View style={styles.ownerAvatar}><Ionicons name="person" size={22} color={colors.brand} /></View><View style={styles.ownerCopy}><Text style={styles.ownerName}>{t("Alpha Alpha")}</Text><Text style={styles.metaText}>{t("Axtar.az üzvü")}</Text></View><Pressable style={styles.followButton} onPress={() => Alert.alert(t("İzlə"), t("İzləmək üçün hesabınıza daxil olun."))}><Text style={styles.followText}>{t("İzlə")}</Text></Pressable></View>
+          <View style={styles.ownerActions}><Text style={styles.metaText}>{t("Digər elanlar: 4")}</Text><Pressable onPress={() => Alert.alert(t("Elanlar"), t("İstifadəçinin digər elanları açılacaq."))}><Text style={styles.moreText}>{t("Hamısına bax")}</Text></Pressable></View>
         </View>
 
         <Pressable onPress={() => openUrl("https://maps.google.com/?q=Baku")} style={styles.mapCard}>
           <View style={styles.mapPattern}><Ionicons name="location" size={31} color={colors.brand} /></View>
-          <View style={styles.mapCopy}><Text style={styles.sectionTitle}>Ünvan</Text><Text style={styles.metaText}>{listing.location}, Azərbaycan</Text></View>
+          <View style={styles.mapCopy}><Text style={styles.sectionTitle}>{t("Ünvan")}</Text><Text style={styles.metaText}>{listing.location}, Azərbaycan</Text></View>
           <Ionicons name="open-outline" size={18} color={colors.muted} />
         </Pressable>
 
         {related.length ? <View style={styles.relatedSection}>
-          <View style={styles.relatedHeading}><Text style={styles.sectionTitle}>Oxşar elanlar</Text><Text style={styles.relatedCount}>Sizə uyğun</Text></View>
+          <View style={styles.relatedHeading}><Text style={styles.sectionTitle}>{t("Oxşar elanlar")}</Text><Text style={styles.relatedCount}>{t("Sizə uyğun")}</Text></View>
           <View style={styles.relatedGrid}>{related.map((item) => <View key={item.id} style={styles.relatedItem}><ListingCard listing={item} onPress={() => onSelectListing(item)} /></View>)}</View>
         </View> : null}
       </ScrollView>
 
       <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 10) }]}>
-        <Pressable onPress={() => openUrl("tel:+994552458979")} style={styles.callButton}><Ionicons name="call" size={19} color="#FFFFFF" /><Text style={styles.callText}>Zəng et</Text></Pressable>
-        <Pressable onPress={() => openUrl("sms:+994552458979")} style={styles.messageButton}><Ionicons name="chatbubble" size={18} color={colors.brand} /><Text style={styles.messageText}>Mesaj yaz</Text></Pressable>
+        <Pressable onPress={() => openUrl("tel:+994552458979")} style={styles.callButton}><Ionicons name="call" size={19} color="#FFFFFF" /><Text style={styles.callText}>{t("Zəng et")}</Text></Pressable>
+        <Pressable onPress={() => openUrl("sms:+994552458979")} style={styles.messageButton}><Ionicons name="chatbubble" size={18} color={colors.brand} /><Text style={styles.messageText}>{t("Mesaj yaz")}</Text></Pressable>
       </View>
 
       <GalleryViewerModal visible={galleryVisible} images={galleryImages} onClose={() => setGalleryVisible(false)} onCall={() => openUrl("tel:+994552458979")} isFavorite={favorite} onToggleFavorite={() => setFavorite((value) => !value)} />
@@ -155,10 +159,10 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
         <Pressable style={StyleSheet.absoluteFill} onPress={() => setMoreVisible(false)} />
         <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 14) }]}>
           <View style={styles.sheetHandle} />
-          <Text style={styles.sheetTitle}>Elan seçimləri</Text>
+          <Text style={styles.sheetTitle}>{t("Elan seçimləri")}</Text>
           <SheetAction icon="share-social-outline" label="Paylaş" onPress={() => { setMoreVisible(false); void shareListing(); }} />
-          <SheetAction icon="flag-outline" label="Şikayət et" onPress={() => { setMoreVisible(false); Alert.alert("Şikayət et", "Şikayət səbəbini seçmək üçün daxil olun."); }} />
-          <SheetAction icon="megaphone-outline" label="Reklam alətləri" onPress={() => { setMoreVisible(false); Alert.alert("Reklam alətləri", "Bu elan üçün tanıtım seçimləri."); }} />
+          <SheetAction icon="flag-outline" label="Şikayət et" onPress={() => { setMoreVisible(false); Alert.alert(t("Şikayət et"), t("Şikayət səbəbini seçmək üçün daxil olun.")); }} />
+          <SheetAction icon="megaphone-outline" label="Reklam alətləri" onPress={() => { setMoreVisible(false); Alert.alert(t("Reklam alətləri"), t("Bu elan üçün tanıtım seçimləri.")); }} />
         </View>
       </View> : null}
     </SafeAreaView>
@@ -166,13 +170,16 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
 }
 
 function Spec({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string }) {
-  return <View style={styles.spec}><Ionicons name={icon} size={16} color={colors.muted} /><View><Text style={styles.specLabel}>{label}</Text><Text style={styles.specValue}>{value}</Text></View></View>;
+  const { t } = useI18n();
+  return <View style={styles.spec}><Ionicons name={icon} size={16} color={colors.muted} /><View><Text style={styles.specLabel}>{t(label)}</Text><Text style={styles.specValue}>{value}</Text></View></View>;
 }
 function Stat({ icon, value, label }: { icon: keyof typeof Ionicons.glyphMap; value: string; label: string }) {
-  return <View style={styles.stat}><Ionicons name={icon} size={17} color={colors.muted} /><Text style={styles.statValue}>{value}</Text><Text style={styles.statLabel}>{label}</Text></View>;
+  const { t } = useI18n();
+  return <View style={styles.stat}><Ionicons name={icon} size={17} color={colors.muted} /><Text style={styles.statValue}>{value}</Text><Text style={styles.statLabel}>{t(label)}</Text></View>;
 }
 function SheetAction({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void }) {
-  return <Pressable onPress={onPress} style={styles.sheetAction}><Ionicons name={icon} size={21} color={colors.ink} /><Text style={styles.sheetActionText}>{label}</Text><Ionicons name="chevron-forward" size={17} color={colors.subtle} /></Pressable>;
+  const { t } = useI18n();
+  return <Pressable onPress={onPress} style={styles.sheetAction}><Ionicons name={icon} size={21} color={colors.ink} /><Text style={styles.sheetActionText}>{t(label)}</Text><Ionicons name="chevron-forward" size={17} color={colors.subtle} /></Pressable>;
 }
 
 const styles = StyleSheet.create({
