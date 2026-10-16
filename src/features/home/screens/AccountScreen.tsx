@@ -53,9 +53,11 @@ const tabInfo: { id: AccountTab; title: string; icon: keyof typeof Ionicons.glyp
 type Props = {
   onHome: () => void;
   onLogout: () => void;
+  onSelectListing: (listing: (typeof listings)[number]) => void;
+  onSelectBusiness: (business: (typeof businesses)[number]) => void;
 };
 
-export function AccountScreen({ onHome, onLogout }: Props) {
+export function AccountScreen({ onHome, onLogout, onSelectListing, onSelectBusiness }: Props) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<AccountTab>("info");
@@ -258,6 +260,7 @@ export function AccountScreen({ onHome, onLogout }: Props) {
                     mode={viewModes.listings}
                     onEdit={() => Alert.alert(t("Elanı redaktə et"), t("Elan redaktəsi demo rejimində aktiv deyil."))}
                     onDelete={() => deleteListing(item)}
+                    onPress={() => onSelectListing({ id: item.id, title: item.title, price: item.price, image: item.image, location: item.location, age: item.age })}
                   />
                 ))}
               </View>
@@ -278,7 +281,7 @@ export function AccountScreen({ onHome, onLogout }: Props) {
             </View>
             <View style={viewModes.businesses === "grid" ? styles.grid : styles.list}>
               {businesses.map((item) => (
-                <BusinessItem key={item.id} item={item} mode={viewModes.businesses} />
+                <BusinessItem key={item.id} item={item} mode={viewModes.businesses} onPress={() => onSelectBusiness(item)} />
               ))}
             </View>
           </View>
@@ -350,18 +353,20 @@ function InfoField({ label, value, last }: { label: string; value: string; last?
   );
 }
 
-function ListingItem({ item, mode, onEdit, onDelete }: { item: AccountListing; mode: ViewMode; onEdit: () => void; onDelete: () => void }) {
+function ListingItem({ item, mode, onEdit, onDelete, onPress }: { item: AccountListing; mode: ViewMode; onEdit: () => void; onDelete: () => void; onPress: () => void }) {
   const { t } = useI18n();
   const image = <Image source={{ uri: item.image }} style={mode === "grid" ? styles.listingImage : styles.rowImage} resizeMode="cover" />;
   if (mode === "list") {
     return (
       <View style={styles.listingRow}>
-        {image}
-        <View style={styles.rowCopy}>
-          <Text style={styles.rowPrice}>{t(item.price)}</Text>
-          <Text style={styles.rowTitle} numberOfLines={2}>{t(item.title)}</Text>
-          <Text style={styles.rowMeta}>{t(item.location)} · {t(item.age)}</Text>
-        </View>
+        <Pressable onPress={onPress} style={styles.listingMainPress}>
+          {image}
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowPrice}>{t(item.price)}</Text>
+            <Text style={styles.rowTitle} numberOfLines={2}>{t(item.title)}</Text>
+            <Text style={styles.rowMeta}>{t(item.location)} · {t(item.age)}</Text>
+          </View>
+        </Pressable>
         <View style={styles.rowActions}>
           <Pressable onPress={onEdit} accessibilityLabel={t("Redaktə et")}><Ionicons name="create-outline" size={20} color={colors.action} /></Pressable>
           <Pressable onPress={onDelete} accessibilityLabel={t("Sil")}><Ionicons name="trash-outline" size={20} color={colors.brand} /></Pressable>
@@ -372,50 +377,54 @@ function ListingItem({ item, mode, onEdit, onDelete }: { item: AccountListing; m
   return (
     <View style={styles.listingCard}>
       <View style={styles.cardImageWrap}>
-        {image}
+        <Pressable style={StyleSheet.absoluteFillObject} onPress={onPress} accessibilityRole="button">
+          {image}
+        </Pressable>
         <View style={styles.cardActions}>
           <ActionIcon icon="create-outline" color={colors.action} label={t("Redaktə et")} onPress={onEdit} />
           <ActionIcon icon="trash-outline" color={colors.brand} label={t("Sil")} onPress={onDelete} />
           <View style={styles.heartIcon}><Ionicons name="heart" size={17} color={colors.ink} /></View>
         </View>
       </View>
-      <View style={styles.cardCopy}>
+      <Pressable style={styles.cardCopy} onPress={onPress} accessibilityRole="button">
         <Text style={styles.rowPrice}>{t(item.price)}</Text>
         <Text style={styles.rowTitle} numberOfLines={1}>{t(item.title)}</Text>
         <Text style={styles.rowMeta}>{t(item.location)} · {t(item.age)}</Text>
-      </View>
+      </Pressable>
     </View>
   );
 }
 
-function BusinessItem({ item, mode }: { item: (typeof businesses)[number]; mode: ViewMode }) {
+function BusinessItem({ item, mode, onPress }: { item: (typeof businesses)[number]; mode: ViewMode; onPress: () => void }) {
   const { t } = useI18n();
   if (mode === "list") {
     return (
-      <View style={styles.businessRow}>
+      <Pressable style={styles.businessRow} onPress={onPress} accessibilityRole="button">
         <Image source={{ uri: ownershipCover }} style={styles.businessRowImage} resizeMode="cover" />
         <View style={styles.rowCopy}>
           <Text style={styles.rowTitle}>{t(item.name)}</Text>
           <Text style={styles.rowMeta}>{t(item.listings)}</Text>
         </View>
         <Ionicons name="chevron-forward" size={18} color={colors.muted} />
-      </View>
+      </Pressable>
     );
   }
   return (
     <View style={styles.businessCard}>
       <View style={styles.businessCover}>
-        <Image source={{ uri: ownershipCover }} style={styles.businessImage} resizeMode="cover" />
+        <Pressable style={StyleSheet.absoluteFillObject} onPress={onPress} accessibilityRole="button">
+          <Image source={{ uri: ownershipCover }} style={styles.businessImage} resizeMode="cover" />
+        </Pressable>
         <View style={styles.cardActions}>
           <ActionIcon icon="create-outline" color={colors.action} label={t("Redaktə et")} onPress={() => Alert.alert(t("Biznesi redaktə et"), t("Biznes redaktəsi demo rejimində aktiv deyil."))} />
           <ActionIcon icon="trash-outline" color={colors.brand} label={t("Sil")} onPress={() => Alert.alert(t("Biznesi sil"), t("Biznes silmə demo rejimində aktiv deyil."))} />
         </View>
       </View>
-      <View style={styles.businessCopy}>
+      <Pressable style={styles.businessCopy} onPress={onPress} accessibilityRole="button">
         <Text style={styles.rowTitle} numberOfLines={1}>{t(item.name)}</Text>
         <Text style={styles.countPill}><Ionicons name="grid-outline" size={12} color={colors.muted} /> {t(item.listings)}</Text>
         <View style={styles.onlineRow}><Ionicons name="location-outline" size={14} color={colors.muted} /><Ionicons name="car-outline" size={14} color={colors.muted} /><Ionicons name="card-outline" size={14} color={colors.muted} /><View style={styles.onlineDot} /></View>
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -612,6 +621,7 @@ const styles = StyleSheet.create({
   rowTitle: { color: colors.ink, fontSize: 14, fontWeight: "600" },
   rowMeta: { color: colors.muted, fontSize: 11, marginTop: 5 },
   listingRow: { minHeight: 100, padding: 10, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 15, borderWidth: 1, borderColor: colors.line, backgroundColor: "#FFFFFF" },
+  listingMainPress: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 12 },
   rowImage: { width: 86, height: 76, borderRadius: 11, backgroundColor: colors.soft },
   rowCopy: { flex: 1, minWidth: 0 },
   rowActions: { gap: 12, paddingHorizontal: 4 },
