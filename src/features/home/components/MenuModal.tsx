@@ -216,7 +216,7 @@ function ContactRow({
       onPress={onPress}
       style={({ pressed }) => [styles.contactRow, pressed && styles.pressed]}
       accessibilityRole="button"
-      accessibilityLabel={`${label} ${value}`}
+      accessibilityLabel={`${t(label)} ${value}`}
     >
       <View style={styles.contactIcon}>
         <Ionicons name={icon} size={20} color="#17191F" />
