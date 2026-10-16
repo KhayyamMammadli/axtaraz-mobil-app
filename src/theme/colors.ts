@@ -1,6 +1,7 @@
 export const colors = {
   brand: "#FA3A4D",
   brandDark: "#E82E43",
+  action: "#3764F5",
   ink: "#171A22",
   muted: "#7B8190",
   subtle: "#A3A8B2",
