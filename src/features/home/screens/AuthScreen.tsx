@@ -13,11 +13,14 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme/colors";
+import { useI18n } from "../../../i18n/I18nProvider";
+import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type AuthPage = "login" | "register" | "forgot";
 type Props = { onHome: () => void };
 
 export function AuthScreen({ onHome }: Props) {
+  const { t, language } = useI18n();
   const [page, setPage] = useState<AuthPage>("login");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -41,63 +44,64 @@ export function AuthScreen({ onHome }: Props) {
 
   const submitLogin = () => {
     if (!phone.trim() || !password) {
-      Alert.alert("Məlumatları tamamlayın", "Mobil nömrə və şifrəni daxil edin.");
+      Alert.alert(t("Məlumatları tamamlayın"), t("Mobil nömrə və şifrəni daxil edin."));
       return;
     }
     if (!captcha) {
-      Alert.alert("Təsdiq tələb olunur", "Davam etmək üçün “Mən robot deyiləm” seçimini edin.");
+      Alert.alert(t("Təsdiq tələb olunur"), t("Davam etmək üçün “Mən robot deyiləm” seçimini edin."));
       return;
     }
-    Alert.alert("Giriş", "Giriş xidməti hələ backend-ə qoşulmayıb.");
+    Alert.alert(t("Giriş"), t("Giriş xidməti hələ backend-ə qoşulmayıb."));
   };
 
   const submitRegister = () => {
     if (!name.trim() || !surname.trim() || !phone.trim() || !email.trim() || !password || !confirmPassword) {
-      Alert.alert("Məlumatları tamamlayın", "Qeydiyyat üçün bütün xanaları doldurun.");
+      Alert.alert(t("Məlumatları tamamlayın"), t("Qeydiyyat üçün bütün xanaları doldurun."));
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert("Şifrələr uyğun deyil", "Şifrə və təkrar şifrəni eyni daxil edin.");
+      Alert.alert(t("Şifrələr uyğun deyil"), t("Şifrə və təkrar şifrəni eyni daxil edin."));
       return;
     }
     if (!captcha) {
-      Alert.alert("Təsdiq tələb olunur", "Davam etmək üçün “Mən robot deyiləm” seçimini edin.");
+      Alert.alert(t("Təsdiq tələb olunur"), t("Davam etmək üçün “Mən robot deyiləm” seçimini edin."));
       return;
     }
-    Alert.alert("Qeydiyyat", "Qeydiyyat xidməti hələ backend-ə qoşulmayıb.");
+    Alert.alert(t("Qeydiyyat"), t("Qeydiyyat xidməti hələ backend-ə qoşulmayıb."));
   };
 
   const submitForgot = () => {
     if (!phone.trim()) {
-      Alert.alert("Mobil nömrə tələb olunur", "Şifrəni bərpa etmək üçün mobil nömrənizi daxil edin.");
+      Alert.alert(t("Mobil nömrə tələb olunur"), t("Şifrəni bərpa etmək üçün mobil nömrənizi daxil edin."));
       return;
     }
     if (!captcha) {
-      Alert.alert("Təsdiq tələb olunur", "Davam etmək üçün “Mən robot deyiləm” seçimini edin.");
+      Alert.alert(t("Təsdiq tələb olunur"), t("Davam etmək üçün “Mən robot deyiləm” seçimini edin."));
       return;
     }
     if (!codeSent) {
       setCodeSent(true);
-      Alert.alert("Təsdiq kodu", "Demo ekran: nömrəyə göndərilən kod prosesi backend qoşulanda aktiv olacaq.");
+      Alert.alert(t("Təsdiq kodu"), t("Demo ekran: nömrəyə göndərilən kod prosesi backend qoşulanda aktiv olacaq."));
       return;
     }
     if (!otp.trim() || !password || password !== confirmPassword) {
-      Alert.alert("Məlumatları yoxlayın", "OTP kodu və uyğun yeni şifrəni daxil edin.");
+      Alert.alert(t("Məlumatları yoxlayın"), t("OTP kodu və uyğun yeni şifrəni daxil edin."));
       return;
     }
-    Alert.alert("Şifrə", "Şifrə yeniləmə xidməti hələ backend-ə qoşulmayıb.");
+    Alert.alert(t("Şifrə"), t("Şifrə yeniləmə xidməti hələ backend-ə qoşulmayıb."));
   };
 
-  const title = page === "login" ? "Xoş gəlmisiniz" : page === "register" ? "Qeydiyyat" : "Şifrəmi unutmuşam";
-  const subtitle = page === "login"
+  const title = t(page === "login" ? "Xoş gəlmisiniz" : page === "register" ? "Qeydiyyat" : "Şifrəmi unutmuşam");
+  const subtitle = t(page === "login"
     ? "Zəhmət olmasa giriş üçün məlumatları daxil edin"
     : page === "register"
       ? "Zəhmət olmasa qeydiyyat üçün məlumatları daxil edin"
-      : "Şifrənizi sıfırlamaq üçün mobil nömrənizi daxil edin. Nömrəyə 6 rəqəmli OTP kod göndəriləcək.";
+      : "Şifrənizi sıfırlamaq üçün mobil nömrənizi daxil edin. Nömrəyə 6 rəqəmli OTP kod göndəriləcək.");
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView style={styles.keyboard} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <View style={styles.topActions}><LanguagePicker /></View>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: 105 + insets.bottom }]}
@@ -105,14 +109,14 @@ export function AuthScreen({ onHome }: Props) {
           showsVerticalScrollIndicator={false}
         >
           <View style={[styles.form, page === "login" && styles.loginForm]}>
-            <View style={styles.logoMark}><View style={styles.logoCircle} /><Text style={styles.logo}>axtar.az</Text></View>
+            <View style={styles.logoMark}><View style={styles.logoCircle} /><Text style={styles.logo}>{t("axtar.az")}</Text></View>
             <Text style={styles.heading}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
 
             {page === "register" ? (
               <>
-                <InputField label="Ad" icon="person-outline" value={name} onChangeText={setName} placeholder="Adınız" />
-                <InputField label="Soyad" icon="person-outline" value={surname} onChangeText={setSurname} placeholder="Soyadınız" />
+                <InputField label="Ad" icon="person-outline" value={name} onChangeText={setName} placeholder={t("Adınız")} />
+                <InputField label="Soyad" icon="person-outline" value={surname} onChangeText={setSurname} placeholder={t("Soyadınız")} />
               </>
             ) : null}
 
@@ -121,13 +125,13 @@ export function AuthScreen({ onHome }: Props) {
               icon="call"
               value={phone}
               onChangeText={setPhone}
-              placeholder="(050) 000-00-00"
+              placeholder={t("(050) 000-00-00")}
               keyboardType="phone-pad"
               autoComplete="tel"
             />
 
             {page === "register" ? (
-              <InputField label="E-poçt ünvanı" icon="mail" value={email} onChangeText={setEmail} placeholder="hello@mail.com" keyboardType="email-address" autoCapitalize="none" />
+              <InputField label="E-poçt ünvanı" icon="mail" value={email} onChangeText={setEmail} placeholder={t("hello@mail.com")} keyboardType="email-address" autoCapitalize="none" />
             ) : null}
 
             {page !== "forgot" || codeSent ? (
@@ -137,7 +141,7 @@ export function AuthScreen({ onHome }: Props) {
                   icon="lock-closed"
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="Şifrənizi daxil edin"
+                  placeholder={t("Şifrənizi daxil edin")}
                   secureTextEntry={!showPassword}
                   rightAction={() => setShowPassword((value) => !value)}
                   rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
@@ -148,7 +152,7 @@ export function AuthScreen({ onHome }: Props) {
                     icon="lock-closed"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
-                    placeholder="Şifrəni təkrar daxil edin"
+                    placeholder={t("Şifrəni təkrar daxil edin")}
                     secureTextEntry={!showPassword}
                     rightAction={() => setShowPassword((value) => !value)}
                     rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
@@ -158,7 +162,7 @@ export function AuthScreen({ onHome }: Props) {
             ) : null}
 
             {page === "forgot" && codeSent ? (
-              <InputField label="SMS kodu" icon="key-outline" value={otp} onChangeText={setOtp} placeholder="6 rəqəmli kod" keyboardType="number-pad" />
+              <InputField label="SMS kodu" icon="key-outline" value={otp} onChangeText={setOtp} placeholder={t("6 rəqəmli kod")} keyboardType="number-pad" />
             ) : null}
 
             <Pressable
@@ -170,17 +174,17 @@ export function AuthScreen({ onHome }: Props) {
               <View style={[styles.checkbox, captcha && styles.checkboxChecked]}>
                 {captcha ? <Ionicons name="checkmark" size={17} color="#FFFFFF" /> : null}
               </View>
-              <Text style={styles.captchaText}>Mən robot deyiləm</Text>
-              <View style={styles.captchaBrand}><Ionicons name="refresh-circle" size={27} color="#4285F4" /><Text style={styles.captchaCaption}>reCAPTCHA</Text></View>
+              <Text style={styles.captchaText}>{t("Mən robot deyiləm")}</Text>
+              <View style={styles.captchaBrand}><Ionicons name="refresh-circle" size={27} color="#4285F4" /><Text style={styles.captchaCaption}>{t("reCAPTCHA")}</Text></View>
             </Pressable>
 
             {page === "login" ? (
               <View style={styles.loginOptions}>
                 <Pressable onPress={() => setRemember((value) => !value)} style={styles.remember} accessibilityRole="checkbox" accessibilityState={{ checked: remember }}>
                   <View style={[styles.smallCheckbox, remember && styles.smallCheckboxChecked]}>{remember ? <Ionicons name="checkmark" size={12} color="#FFFFFF" /> : null}</View>
-                  <Text style={styles.optionText}>Məni yadda saxla</Text>
+                  <Text style={styles.optionText}>{t("Məni yadda saxla")}</Text>
                 </Pressable>
-                <Pressable onPress={() => goTo("forgot")}><Text style={styles.linkText}>Şifrəni unutmusunuz?</Text></Pressable>
+                <Pressable onPress={() => goTo("forgot")}><Text style={styles.linkText}>{t("Şifrəni unutmusunuz?")}</Text></Pressable>
               </View>
             ) : null}
 
@@ -190,7 +194,7 @@ export function AuthScreen({ onHome }: Props) {
               accessibilityRole="button"
             >
               <Text style={styles.submitText}>
-                {page === "login" ? "Daxil olun" : page === "register" ? "Qeydiyyatdan keç" : codeSent ? "Şifrəni yenilə" : "Kod göndər"}
+                {t(page === "login" ? "Daxil olun" : page === "register" ? "Qeydiyyatdan keç" : codeSent ? "Şifrəni yenilə" : "Kod göndər")}
               </Text>
             </Pressable>
 
@@ -199,22 +203,22 @@ export function AuthScreen({ onHome }: Props) {
                 {page === "login" ? "Hələ də qeydiyyatdan keçməmisiniz?" : page === "register" ? "Artıq hesabınız var?" : "Hesabınız artıq mövcuddur?"}
               </Text>
               <Pressable onPress={() => goTo(page === "register" || page === "forgot" ? "login" : "register")} style={styles.switchButton}>
-                <Text style={styles.switchButtonText}>{page === "register" || page === "forgot" ? "Giriş et" : "Qeydiyyat"}</Text>
+                <Text style={styles.switchButtonText}>{t(page === "register" || page === "forgot" ? "Giriş et" : "Qeydiyyat")}</Text>
               </Pressable>
             </View>
           </View>
           {page === "register" || page === "forgot" ? (
-            <View style={styles.footer}><Text style={styles.footerText}>Müəllif hüquqları qorunur — 2026</Text><Text style={styles.language}><Ionicons name="globe-outline" size={13} color={colors.muted} /> AZE</Text></View>
+            <View style={styles.footer}><Text style={styles.footerText}>{t("Müəllif hüquqları qorunur — 2026")}</Text><Text style={styles.language}><Ionicons name="globe-outline" size={13} color={colors.muted} /> {t("AZE")}</Text></View>
           ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={[styles.bottomBar, { height: 64 + insets.bottom, paddingBottom: insets.bottom }]}>
         <BottomItem icon="home" label="Ana səhifə" onPress={onHome} />
-        <BottomItem icon="heart" label="Seçilmişlər" onPress={() => Alert.alert("Seçilmişlər", "Bu bölməyə baxmaq üçün giriş edin.")} />
-        <Pressable style={styles.addButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmək üçün əvvəlcə giriş edin.")} accessibilityLabel="Yeni elan">
+        <BottomItem icon="heart" label="Seçilmişlər" onPress={() => Alert.alert(t("Seçilmişlər"), t("Bu bölməyə baxmaq üçün giriş edin."))} />
+        <Pressable style={styles.addButton} onPress={() => Alert.alert(t("Yeni elan"), t("Elan yerləşdirmək üçün əvvəlcə giriş edin."))} accessibilityLabel={t("Yeni elan")}>
           <Ionicons name="add" size={27} color={colors.brand} />
         </Pressable>
-        <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" onPress={() => Alert.alert("Mesajlarım", "Bu bölməyə baxmaq üçün giriş edin.")} />
+        <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" onPress={() => Alert.alert(t("Mesajlarım"), t("Bu bölməyə baxmaq üçün giriş edin."))} />
         <BottomItem icon="person-circle-outline" label="Profil" active onPress={() => goTo("login")} />
       </View>
     </SafeAreaView>
@@ -246,15 +250,16 @@ function InputField({
   autoComplete?: "tel";
   autoCapitalize?: "none" | "sentences";
 }) {
+  const { t } = useI18n();
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{t(label)}</Text>
       <View style={styles.inputWrap}>
         <Ionicons name={icon} size={19} color="#98A0AE" />
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          placeholder={placeholder}
+          placeholder={t(placeholder)}
           placeholderTextColor="#8F96A3"
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
@@ -263,7 +268,7 @@ function InputField({
           style={styles.input}
         />
         {rightAction && rightIcon ? (
-          <Pressable onPress={rightAction} hitSlop={10} accessibilityLabel="Şifrəni göstər/gizlət">
+          <Pressable onPress={rightAction} hitSlop={10} accessibilityLabel={t("Şifrəni göstər/gizlət")}>
             <Ionicons name={rightIcon} size={21} color="#707887" />
           </Pressable>
         ) : null}
@@ -273,16 +278,18 @@ function InputField({
 }
 
 function BottomItem({ icon, label, active, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; active?: boolean; onPress: () => void }) {
+  const { t } = useI18n();
   return (
     <Pressable onPress={onPress} style={styles.bottomItem} accessibilityRole="tab" accessibilityState={{ selected: active }}>
       <Ionicons name={icon} size={20} color={active ? colors.ink : "#596477"} />
-      <Text style={[styles.bottomLabel, active && styles.bottomLabelActive]} numberOfLines={1}>{label}</Text>
+      <Text style={[styles.bottomLabel, active && styles.bottomLabelActive]} numberOfLines={1}>{t(label)}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#FFFFFF" },
+  topActions: { position: "absolute", zIndex: 3, top: 7, right: 16 },
   keyboard: { flex: 1 },
   scroll: { flex: 1 },
   scrollContent: { flexGrow: 1 },
