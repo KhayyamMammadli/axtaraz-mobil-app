@@ -53,7 +53,7 @@ export function ListingCard({ listing, onFavoriteChange, onPress }: Props) {
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
