@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   Dimensions,
   Image,
   Pressable,
@@ -9,6 +10,8 @@ import {
   Text,
   TextInput,
   View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,6 +36,39 @@ export function HomeScreen() {
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const businessCardWidth = (Dimensions.get("window").width - 42) / 2;
+  const bottomBarTranslateY = useRef(new Animated.Value(0)).current;
+  const headerHeight = useRef(new Animated.Value(66)).current;
+  const lastScrollY = useRef(0);
+  const bottomBarHidden = useRef(false);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentY = Math.max(0, event.nativeEvent.contentOffset.y);
+    const delta = currentY - lastScrollY.current;
+    const shouldShow = currentY < 12 || delta < -4;
+    const shouldHide = currentY > 24 && delta > 4;
+
+    const animateChrome = (hidden: boolean) => {
+      if (bottomBarHidden.current === hidden) return;
+      bottomBarHidden.current = hidden;
+      Animated.parallel([
+        Animated.timing(headerHeight, {
+          toValue: hidden ? 0 : 66,
+          duration: 180,
+          useNativeDriver: false,
+        }),
+        Animated.timing(bottomBarTranslateY, {
+          toValue: hidden ? 78 : 0,
+          duration: 180,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    };
+
+    if (shouldShow) animateChrome(false);
+    else if (shouldHide) animateChrome(true);
+
+    lastScrollY.current = currentY;
+  };
 
   const visibleListings = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("az");
@@ -57,6 +93,7 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+      <Animated.View style={[styles.headerClip, { height: headerHeight }]}>
       <View style={styles.header}>
         <Pressable style={styles.catalogButton} accessibilityLabel="Kataloq" onPress={() => Alert.alert("Kataloq", "Kateqoriyalar növbəti mərhələdə açılacaq.")}>
           <Ionicons name="list-outline" size={21} color={colors.white} />
@@ -72,9 +109,12 @@ export function HomeScreen() {
           <Ionicons name="menu" size={23} color={colors.ink} />
         </Pressable>
       </View>
-
+      </Animated.View>
       <ScrollView
         style={styles.scroll}
+        stickyHeaderIndices={[2]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -125,6 +165,7 @@ export function HomeScreen() {
           ))}
         </ScrollView>
 
+        <View style={styles.stickyFeedHeader}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.feedTabs}>
           {feedTabs.map((tab) => {
             const active = activeFeed === tab.id;
@@ -142,6 +183,7 @@ export function HomeScreen() {
             );
           })}
         </ScrollView>
+        </View>
 
         {visibleListings.length > 0 ? (
           <View style={styles.listingGrid}>
@@ -205,7 +247,7 @@ export function HomeScreen() {
         <Text style={styles.footerNote}>Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.</Text>
       </ScrollView>
 
-      <View style={styles.bottomBar}>
+      <Animated.View style={[styles.bottomBar, { transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
         <Pressable style={styles.addButton} onPress={() => Alert.alert("Yeni elan", "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq.")} accessibilityRole="button" accessibilityLabel="Yeni elan">
@@ -213,7 +255,7 @@ export function HomeScreen() {
         </Pressable>
         <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" active={activeBottomTab === "messages"} onPress={() => chooseBottomTab("messages")} />
         <BottomItem icon="person-circle-outline" label="Profil" active={activeBottomTab === "profile"} onPress={() => chooseBottomTab("profile")} />
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -231,12 +273,13 @@ function BottomItem({ icon, label, active, onPress }: BottomItemProps) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
-  header: { minHeight: 66, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#FFF9F7" },
+  headerClip: { overflow: "hidden", backgroundColor: "#FFF9F7" },
+  header: { height: 66, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#FFF9F7" },
 
   menuButton: { width: 34, height: 38, alignItems: "center", justifyContent: "center" },
   locationButton: { width: 40, height: 34, alignItems: "center", justifyContent: "center", borderLeftWidth: 1, borderLeftColor: colors.line },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 18, backgroundColor: "#FFF9F7" },
+  scrollContent: { paddingBottom: 88, backgroundColor: "#FFF9F7" },
   searchArea: { paddingHorizontal: 15, paddingTop: 12, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
   searchRow: { flexDirection: "row", alignItems: "center", gap: 9 },
   catalogButton: { width: 42, height: 42, borderRadius: 22, backgroundColor: colors.brand, alignItems: "center", justifyContent: "center" },
@@ -266,7 +309,8 @@ const styles = StyleSheet.create({
   businessMeta: { height: 34, flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingHorizontal: 6 },
   metaDivider: { width: 0 },
   onlineDot: { width: 14, height: 14, borderRadius: 8, backgroundColor: colors.green, borderWidth: 4, borderColor: "#E5F8EE" },
-  feedTabs: { marginTop: 12, paddingHorizontal: 15, gap: 16, borderBottomWidth: 1, borderBottomColor: colors.line },
+  stickyFeedHeader: { backgroundColor: "#FFF9F7", zIndex: 10, elevation: 10 },
+  feedTabs: { marginTop: 12, paddingHorizontal: 15, gap: 16, borderBottomWidth: 1, borderBottomColor: colors.line, backgroundColor: "#FFF9F7" },
   feedTab: { minHeight: 43, flexDirection: "row", alignItems: "center", gap: 5, borderBottomWidth: 2, borderBottomColor: "transparent", paddingHorizontal: 2 },
   feedTabActive: { borderBottomColor: colors.brand },
   feedTabText: { color: colors.ink, fontSize: 11, fontWeight: "500" },
@@ -299,7 +343,7 @@ const styles = StyleSheet.create({
   blogDate: { color: colors.muted, fontSize: 9 },
   blogListings: { color: colors.brand, fontSize: 9, fontWeight: "700" },
   footerNote: { paddingHorizontal: 24, paddingTop: 18, color: colors.muted, textAlign: "center", fontSize: 10, lineHeight: 15 },
-  bottomBar: { minHeight: 66, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
+  bottomBar: { position: "absolute", left: 0, right: 0, bottom: 0, minHeight: 66, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", justifyContent: "space-around", borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
   bottomItem: { flex: 1, height: 56, alignItems: "center", justifyContent: "center", gap: 4 },
   bottomLabel: { color: colors.muted, fontSize: 8, fontWeight: "600", maxWidth: "100%" },
   bottomLabelActive: { color: colors.brand, fontWeight: "700" },
