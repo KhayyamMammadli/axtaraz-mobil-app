@@ -91,6 +91,9 @@ export function GalleryViewerModal({
             ref={listRef}
             horizontal
             pagingEnabled
+            snapToInterval={screenWidth}
+            decelerationRate="fast"
+            disableIntervalMomentum
             showsHorizontalScrollIndicator={false}
             contentOffset={{ x: Math.min(initialIndex, images.length - 1) * screenWidth, y: 0 }}
             onMomentumScrollEnd={(event) => {
