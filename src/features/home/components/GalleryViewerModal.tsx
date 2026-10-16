@@ -38,6 +38,14 @@ export function GalleryViewerModal({
   const [zoom, setZoom] = useState(1);
   const listRef = useRef<ScrollView>(null);
 
+  useEffect(() => {
+    if (!visible) return;
+    const index = Math.max(0, Math.min(initialIndex, images.length - 1));
+    setActiveIndex(index);
+    setZoom(1);
+    requestAnimationFrame(() => listRef.current?.scrollTo({ x: index * screenWidth, animated: false }));
+  }, [visible, initialIndex, images.length]);
+
   const close = () => {
     setZoom(1);
     onClose();
