@@ -16,6 +16,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ListingCard } from "../components/ListingCard";
+import { CatalogModal } from "../components/CatalogModal";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 
@@ -32,6 +33,8 @@ const homeBlogs = [
 
 export function HomeScreen() {
   const [query, setQuery] = useState("");
+  const [catalogVisible, setCatalogVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
   const [savedIds, setSavedIds] = useState<string[]>([]);
@@ -96,7 +99,7 @@ export function HomeScreen() {
         keyboardShouldPersistTaps="handled"
       >
       <View style={styles.header}>
-        <Pressable style={styles.catalogButton} accessibilityLabel="Kataloq" onPress={() => Alert.alert("Kataloq", "Kateqoriyalar növbəti mərhələdə açılacaq.")}>
+        <Pressable style={styles.catalogButton} accessibilityLabel="Kataloq" onPress={() => setCatalogVisible(true)}>
           <Ionicons name="list-outline" size={21} color={colors.white} />
         </Pressable>
         <View style={styles.searchBox}>
@@ -110,6 +113,19 @@ export function HomeScreen() {
           <Ionicons name="menu" size={23} color={colors.ink} />
         </Pressable>
       </View>
+        {selectedCategory ? (
+          <View style={styles.selectedCategoryRow}>
+            <Ionicons name="checkmark-circle" size={17} color={colors.brand} />
+            <Text style={styles.selectedCategoryText} numberOfLines={1}>{selectedCategory}</Text>
+            <Pressable
+              onPress={() => setSelectedCategory("")}
+              hitSlop={8}
+              accessibilityLabel="Kateqoriyanı sil"
+            >
+              <Ionicons name="close-circle" size={18} color={colors.muted} />
+            </Pressable>
+          </View>
+        ) : null}
         <View style={styles.sectionHeading}>
           <View style={styles.headingTitleRow}>
             <Text style={styles.crown}>👑</Text>
@@ -237,6 +253,14 @@ export function HomeScreen() {
         </ScrollView>
         <Text style={styles.footerNote}>Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.</Text>
       </ScrollView>
+      <CatalogModal
+        visible={catalogVisible}
+        onClose={() => setCatalogVisible(false)}
+        onSelect={(categoryPath) => {
+          setSelectedCategory(categoryPath);
+          setCatalogVisible(false);
+        }}
+      />
       <Animated.View style={[styles.bottomBar, { height: 66 + insets.bottom, paddingBottom: insets.bottom, transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
@@ -275,6 +299,8 @@ const styles = StyleSheet.create({
   catalogButton: { width: 42, height: 42, borderRadius: 22, backgroundColor: colors.brand, alignItems: "center", justifyContent: "center" },
   searchBox: { flex: 1, minWidth: 0, height: 42, flexDirection: "row", alignItems: "center", gap: 8, paddingLeft: 12, borderRadius: 22, borderWidth: 1, borderColor: colors.line, backgroundColor: "#FFF9F7" },
   searchInput: { flex: 1, minWidth: 0, color: colors.ink, fontSize: 14, paddingVertical: 0 },
+  selectedCategoryRow: { marginHorizontal: 15, marginTop: 8, paddingHorizontal: 11, paddingVertical: 9, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 12, backgroundColor: "#FFF0F2" },
+  selectedCategoryText: { flex: 1, color: colors.ink, fontSize: 11, fontWeight: "600" },
   sectionHeading: { marginTop: 14, marginBottom: 10, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headingTitleRow: { flexDirection: "row", alignItems: "center", gap: 5 },
   crown: { fontSize: 16 },
