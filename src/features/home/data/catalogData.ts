@@ -111,27 +111,62 @@ export const catalogCategories: CatalogCategory[] = [
     { id: "tires", name: "Şinlər və disklər", icon: "🛞" },
     { id: "car-electronics", name: "Avtoelektronika", icon: "🔌" },
   ]},
-  { id: "electronics", name: "Elektronika", icon: "📱", children: [
-    { id: "phones", name: "Telefonlar", icon: "📱" },
-    { id: "computers", name: "Kompüter və noutbuklar", icon: "💻" },
-    { id: "appliances", name: "Məişət texnikası", icon: "🧺" },
-    { id: "electronics-accessories", name: "Aksesuarlar", icon: "🎧" },
+  { id: "equipment", name: "Avadanlıqlar", icon: "🧰", children: [
+    { id: "business-equipment", name: "Biznes avadanlıqları", icon: "🏪" },
+    { id: "industrial-equipment", name: "Sənaye avadanlıqları", icon: "⚙️" },
+    { id: "office-equipment", name: "Ofis avadanlıqları", icon: "🖨️" },
   ]},
-  { id: "property", name: "Daşınmaz əmlak", icon: "🏘️", children: [
+  { id: "shopping", name: "Bazarlıq", icon: "🛒", children: [
+    { id: "market-products", name: "Məhsullar", icon: "🧺" },
+    { id: "market-sale", name: "Topdan satış", icon: "📦" },
+  ]},
+  { id: "zoo-products", name: "Zoo məhsullar", icon: "🐾", children: [
+    { id: "pet-food", name: "Heyvan yemləri", icon: "🦴" },
+    { id: "pet-care", name: "Heyvanlara qulluq", icon: "🐕" },
+  ]},
+  { id: "repair-construction", name: "Təmir tikinti", icon: "🧱", children: [
+    { id: "building-materials", name: "Tikinti materialları", icon: "🧱" },
+    { id: "repair-tools", name: "Təmir alətləri", icon: "🛠️" },
+    { id: "construction-services", name: "Usta xidmətləri", icon: "👷" },
+  ]},
+  { id: "appliances", name: "Məişət texnikası", icon: "🧺", children: [
+    { id: "large-appliances", name: "İri məişət texnikası", icon: "🧊" },
+    { id: "small-appliances", name: "Kiçik məişət texnikası", icon: "☕" },
+  ]},
+  { id: "home-garden", name: "Ev və bağ üçün", icon: "🪴", children: [
+    { id: "furniture", name: "Mebel", icon: "🛋️" },
+    { id: "home-decor", name: "Ev dekoru", icon: "🪑" },
+    { id: "garden", name: "Bağ və həyət", icon: "🌱" },
+  ]},
+  { id: "computers", name: "Kompüterlər", icon: "💻", children: [
+    { id: "laptops", name: "Noutbuklar", icon: "💻" },
+    { id: "computer-parts", name: "Komputer hissələri", icon: "🖥️" },
+    { id: "computer-accessories", name: "Komputer aksesuarları", icon: "🖱️" },
+  ]},
+  { id: "personal-items", name: "Şəxsi Əşyalar", icon: "👜", children: [
+    { id: "bags", name: "Çantalar", icon: "👜" },
+    { id: "watches", name: "Saatlar", icon: "⌚" },
+    { id: "accessories", name: "Aksesuarlar", icon: "🕶️" },
+  ]},
+  { id: "phones", name: "Telefonlar", icon: "📱", children: [
+    { id: "smartphones", name: "Smartfonlar", icon: "📱" },
+    { id: "phone-accessories", name: "Telefon aksesuarları", icon: "🎧" },
+  ]},
+  { id: "services", name: "Xidmətlər", icon: "🛠️", children: [
+    { id: "repair-services", name: "Təmir xidmətləri", icon: "🔧" },
+    { id: "education-services", name: "Təhsil və kurslar", icon: "📖" },
+    { id: "delivery-services", name: "Daşınma və çatdırılma", icon: "📦" },
+    { id: "other-services", name: "Digər xidmətlər", icon: "🧰" },
+  ]},
+  { id: "property", name: "Daşınmaz Əmlak", icon: "🏘️", children: [
     { id: "apartments", name: "Mənzillər", icon: "🏢" },
     { id: "houses", name: "Həyət evləri və bağ evləri", icon: "🏡" },
     { id: "land", name: "Torpaq sahələri", icon: "🌳" },
     { id: "commercial-property", name: "Obyektlər və ofislər", icon: "🏬" },
   ]},
-  { id: "home-garden", name: "Ev və bağ", icon: "🪴", children: [
-    { id: "furniture", name: "Mebel", icon: "🛋️" },
-    { id: "home-appliances", name: "Ev əşyaları", icon: "🪑" },
-    { id: "garden", name: "Bağ və həyət", icon: "🌱" },
-  ]},
-  { id: "services", name: "Xidmətlər", icon: "🛠️", children: [
-    { id: "repair", name: "Təmir və tikinti", icon: "🧱" },
-    { id: "education", name: "Təhsil və kurslar", icon: "📖" },
-    { id: "delivery", name: "Daşınma və çatdırılma", icon: "📦" },
-    { id: "other-services", name: "Digər xidmətlər", icon: "🧰" },
+  { id: "electronics", name: "Elektronika", icon: "📱", children: [
+    { id: "electronics-phones", name: "Telefonlar", icon: "📱" },
+    { id: "electronics-computers", name: "Kompüter və noutbuklar", icon: "💻" },
+    { id: "electronics-accessories", name: "Elektronika aksesuarları", icon: "🎧" },
   ]},
 ];
