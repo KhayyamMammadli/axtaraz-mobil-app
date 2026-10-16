@@ -19,6 +19,7 @@ import { ListingCard } from "../components/ListingCard";
 import { CatalogModal } from "../components/CatalogModal";
 import { MenuModal } from "../components/MenuModal";
 import { BusinessProfileScreen } from "./BusinessProfileScreen";
+import { AuthScreen } from "./AuthScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
 import { colors } from "../../../theme/colors";
@@ -40,6 +41,7 @@ export function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
   const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
+  const [authVisible, setAuthVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
@@ -84,6 +86,10 @@ export function HomeScreen() {
 
   const chooseBottomTab = (tab: BottomTabId) => {
     setActiveBottomTab(tab);
+    if (tab === "profile") {
+      setAuthVisible(true);
+      return;
+    }
     const labels: Record<BottomTabId, string> = {
       home: "Ana səhifə",
       favorites: "Seçilmişlər",
@@ -99,6 +105,10 @@ export function HomeScreen() {
 
   if (selectedBusiness) {
     return <BusinessProfileScreen businessName={selectedBusiness.name} onBack={() => setSelectedBusiness(null)} />;
+  }
+
+  if (authVisible) {
+    return <AuthScreen onHome={() => { setAuthVisible(false); setActiveBottomTab("home"); }} />;
   }
 
   return (
