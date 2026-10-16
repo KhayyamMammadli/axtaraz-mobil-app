@@ -3,7 +3,8 @@ import { createContext, useContext, useMemo, useState, type PropsWithChildren } 
 export type Language = "az" | "en" | "ru";
 type Translation = { en: string; ru: string };
 
-// Add every new user-facing Azerbaijani string here with both English and Russian translations. Azerbaijani is the source/default language.\nconst translations: Record<string, Translation> = {
+// Add every new user-facing Azerbaijani string here with both English and Russian translations. Azerbaijani is the source/default language.
+const translations: Record<string, Translation> = {
   "Ana səhifə": { en: "Home", ru: "Главная" },
   "Seçilmişlər": { en: "Favorites", ru: "Избранное" },
   "Mesajlarım": { en: "Messages", ru: "Сообщения" },
