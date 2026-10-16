@@ -5,6 +5,7 @@ export type Listing = {
   location: string;
   age: string;
   image: string;
+  images?: string[];
   badge?: string;
 };
 
