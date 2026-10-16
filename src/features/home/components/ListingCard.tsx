@@ -3,10 +3,12 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/colors";
 import type { Listing } from "../data/homeData";
+import { useI18n } from "../../../i18n/I18nProvider";
 
 type Props = { listing: Listing; onFavoriteChange?: (id: string, saved: boolean) => void; onPress?: () => void };
 
 export function ListingCard({ listing, onFavoriteChange, onPress }: Props) {
+  const { t } = useI18n();
   const [saved, setSaved] = useState(false);
 
   const toggleFavorite = () => {
@@ -22,11 +24,11 @@ export function ListingCard({ listing, onFavoriteChange, onPress }: Props) {
         <View style={styles.badges}>
           <View style={styles.badge}>
             <Ionicons name="alert-circle" size={11} color={colors.white} />
-            <Text style={styles.badgeText}>İTKİN</Text>
+            <Text style={styles.badgeText}>{t("İTKİN")}</Text>
           </View>
           <View style={styles.badge}>
             <Ionicons name="search" size={11} color={colors.brand} />
-            <Text style={[styles.badgeText, styles.searchBadgeText]}>AXTARILIR</Text>
+            <Text style={[styles.badgeText, styles.searchBadgeText]}>{t("AXTARILIR")}</Text>
           </View>
         </View>
         <Pressable
@@ -40,13 +42,13 @@ export function ListingCard({ listing, onFavoriteChange, onPress }: Props) {
         </Pressable>
       </View>
       <View style={styles.body}>
-        <Text style={styles.price}>{listing.price}</Text>
-        <Text style={styles.title} numberOfLines={2}>{listing.title}</Text>
+        <Text style={styles.price}>{t(listing.price)}</Text>
+        <Text style={styles.title} numberOfLines={2}>{t(listing.title)}</Text>
         <View style={styles.meta}>
           <Ionicons name="location" size={12} color={colors.muted} />
-          <Text style={styles.metaText}>{listing.location}</Text>
+          <Text style={styles.metaText}>{t(listing.location)}</Text>
           <Text style={styles.metaSeparator}>·</Text>
-          <Text style={styles.metaText} numberOfLines={1}>{listing.age}</Text>
+          <Text style={styles.metaText} numberOfLines={1}>{t(listing.age)}</Text>
           <View style={styles.serviceBadges}>
             {listing.badge ? <Ionicons name={listing.badge === "VIP" ? "diamond" : "ribbon"} size={13} color={colors.gold} /> : null}
             <Ionicons name="flash" size={13} color={colors.gold} />
