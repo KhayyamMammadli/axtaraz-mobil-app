@@ -12,7 +12,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { catalogCategories, type CatalogCategory } from "../data/catalogData";
 import { useI18n } from "../../../i18n/I18nProvider";
-import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type Props = {
   visible: boolean;
@@ -89,7 +88,6 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
               {path.length ? t(path[path.length - 1].name) : t("Kataloq")}
             </Text>
           </View>
-          <LanguagePicker />
           <Pressable
             onPress={onClose}
             style={styles.doneButton}
