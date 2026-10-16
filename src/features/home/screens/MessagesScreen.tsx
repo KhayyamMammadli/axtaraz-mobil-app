@@ -213,16 +213,16 @@ export function MessagesScreen({ onBack, onOpenListing }: { onBack: () => void; 
             <View style={styles.headerSpacer} />
           </View>
 
-          <View style={styles.tabs}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabs} contentContainerStyle={styles.tabsContent}>
             {([
               { id: "all", label: "Hamısı" },
               { id: "mine", label: "Mənimkilər" },
               { id: "interested", label: "Maraqlandıqlarım" },
             ] as const).map((item) => {
               const active = tab === item.id;
-              return <Pressable key={item.id} onPress={() => setTab(item.id)} style={[styles.tab, active && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: active }}><Text style={[styles.tabText, active && styles.tabTextActive]}>{t(item.label)}</Text></Pressable>;
+              return <Pressable key={item.id} onPress={() => setTab(item.id)} style={[styles.tab, active && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: active }}><Text numberOfLines={1} style={[styles.tabText, active && styles.tabTextActive]}>{t(item.label)}</Text></Pressable>;
             })}
-          </View>
+          </ScrollView>
 
           <View style={styles.searchRow}>
             <View style={styles.searchBox}><Ionicons name="search" size={19} color={colors.muted} /><TextInput value={query} onChangeText={setQuery} placeholder={t("Söhbətlərdə axtar...")} placeholderTextColor={colors.ink} style={styles.searchInput} returnKeyType="search" /></View>
@@ -322,8 +322,9 @@ const styles = StyleSheet.create({
   inboxBackButton: { width: 40, height: 42, justifyContent: "center" },
   inboxTitle: { position: "absolute", left: 60, right: 60, textAlign: "center", color: colors.ink, fontSize: 22, fontWeight: "800" },
   headerSpacer: { width: 40 },
-  tabs: { height: 58, paddingHorizontal: 18, flexDirection: "row", alignItems: "stretch", borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
-  tab: { flex: 1, minWidth: 112, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "transparent" },
+  tabs: { height: 58, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
+  tabsContent: { paddingHorizontal: 18, flexDirection: "row", alignItems: "stretch" },
+  tab: { width: 118, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "transparent" },
   tabActive: { borderBottomColor: colors.brand },
   tabText: { color: colors.muted, fontSize: 14, fontWeight: "500" },
   tabTextActive: { color: colors.brand },
