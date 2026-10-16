@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useI18n } from "../../../i18n/I18nProvider";
+import { LanguagePicker } from "../../../i18n/LanguagePicker";
 
 type MenuPage = "menu" | "about" | "rules";
 type MenuLink = { title: string; icon: keyof typeof Ionicons.glyphMap; page: Exclude<MenuPage, "menu"> };
@@ -38,6 +40,7 @@ type Props = {
 };
 
 export function MenuModal({ visible, onClose }: Props) {
+  const { t } = useI18n();
   const [page, setPage] = useState<MenuPage>("menu");
   const scrollRef = useRef<ScrollView | null>(null);
 
@@ -57,7 +60,7 @@ export function MenuModal({ visible, onClose }: Props) {
     try {
       await Linking.openURL(url);
     } catch {
-      Alert.alert("Açılmadı", "Bu əməliyyat üçün uyğun tətbiq tapılmadı.");
+      Alert.alert(t("Açılmadı"), t("Bu əməliyyat üçün uyğun tətbiq tapılmadı."));
     }
   };
 
@@ -71,13 +74,13 @@ export function MenuModal({ visible, onClose }: Props) {
       <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
         <View style={styles.header}>
           {page === "menu" ? (
-            <Text accessibilityLabel="Axtar.az" style={styles.wordmark}>
+            <Text accessibilityLabel={t("Axtar.az")} style={styles.wordmark}>
               axtar.az
             </Text>
           ) : (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Menyuya qayıt"
+              accessibilityLabel={t("Menyuya qayıt")}
               onPress={() => setPage("menu")}
               style={styles.backButton}
             >
@@ -85,13 +88,14 @@ export function MenuModal({ visible, onClose }: Props) {
             </Pressable>
           )}
           {page !== "menu" ? (
-            <Text style={styles.pageTitle}>{pageContent[page].title}</Text>
+            <Text style={styles.pageTitle}>{t(pageContent[page].title)}</Text>
           ) : null}
+          <LanguagePicker />
           <Pressable
             onPress={onClose}
             style={styles.closeButton}
             accessibilityRole="button"
-            accessibilityLabel="Menyunu bağla"
+            accessibilityLabel={t("Menyunu bağla")}
             hitSlop={6}
           >
             <Ionicons name="close" size={25} color="#17191F" />
@@ -114,7 +118,7 @@ export function MenuModal({ visible, onClose }: Props) {
                   accessibilityRole="button"
                 >
                   <Ionicons name={item.icon} size={24} color="#C6CBD3" />
-                  <Text style={styles.navigationLabel}>{item.title}</Text>
+                  <Text style={styles.navigationLabel}>{t(item.title)}</Text>
                   <Ionicons name="chevron-forward" size={18} color="#C6CBD3" />
                 </Pressable>
               ))}
@@ -124,7 +128,7 @@ export function MenuModal({ visible, onClose }: Props) {
                 accessibilityRole="button"
               >
                 <Ionicons name="call" size={24} color="#C6CBD3" />
-                <Text style={styles.navigationLabel}>Əlaqə</Text>
+                <Text style={styles.navigationLabel}>{t("Əlaqə")}</Text>
                 <Ionicons name="chevron-forward" size={18} color="#C6CBD3" />
               </Pressable>
             </View>
@@ -157,7 +161,7 @@ export function MenuModal({ visible, onClose }: Props) {
             <View style={styles.separator} />
 
             <View style={styles.socialSection}>
-              <Text style={styles.sectionLabel}>Sosial şəbəkələr</Text>
+              <Text style={styles.sectionLabel}>{t("Sosial şəbəkələr")}</Text>
               <View style={styles.socialRow}>
                 <SocialIcon name="logo-facebook" color="#1687E8" label="Facebook" />
                 <SocialIcon name="logo-instagram" color="#D94282" label="Instagram" />
@@ -175,7 +179,7 @@ export function MenuModal({ visible, onClose }: Props) {
               <PaymentMark label="VISA" style={styles.visa} />
             </View>
 
-            <Text style={styles.copyright}>© Müəllif hüquqları qorunur ©2025</Text>
+            <Text style={styles.copyright}>{t("© Müəllif hüquqları qorunur ©2025")}</Text>
           </ScrollView>
         ) : (
           <View style={styles.detailPage}>
@@ -187,7 +191,7 @@ export function MenuModal({ visible, onClose }: Props) {
               />
             </View>
             <Text style={styles.detailTitle}>{pageContent[page].title}</Text>
-            <Text style={styles.detailBody}>{pageContent[page].body}</Text>
+            <Text style={styles.detailBody}>{t(pageContent[page].body)}</Text>
           </View>
         )}
       </SafeAreaView>
@@ -206,6 +210,7 @@ function ContactRow({
   value: string;
   onPress: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <Pressable
       onPress={onPress}
@@ -217,7 +222,7 @@ function ContactRow({
         <Ionicons name={icon} size={20} color="#17191F" />
       </View>
       <View style={styles.contactCopy}>
-        <Text style={styles.contactLabel}>{label}</Text>
+        <Text style={styles.contactLabel}>{t(label)}</Text>
         <Text style={styles.contactValue}>{value}</Text>
       </View>
       <Ionicons name="chevron-forward" size={16} color="#C6CBD3" />
@@ -234,8 +239,9 @@ function SocialIcon({
   color: string;
   label: string;
 }) {
+  const { t } = useI18n();
   return (
-    <View style={styles.socialItem} accessibilityLabel={label}>
+    <View style={styles.socialItem} accessibilityLabel={t(label)}>
       <Ionicons name={name} size={27} color={color} />
     </View>
   );
