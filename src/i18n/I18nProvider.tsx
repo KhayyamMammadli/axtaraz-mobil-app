@@ -425,6 +425,13 @@ const translations: Record<string, Translation> = {
 
   "İmtina et": { en: "Cancel", ru: "Отмена" },
 
+  "Məlumatlarım": { en: "My information", ru: "Мои данные" },
+  "Bizneslərim": { en: "My businesses", ru: "Мои бизнесы" },
+  "Bloglarım": { en: "My blogs", ru: "Мои блоги" },
+  "Kabinetim": { en: "Account", ru: "Кабинет" },
+  "Test MMC": { en: "Test LLC", ru: "Тест ООО" },
+  "TEst 2": { en: "Test 2", ru: "Тест 2" },
+  "template 2": { en: "Template 2", ru: "Шаблон 2" },
 type I18nValue = { language: Language; setLanguage: (language: Language) => void; t: (text: string) => string };
 const I18nContext = createContext<I18nValue>({
   language: "az",
