@@ -93,6 +93,10 @@ export function HomeScreen() {
     if (tab !== "home") Alert.alert(labels[tab], "Bu bölmə növbəti mərhələdə əlavə olunacaq.");
   };
 
+  if (selectedListing) {
+    return <ListingDetailScreen listing={selectedListing} onBack={() => setSelectedListing(null)} onSelectListing={setSelectedListing} />;
+  }
+
   if (selectedBusiness) {
     return <BusinessProfileScreen businessName={selectedBusiness.name} onBack={() => setSelectedBusiness(null)} />;
   }
