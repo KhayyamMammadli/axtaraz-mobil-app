@@ -319,7 +319,6 @@ const translations: Record<string, Translation> = {
   "Obyektlər və ofislər": { en: "Commercial property and offices", ru: "Коммерческая недвижимость и офисы" },
   "Kompüter və noutbuklar": { en: "Computers and laptops", ru: "Компьютеры и ноутбуки" },
   "Elektronika aksesuarları": { en: "Electronics accessories", ru: "Аксессуары для электроники" },
-};
 
   "Dil seç": {"en":"Choose language","ru":"Выбрать язык"},
   "Tətbiq dili": {"en":"App language","ru":"Язык приложения"},
