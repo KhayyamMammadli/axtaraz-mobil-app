@@ -59,7 +59,7 @@ export function CatalogModal({ visible, onClose, onSelect }: Props) {
       setSearch("");
       return;
     }
-    onSelect([...path, category].map((item) => t(item.name)).join(" / "));
+    onSelect([...path, category].map((item) => item.name).join(" / "));
   };
 
   return (
