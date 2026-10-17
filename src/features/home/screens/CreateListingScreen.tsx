@@ -16,6 +16,7 @@ import { useI18n } from "../../../i18n/I18nProvider";
 
 type CreateListingScreenProps = {
   onBack: () => void;
+  intent?: "offer" | "search";
 };
 
 type PickerState = {
@@ -42,7 +43,7 @@ const timeOptions = Array.from({ length: 48 }, (_, index) => {
   return hour + ":" + minute;
 });
 
-export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
+export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingScreenProps) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -125,7 +126,7 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
         <Pressable style={styles.backButton} onPress={onBack} accessibilityRole="button" accessibilityLabel={t("Geri")}>
           <Ionicons name="arrow-back" size={22} color={colors.ink} />
         </Pressable>
-        <Text style={styles.topTitle}>{t("Yeni elan yerləşdir")}</Text>
+        <Text style={styles.topTitle}>{t(intent === "search" ? "Elan axtar" : "Yeni elan yerləşdir")}</Text>
         <View style={styles.topSpacer} />
       </View>
       <ScrollView
@@ -137,8 +138,8 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
         <View style={styles.sectionCard}>
           <SectionHeading title={t("Elan haqqında məlumatlar")} />
           <SelectField label={t("Kateqoriya seçimi")} value={category ? t(category) : ""} placeholder={t("Seçin")} onPress={() => showPicker(t("Kateqoriya seçimi"), categoryOptions, setCategory)} />
-          <FormField label={t("Elanın adı")} value={title} onChangeText={setTitle} placeholder={t("Elanın adını yazın")} />
-          <FormField label={t("Qiymət")} value={price} onChangeText={setPrice} placeholder="0" keyboardType="decimal-pad" trailing="₼" />
+          <FormField label={t("Elanın adı")} value={title} onChangeText={setTitle} placeholder={t(intent === "search" ? "Axtardığınız məhsul və ya xidməti yazın" : "Elanın adını yazın")} />
+          <FormField label={t(intent === "search" ? "Təxmini büdcə" : "Qiymət")} value={price} onChangeText={setPrice} placeholder="0" keyboardType="decimal-pad" trailing="₼" />
           <SelectField label={t("Şəhər")} value={city ? t(city) : ""} placeholder={t("Seçin")} onPress={() => showPicker(t("Şəhər"), cityOptions, setCity)} />
           <View style={styles.field}>
             <FieldLabel text={t("Elan haqqında məlumat")} />
