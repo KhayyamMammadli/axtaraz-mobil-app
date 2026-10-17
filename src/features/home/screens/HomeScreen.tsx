@@ -529,7 +529,7 @@ export function HomeScreen() {
       <Modal
         visible={listingTypeVisible}
         transparent
-        animationType="fade"
+        animationType="slide"
         statusBarTranslucent
         onRequestClose={() => setListingTypeVisible(false)}
       >
@@ -540,21 +540,19 @@ export function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel={t("Bağla")}
           />
-          <View style={styles.listingTypeCard}>
+          <View style={[styles.listingTypeCard, { paddingBottom: Math.max(insets.bottom, 20), maxHeight: Dimensions.get("window").height * 0.78 }]}>
+            <View style={styles.listingTypeHandle} />
             <View style={styles.listingTypeHeader}>
+              <Text style={styles.listingTypeHeading}>{t("Yeni elan")}</Text>
               <Pressable
-                onPress={() => {
-                  setListingTypeVisible(false);
-                  setTimeout(() => setCreateMenuVisible(true), 300);
-                }}
+                onPress={() => setListingTypeVisible(false)}
                 hitSlop={10}
                 accessibilityRole="button"
-                accessibilityLabel={t("Geri")}
+                accessibilityLabel={t("Bağla")}
+                style={styles.listingTypeClose}
               >
-                <Ionicons name="arrow-back" size={23} color={colors.ink} />
+                <Ionicons name="close" size={21} color={colors.muted} />
               </Pressable>
-              <Text style={styles.listingTypeHeading}>{t("Yeni elan")}</Text>
-              <View style={styles.listingTypeHeaderSpacer} />
             </View>
             {([
               { title: "Təklif edilir", subtitle: "Məhsul və ya xidmət təklif edirəm", icon: "pricetag" as const },
@@ -715,18 +713,19 @@ const styles = StyleSheet.create({
   createActionCopy: { flex: 1, gap: 3 },
   createActionTitle: { color: colors.ink, fontSize: 14, fontWeight: "700" },
   createActionSubtitle: { color: colors.muted, fontSize: 11 },
-  listingTypeModalRoot: { flex: 1, justifyContent: "center", paddingHorizontal: 22 },
+  listingTypeModalRoot: { flex: 1, justifyContent: "flex-end" },
   listingTypeBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(22, 26, 36, 0.38)" },
-  listingTypeCard: { paddingHorizontal: 18, paddingTop: 8, borderRadius: 28, backgroundColor: colors.white, shadowColor: "#121622", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.18, shadowRadius: 24, elevation: 18 },
-  listingTypeHeader: { height: 67, flexDirection: "row", alignItems: "center", gap: 18, borderBottomWidth: 1, borderBottomColor: colors.line },
-  listingTypeHeading: { flex: 1, color: colors.ink, fontSize: 19, fontWeight: "700", letterSpacing: -0.3 },
-  listingTypeHeaderSpacer: { width: 23 },
-  listingTypeRow: { minHeight: 112, flexDirection: "row", alignItems: "center", gap: 16 },
+  listingTypeCard: { width: "100%", paddingHorizontal: 20, paddingTop: 9, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.white, shadowColor: "#121622", shadowOffset: { width: 0, height: -6 }, shadowOpacity: 0.12, shadowRadius: 18, elevation: 20 },
+  listingTypeHandle: { alignSelf: "center", width: 36, height: 4, borderRadius: 2, marginBottom: 8, backgroundColor: "#D9DCE3" },
+  listingTypeHeader: { minHeight: 54, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.line },
+  listingTypeHeading: { flex: 1, color: colors.ink, fontSize: 20, fontWeight: "700", letterSpacing: -0.3 },
+  listingTypeClose: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center", backgroundColor: colors.soft },
+  listingTypeRow: { minHeight: 86, paddingVertical: 12, flexDirection: "row", alignItems: "center", gap: 14 },
   listingTypeRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.line },
-  listingTypeIcon: { width: 42, alignItems: "center", justifyContent: "center" },
-  listingTypeCopy: { flex: 1, gap: 8 },
-  listingTypeTitle: { color: colors.ink, fontSize: 17, fontWeight: "700" },
-  listingTypeSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 18 },
+  listingTypeIcon: { width: 42, height: 42, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF0F2" },
+  listingTypeCopy: { flex: 1, gap: 4 },
+  listingTypeTitle: { color: colors.ink, fontSize: 16, fontWeight: "700" },
+  listingTypeSubtitle: { color: colors.muted, fontSize: 12, lineHeight: 17 },
 
 
 });
