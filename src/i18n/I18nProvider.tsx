@@ -500,6 +500,7 @@ const translations: Record<string, Translation> = {
   "MacBook Pro": { en: "MacBook Pro", ru: "MacBook Pro" },
   "PlayStation 4": { en: "PlayStation 4", ru: "PlayStation 4" },
   "Elanlar yüklənir...": { en: "Loading listings...", ru: "Загрузка объявлений..." },
+  "Biznesləri yükləmək alınmadı": { en: "Could not load businesses", ru: "Не удалось загрузить бизнесы" },
   "Elanları yükləmək mümkün olmadı": { en: "Could not load listings", ru: "Не удалось загрузить объявления" },
   "Yenidən yoxla": { en: "Try again", ru: "Повторить" },
   "Daha çox elan": { en: "Load more listings", ru: "Загрузить ещё объявления" },
