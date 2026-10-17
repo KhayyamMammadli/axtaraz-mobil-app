@@ -411,6 +411,7 @@ const translations: Record<string, Translation> = {
   "Elanın adını yazın": { en: "Enter a title", ru: "Введите название" },
   "Qiymət": { en: "Price", ru: "Цена" },
   "Təxmini büdcə": { en: "Estimated budget", ru: "Примерный бюджет" },
+  "İtkin elanının ön baxışı": { en: "Lost item preview", ru: "Предпросмотр объявления о пропаже" },
   "Yeni itkin elan yarat": { en: "Create a lost item listing", ru: "Создать объявление о пропаже" },
   "İtkin haqqında məlumat": { en: "Lost item details", ru: "Информация о пропаже" },
   "İtmə vaxtı": { en: "When it was lost", ru: "Когда пропала вещь" },
