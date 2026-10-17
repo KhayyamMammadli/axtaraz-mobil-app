@@ -488,7 +488,7 @@ export function HomeScreen() {
                   onPress={() => {
                     setCreateMenuVisible(false);
                     if (action.title === "Yeni elan") {
-                      setListingTypeVisible(true);
+                      setTimeout(() => setListingTypeVisible(true), 300);
                       return;
                     }
                     const message = action.title === "Yeni biznes"
@@ -532,7 +532,7 @@ export function HomeScreen() {
               <Pressable
                 onPress={() => {
                   setListingTypeVisible(false);
-                  setCreateMenuVisible(true);
+                  setTimeout(() => setCreateMenuVisible(true), 300);
                 }}
                 hitSlop={10}
                 accessibilityRole="button"
