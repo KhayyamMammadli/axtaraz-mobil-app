@@ -410,6 +410,8 @@ const translations: Record<string, Translation> = {
   "Elanın adı": { en: "Listing title", ru: "Название объявления" },
   "Elanın adını yazın": { en: "Enter a title", ru: "Введите название" },
   "Qiymət": { en: "Price", ru: "Цена" },
+  "Təxmini büdcə": { en: "Estimated budget", ru: "Примерный бюджет" },
+  "Axtardığınız məhsul və ya xidməti yazın": { en: "Describe the product or service you are looking for", ru: "Опишите товар или услугу, которую ищете" },
   "Elan haqqında məlumat": { en: "Description", ru: "Описание объявления" },
   "Ətraflı məlumat əlavə edin": { en: "Add a detailed description", ru: "Добавьте подробное описание" },
   "Şəkillər": { en: "Photos", ru: "Фотографии" },
