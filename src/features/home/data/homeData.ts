@@ -16,6 +16,29 @@ export type Listing = {
   phone?: string;
 };
 
+export type Business = {
+  id: string;
+  name: string;
+  listings: string;
+  slogan?: string;
+  description?: string;
+  phone?: string;
+  url?: string;
+  subdomain?: string;
+  template?: string;
+  category?: string;
+  activeMenuLinks?: string[];
+  workDayNames?: string[];
+  socials?: Record<string, string | null>;
+  image?: string;
+  images?: string[];
+  productsCount?: number;
+  status?: string;
+  level?: string;
+  recommended?: boolean;
+  createdAt?: string;
+};
+
 export const categories = [
   { id: "electronics", title: "Elektronika", icon: "phone-portrait-outline" as const, tint: "#F0F5FF", color: "#4676D7" },
   { id: "property", title: "Daşınmaz əmlak", icon: "home-outline" as const, tint: "#FFF3EA", color: "#DA7C35" },
@@ -25,7 +48,7 @@ export const categories = [
   { id: "services", title: "Xidmətlər", icon: "construct-outline" as const, tint: "#EEF7FA", color: "#3A91A7" },
 ];
 
-export const businesses = [
+export const businesses: Business[] = [
   { id: "business-2", name: "Test MMC", listings: "0 elan" },
   { id: "business-3", name: "TEst 2", listings: "0 elan" },
   { id: "business-1", name: "template 2", listings: "0 elan" },
