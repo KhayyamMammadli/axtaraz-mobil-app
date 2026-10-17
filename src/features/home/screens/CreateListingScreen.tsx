@@ -130,7 +130,7 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
       </View>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.formContent, { paddingBottom: 150 + insets.bottom }]}
+        contentContainerStyle={[styles.formContent, { paddingBottom: 100 }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
