@@ -52,10 +52,9 @@ export function BusinessProfileScreen({ business, businessName: fallbackBusiness
   const [galleryIndex, setGalleryIndex] = useState(0);
   const insets = useSafeAreaInsets();
   const businessName = business?.name ?? fallbackBusinessName ?? "Biznes";
-  const businessImage = business?.image || ownershipCover;
   const businessGalleryImages = business?.images?.length ? business.images : fallbackBusinessGalleryImages;
   const businessPhone = business?.phone ?? fallbackBusinessPhone;
-  const phoneUri = businessPhone.replace(/[^\\d+]/g, "");
+  const phoneUri = businessPhone.replace(/[^\d+]/g, "");
 
   const showOffer = useMemo(() => {
     const matchesSearch = !search.trim() || t("BMW").toLocaleLowerCase(language).includes(search.trim().toLocaleLowerCase(language));
@@ -280,11 +279,11 @@ export function BusinessProfileScreen({ business, businessName: fallbackBusiness
         ) : null}
       </ScrollView>
 
-      <GalleryViewerModal visible={galleryVisible} images={businessGalleryImages} initialIndex={galleryIndex} onClose={() => setGalleryVisible(false)} onCall={() => openLink(`tel:${phoneUri}`) isFavorite={isSaved} onToggleFavorite={() => setIsSaved((current) => !current)} />
+      <GalleryViewerModal visible={galleryVisible} images={businessGalleryImages} initialIndex={galleryIndex} onClose={() => setGalleryVisible(false)} onCall={() => openLink(`tel:${phoneUri}`)} isFavorite={isSaved} onToggleFavorite={() => setIsSaved((current) => !current)} />
 
       <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
-          onPress={() => openLink(`tel:${phoneUri}`)
+          onPress={() => openLink(`tel:${phoneUri}`)}
           style={styles.callButton}
           accessibilityRole="button"
           accessibilityLabel={t("Zəng et")}
@@ -293,7 +292,7 @@ export function BusinessProfileScreen({ business, businessName: fallbackBusiness
           <Text style={styles.callButtonText}>{t("Zəng et")}</Text>
         </Pressable>
         <Pressable
-          onPress={() => openLink(`sms:${phoneUri}`)
+          onPress={() => openLink(`sms:${phoneUri}`)}
           style={styles.messageButton}
           accessibilityRole="button"
           accessibilityLabel={t("Mesaj yaz")}
