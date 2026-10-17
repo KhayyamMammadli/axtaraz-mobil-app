@@ -54,6 +54,8 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [sameHours, setSameHours] = useState(true);
+  const [sameStart, setSameStart] = useState("09:00");
+  const [sameEnd, setSameEnd] = useState("18:00");
   const [days, setDays] = useState<string[]>(weekdays);
   const [hours, setHours] = useState<WorkHours>(() =>
     Object.fromEntries(weekdays.map((day, index) => [
@@ -110,6 +112,7 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
         city={city}
         description={description}
         address={address}
+        phone={phone}
         onEdit={() => setPreviewVisible(false)}
         onSubmit={handleSubmit}
       />
@@ -205,9 +208,9 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
           {sameHours ? (
             <View style={styles.sameHoursRow}>
               <Text style={styles.dayLabel}>{t("Hər gün")}</Text>
-              <TimeButton value="09:00" onPress={() => showPicker(t("Başlama saatı"), timeOptions, () => undefined)} />
+              <TimeButton value={sameStart} onPress={() => showPicker(t("Başlama saatı"), timeOptions, setSameStart)} />
               <Text style={styles.timeDash}>–</Text>
-              <TimeButton value="18:00" onPress={() => showPicker(t("Bitmə saatı"), timeOptions, () => undefined)} />
+              <TimeButton value={sameEnd} onPress={() => showPicker(t("Bitmə saatı"), timeOptions, setSameEnd)} />
             </View>
           ) : (
             <>
@@ -340,7 +343,6 @@ function FormField({ label, value, onChangeText, placeholder, keyboardType = "de
 }
 
 function FieldLabel({ text }: { text: string }) {
-  const { t } = useI18n();
   return <Text style={styles.fieldLabel}>{text}<Text style={styles.required}> *</Text></Text>;
 }
 
@@ -418,12 +420,13 @@ function PrimaryButton({ title, onPress }: { title: string; onPress: () => void 
   );
 }
 
-function ListingPreview({ title, price, city, description, address, onEdit, onSubmit }: {
+function ListingPreview({ title, price, city, description, address, phone, onEdit, onSubmit }: {
   title: string;
   price: string;
   city: string;
   description: string;
   address: string;
+  phone: string;
   onEdit: () => void;
   onSubmit: () => void;
 }) {
@@ -469,7 +472,7 @@ function ListingPreview({ title, price, city, description, address, onEdit, onSu
             </View>
             <View style={styles.activeRow}><Ionicons name="checkmark-circle" size={17} color={colors.green} /><Text style={styles.activeText}>{t("Aktivdir")}</Text></View>
             <OutlineAction icon="heart-outline" title={t("İzlə")} />
-            <OutlineAction icon="call" title="+994 " + (phonePreviewPlaceholder) />
+            <OutlineAction icon="call" title="+994 " + (phone || "50 000 00 00")} />
             <OutlineAction icon="chatbubble" title={t("Mesaj yaz")} />
             <View style={styles.addressCard}>
               <View style={styles.addressHeader}><Text style={styles.addressTitle}>{t("Ünvan")}</Text><Text style={styles.mapLink}>{t("Xəritədə göstər")} →</Text></View>
@@ -493,7 +496,6 @@ function ListingPreview({ title, price, city, description, address, onEdit, onSu
   );
 }
 
-const phonePreviewPlaceholder = "50 000 00 00";
 
 function PreviewStat({ icon, label, value }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string }) {
   return (
