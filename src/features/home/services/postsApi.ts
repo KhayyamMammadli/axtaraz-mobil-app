@@ -53,12 +53,12 @@ function asString(value: unknown): string | undefined {
 
 function normalizeImage(value?: string) {
   if (!value) return "";
-  if (/^https?:\\/\\//i.test(value)) return value;
-  return `https://storage.axtar.az/${value.replace(/^\\/+/, "")}`;
+  if (/^https?:\/\//i.test(value)) return value;
+  return \`https://storage.axtar.az/\${value.replace(/^\/+/, "")}\`;
 }
 
 function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\\s+/g, " ").trim();
+  return value.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 }
 
 function getImage(post: ApiPost, images: string[]) {
