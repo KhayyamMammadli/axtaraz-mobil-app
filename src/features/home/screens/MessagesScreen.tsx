@@ -213,16 +213,28 @@ export function MessagesScreen({ onBack, onOpenListing }: { onBack: () => void; 
             <View style={styles.headerSpacer} />
           </View>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabs} contentContainerStyle={styles.tabsContent}>
-            {([
-              { id: "all", label: "Hamısı" },
-              { id: "mine", label: "Mənimkilər" },
-              { id: "interested", label: "Maraqlandıqlarım" },
-            ] as const).map((item) => {
-              const active = tab === item.id;
-              return <Pressable key={item.id} onPress={() => setTab(item.id)} style={[styles.tab, active && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: active }}><Text numberOfLines={1} style={[styles.tabText, active && styles.tabTextActive]}>{t(item.label)}</Text></Pressable>;
-            })}
-          </ScrollView>
+          <View style={styles.tabsViewport}>
+            <ScrollView
+              horizontal
+              style={styles.tabs}
+              contentContainerStyle={styles.tabsContent}
+              showsHorizontalScrollIndicator={false}
+              bounces={false}
+            >
+              {([
+                { id: "all", label: "Hamısı" },
+                { id: "mine", label: "Mənimkilər" },
+                { id: "interested", label: "Maraqlandıqlarım" },
+              ] as const).map((item) => {
+                const active = tab === item.id;
+                return (
+                  <Pressable key={item.id} onPress={() => setTab(item.id)} style={[styles.tab, active && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: active }}>
+                    <Text numberOfLines={1} style={[styles.tabText, active && styles.tabTextActive]}>{t(item.label)}</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
 
           <View style={styles.searchRow}>
             <View style={styles.searchBox}><Ionicons name="search" size={19} color={colors.muted} /><TextInput value={query} onChangeText={setQuery} placeholder={t("Söhbətlərdə axtar...")} placeholderTextColor={colors.ink} style={styles.searchInput} returnKeyType="search" /></View>
@@ -318,21 +330,22 @@ function FilterSheet({ visible, value, onChange, onClose, onReset, onApply }: {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#FFFFFF" },
-  inboxHeader: { height: 72, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  inboxHeader: { height: 64, flexShrink: 0, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   inboxBackButton: { width: 40, height: 42, justifyContent: "center" },
   inboxTitle: { position: "absolute", left: 60, right: 60, textAlign: "center", color: colors.ink, fontSize: 22, fontWeight: "800" },
   headerSpacer: { width: 40 },
-  tabs: { height: 58, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
-  tabsContent: { paddingHorizontal: 18, flexDirection: "row", alignItems: "stretch" },
-  tab: { width: 118, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "transparent" },
+  tabsViewport: { height: 56, flexGrow: 0, flexShrink: 0, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
+  tabs: { height: 55, flexGrow: 0, flexShrink: 0 },
+  tabsContent: { height: 55, paddingHorizontal: 18, flexDirection: "row", alignItems: "center" },
+  tab: { width: 118, height: 55, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "transparent" },
   tabActive: { borderBottomColor: colors.brand },
   tabText: { color: colors.muted, fontSize: 14, fontWeight: "500" },
   tabTextActive: { color: colors.brand },
-  searchRow: { paddingHorizontal: 20, paddingVertical: 19, flexDirection: "row", alignItems: "center", gap: 14 },
+  searchRow: { flexShrink: 0, paddingHorizontal: 20, paddingVertical: 12, flexDirection: "row", alignItems: "center", gap: 14 },
   searchBox: { flex: 1, height: 54, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 11, borderWidth: 1, borderColor: "#E3E5EA", borderRadius: 30, backgroundColor: "#FFFFFF" },
   searchInput: { flex: 1, color: colors.ink, fontSize: 15, paddingVertical: 0 },
   filterButton: { width: 54, height: 54, borderRadius: 17, backgroundColor: "#F1F2F5", alignItems: "center", justifyContent: "center" },
-  inboxList: { flex: 1 },
+  inboxList: { flex: 1, minHeight: 0 },
   inboxListContent: { paddingHorizontal: 20, paddingBottom: 12 },
   conversationRow: { minHeight: 128, paddingVertical: 16, flexDirection: "row", alignItems: "center", gap: 15, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
   conversationPhoto: { width: 68, height: 68, borderRadius: 16, backgroundColor: "#F3F4F6" },
@@ -346,7 +359,7 @@ const styles = StyleSheet.create({
   lastMessage: { color: "#657084", fontSize: 13, lineHeight: 19 },
   lastMessageUnread: { color: colors.ink, fontWeight: "600" },
   emptyText: { marginTop: 40, marginHorizontal: 30, color: colors.muted, fontSize: 16, lineHeight: 25 },
-  countFooter: { minHeight: 58, alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF" },
+  countFooter: { minHeight: 58, flexShrink: 0, alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF" },
   countText: { color: colors.muted, fontSize: 14, fontWeight: "500" },
 
   chatScreen: { flex: 1, backgroundColor: "#FFFFFF" },
