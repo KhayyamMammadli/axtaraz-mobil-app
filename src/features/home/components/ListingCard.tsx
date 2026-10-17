@@ -21,16 +21,14 @@ export function ListingCard({ listing, onFavoriteChange, onPress }: Props) {
     <Pressable onPress={onPress} disabled={!onPress} style={styles.card} accessibilityRole={onPress ? "button" : undefined}>
       <View style={styles.imageWrap}>
         <Image source={{ uri: listing.image }} style={styles.image} resizeMode="cover" />
-        <View style={styles.badges}>
-          <View style={styles.badge}>
-            <Ionicons name="alert-circle" size={11} color={colors.white} />
-            <Text style={styles.badgeText}>{t("İTKİN")}</Text>
+        {listing.badge ? (
+          <View style={styles.badges}>
+            <View style={styles.badge}>
+              <Ionicons name={listing.badge.toLowerCase() === "vip" ? "diamond" : "star"} size={11} color={colors.brand} />
+              <Text style={styles.badgeText}>{t(listing.badge)}</Text>
+            </View>
           </View>
-          <View style={styles.badge}>
-            <Ionicons name="search" size={11} color={colors.brand} />
-            <Text style={[styles.badgeText, styles.searchBadgeText]}>{t("AXTARILIR")}</Text>
-          </View>
-        </View>
+        ) : null}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={saved ? "Seçilmişlərdən çıxar" : "Seçilmişlərə əlavə et"}
@@ -66,7 +64,6 @@ const styles = StyleSheet.create({
   badges: { position: "absolute", left: 8, top: 8, gap: 4 },
   badge: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 7, paddingVertical: 4, borderRadius: 7, backgroundColor: "#FFF9F7" },
   badgeText: { color: colors.brand, fontSize: 8, fontWeight: "800", letterSpacing: 0.3 },
-  searchBadgeText: { color: colors.brand },
   favorite: { position: "absolute", right: 9, top: 9, width: 34, height: 34, borderRadius: 18, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.95)" },
   body: { paddingHorizontal: 9, paddingTop: 8, paddingBottom: 9 },
   price: { color: colors.brand, fontSize: 17, fontWeight: "800", letterSpacing: -0.3 },
