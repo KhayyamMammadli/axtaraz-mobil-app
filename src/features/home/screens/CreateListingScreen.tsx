@@ -464,7 +464,7 @@ function ListingPreview({ title, price, city, description, address, phone, onEdi
         <Pressable style={styles.previewBack} onPress={onEdit} accessibilityRole="button" accessibilityLabel={t("Redaktəyə qayıt")}>
           <Ionicons name="arrow-back" size={21} color={colors.ink} />
         </Pressable>
-        <Text style={styles.previewHeaderTitle}>{t("Elanınız belə görünəcək")}</Text>
+        <Text style={styles.previewHeaderTitle}>{t(intent === "lost" ? "İtkin elanının ön baxışı" : "Elanınız belə görünəcək")}</Text>
         <View style={styles.topSpacer} />
       </View>
       <ScrollView contentContainerStyle={[styles.previewContent, { paddingBottom: 126 + insets.bottom }]} showsVerticalScrollIndicator={false}>
