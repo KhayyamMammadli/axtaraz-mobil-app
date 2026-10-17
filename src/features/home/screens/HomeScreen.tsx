@@ -25,7 +25,8 @@ import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { BlogDetailScreen } from "./BlogDetailScreen";
 import { MessagesScreen } from "./MessagesScreen";
-import { businesses, feedTabs, ownershipCover, type Listing } from "../data/homeData";
+import { feedTabs, ownershipCover, type Business, type Listing } from "../data/homeData";
+import { fetchOwnerships } from "../services/ownershipsApi";
 import { fetchProducts } from "../services/productsApi";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
@@ -46,7 +47,7 @@ export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
+  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<(typeof homeBlogs)[number] | null>(null);
   const [messagesVisible, setMessagesVisible] = useState(false);
@@ -61,6 +62,9 @@ export function HomeScreen() {
   const [productsError, setProductsError] = useState(false);
   const [productsPage, setProductsPage] = useState(1);
   const [productsLastPage, setProductsLastPage] = useState(1);
+  const [businessList, setBusinessList] = useState<Business[]>([]);
+  const [businessesLoading, setBusinessesLoading] = useState(true);
+  const [businessesError, setBusinessesError] = useState(false);
   const businessCardWidth = (Dimensions.get("window").width - 42) / 2;
   const bottomBarTranslateY = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
@@ -89,6 +93,23 @@ export function HomeScreen() {
   useEffect(() => {
     void loadProducts(1);
   }, [loadProducts]);
+
+  const loadBusinesses = useCallback(async () => {
+    setBusinessesLoading(true);
+    try {
+      const result = await fetchOwnerships(1);
+      setBusinessList(result.businesses);
+      setBusinessesError(false);
+    } catch {
+      setBusinessesError(true);
+    } finally {
+      setBusinessesLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadBusinesses();
+  }, [loadBusinesses]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentY = Math.max(0, event.nativeEvent.contentOffset.y);
@@ -156,7 +177,7 @@ export function HomeScreen() {
   }
 
   if (selectedBusiness) {
-    return <BusinessProfileScreen businessName={selectedBusiness.name} onBack={() => setSelectedBusiness(null)} />;
+    return <BusinessProfileScreen business={selectedBusiness} onBack={() => setSelectedBusiness(null)} />;
   }
 
   if (messagesVisible) {
@@ -241,14 +262,20 @@ export function HomeScreen() {
         </View>
 
         <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.businessRow}>
-          {businesses.map((business) => (
+          {businessesLoading && businessList.length === 0 ? (
+            <View style={styles.businessLoadState}><ActivityIndicator color={colors.brand} /></View>
+          ) : businessesError && businessList.length === 0 ? (
+            <Pressable onPress={() => void loadBusinesses()} style={styles.businessLoadState}>
+              <Text style={styles.businessLoadText}>{t("Biznesləri yükləmək alınmadı")} · {t("Yenidən yoxla")}</Text>
+            </Pressable>
+          ) : businessList.map((business) => (
             <Pressable key={business.id} style={[styles.businessCard, { width: businessCardWidth }]} onPress={() => setSelectedBusiness(business)}>
               <View style={styles.businessCover}>
-                <Image source={{ uri: ownershipCover }} style={styles.businessCoverImage} resizeMode="cover" />
+                <Image source={{ uri: business.image || ownershipCover }} style={styles.businessCoverImage} resizeMode="cover" />
               </View>
               <View style={styles.businessActions}>
                 <View style={styles.businessLogoWrap}>
-                  <Image source={{ uri: ownershipCover }} style={styles.businessLogo} resizeMode="cover" />
+                  <Image source={{ uri: business.image || ownershipCover }} style={styles.businessLogo} resizeMode="cover" />
                 </View>
                 <View style={styles.businessActionButtons}>
                   <View style={styles.starButton}><Ionicons name="star" size={16} color={colors.white} /></View>
@@ -259,6 +286,7 @@ export function HomeScreen() {
               </View>
               <View style={styles.businessInfo}>
                 <Text style={styles.businessName} numberOfLines={1}>{business.name}</Text>
+                {business.slogan ? <Text style={styles.businessSlogan} numberOfLines={1}>{business.slogan}</Text> : null}
                 <View style={styles.listingCount}>
                   <Ionicons name="grid-outline" size={13} color={colors.muted} />
                   <Text style={styles.businessCount}>{t(business.listings)}</Text>
@@ -439,6 +467,8 @@ const styles = StyleSheet.create({
   seeAllText: { color: colors.brand, fontSize: 10, fontWeight: "700" },
   businessRow: { paddingHorizontal: 15, gap: 12, paddingBottom: 2 },
   businessCard: { overflow: "hidden", borderRadius: 14, backgroundColor: "#FFF9F7" },
+  businessLoadState: { minWidth: 150, minHeight: 70, alignItems: "center", justifyContent: "center", paddingHorizontal: 12 },
+  businessLoadText: { color: colors.muted, fontSize: 11, fontWeight: "600" },
   businessCover: { height: 102, backgroundColor: "#080808", overflow: "hidden", borderRadius: 13 },
   businessCoverImage: { width: "100%", height: "100%" },
   businessActions: { minHeight: 39, paddingLeft: 45, paddingRight: 3, flexDirection: "row", alignItems: "center", justifyContent: "flex-end" },
@@ -450,6 +480,7 @@ const styles = StyleSheet.create({
   followText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
   businessInfo: { minHeight: 59, paddingHorizontal: 7, paddingTop: 0 },
   businessName: { color: colors.ink, fontSize: 15, fontWeight: "800", letterSpacing: -0.4 },
+  businessSlogan: { color: colors.muted, fontSize: 10, marginTop: 3 },
   listingCount: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 5, marginTop: 6, paddingHorizontal: 2, paddingVertical: 2 },
   businessCount: { color: colors.muted, fontSize: 11, fontWeight: "600" },
   businessMeta: { height: 34, flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingHorizontal: 6 },
