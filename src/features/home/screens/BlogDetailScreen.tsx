@@ -18,12 +18,16 @@ import { useI18n } from "../../../i18n/I18nProvider";
 
 export type BlogPost = {
   id: string;
+  slug?: string;
   category: string;
   title: string;
   excerpt: string;
-  date: string;
-  listings: string;
+  content?: string;
+  createdAt?: string;
+  viewCount?: number;
+  author?: string;
   image: string;
+  images?: string[];
 };
 
 type Props = {
@@ -34,8 +38,16 @@ type Props = {
 
 const pageWidth = Dimensions.get("window").width - 32;
 
+function formatPostDate(value: string | undefined, language: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const locale = language === "ru" ? "ru-RU" : language === "en" ? "en-GB" : "az-AZ";
+  return date.toLocaleDateString(locale);
+}
+
 export function BlogDetailScreen({ blog, images, onBack }: Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -71,23 +83,25 @@ export function BlogDetailScreen({ blog, images, onBack }: Props) {
           <Text style={styles.title}>{t(blog.title)}</Text>
           <View style={styles.metaRow}>
             <Ionicons name="time-outline" size={16} color={colors.muted} />
-            <Text style={styles.metaText}>{t("2 ay əvvəl")}</Text>
+            <Text style={styles.metaText}>{formatPostDate(blog.createdAt, language)}</Text>
             <Ionicons name="eye-outline" size={17} color={colors.muted} />
-            <Text style={styles.metaText}>{t("154 baxış")}</Text>
+            <Text style={styles.metaText}>{blog.viewCount ?? 0}</Text>
           </View>
           <View style={styles.authorRow}>
             <View style={styles.authorAvatar}><Ionicons name="person" size={22} color={colors.brand} /></View>
-            <Text style={styles.authorName} numberOfLines={1}>Xəyyam Məmmədli</Text>
+            <Text style={styles.authorName} numberOfLines={1}>{blog.author ?? "Axtar.az"}</Text>
             <Ionicons name="ribbon" size={21} color={colors.gold} />
           </View>
         </View>
 
         <View style={styles.articleBody}>
-          <Text style={styles.paragraph}>{t(blog.excerpt)}</Text>
-          <Text style={styles.sectionTitle}>{t("1. Dizayn və ekran")}</Text>
-          <Text style={styles.paragraph}>{t("Bütün iPhone 15 modelləri Ceramic Shield ön şüşə və alüminium və ya titan çərçivə ilə təqdim olunur.")}</Text>
+          {blog.content ? (
+            <Text style={styles.paragraph}>{blog.content}</Text>
+          ) : (
+            <Text style={styles.paragraph}>{t(blog.excerpt)}</Text>
+          )}
 
-          <View style={styles.gallerySection}>
+          {images.length > 1 ? <View style={styles.gallerySection}>
             <ScrollView
               horizontal
               pagingEnabled
@@ -116,10 +130,7 @@ export function BlogDetailScreen({ blog, images, onBack }: Props) {
                 <View key={uri + "-dot-" + index} style={[styles.dot, index === activeSlide && styles.dotActive]} />
               ))}
             </View>
-          </View>
-
-          <Text style={styles.sectionTitle}>{t("2. Performans")}</Text>
-          <Text style={styles.paragraph}>{t("A16 Bionic çip və A17 Pro çip cihazların sürətini, qrafik imkanlarını və enerji səmərəliliyini maksimum səviyyəyə çatdırır.")}</Text>
+          </View> : null}
         </View>
 
         <View style={styles.feedbackCard}>
