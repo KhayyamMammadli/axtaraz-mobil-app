@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  Switch,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +17,7 @@ import { useI18n } from "../../../i18n/I18nProvider";
 
 type CreateListingScreenProps = {
   onBack: () => void;
-  intent?: "offer" | "search";
+  intent?: "offer" | "search" | "lost";
 };
 
 type PickerState = {
@@ -51,6 +52,10 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [lostAt, setLostAt] = useState("");
+  const [estimatedTime, setEstimatedTime] = useState("");
+  const [rewardEnabled, setRewardEnabled] = useState(false);
+  const [rewardAmount, setRewardAmount] = useState("");
   const [city, setCity] = useState("");
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
@@ -90,6 +95,7 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
 
   const handleSubmit = () => {
     const required = [category, title.trim(), price.trim(), city, description.trim(), address.trim(), firstName.trim(), lastName.trim(), email.trim(), phone.trim(), password, passwordAgain];
+    if (intent === "lost") required.push(lostAt.trim(), estimatedTime.trim());
     if (required.some((value) => !value)) {
       Alert.alert(t("Məlumat çatışmır"), t("Məcburi xanaları doldurun."));
       return;
@@ -116,6 +122,7 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
         phone={phone}
         onEdit={() => setPreviewVisible(false)}
         onSubmit={handleSubmit}
+        intent={intent}
       />
     );
   }
@@ -126,7 +133,7 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
         <Pressable style={styles.backButton} onPress={onBack} accessibilityRole="button" accessibilityLabel={t("Geri")}>
           <Ionicons name="arrow-back" size={22} color={colors.ink} />
         </Pressable>
-        <Text style={styles.topTitle}>{t(intent === "search" ? "Elan axtar" : "Yeni elan yerləşdir")}</Text>
+        <Text style={styles.topTitle}>{t(intent === "lost" ? "Yeni itkin elan yarat" : intent === "search" ? "Elan axtar" : "Yeni elan yerləşdir")}</Text>
         <View style={styles.topSpacer} />
       </View>
       <ScrollView
@@ -136,13 +143,19 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.sectionCard}>
-          <SectionHeading title={t("Elan haqqında məlumatlar")} />
+          <SectionHeading title={t(intent === "lost" ? "İtkin haqqında məlumat" : "Elan haqqında məlumatlar")} />
           <SelectField label={t("Kateqoriya seçimi")} value={category ? t(category) : ""} placeholder={t("Seçin")} onPress={() => showPicker(t("Kateqoriya seçimi"), categoryOptions, setCategory)} />
           <FormField label={t("Elanın adı")} value={title} onChangeText={setTitle} placeholder={t(intent === "search" ? "Axtardığınız məhsul və ya xidməti yazın" : "Elanın adını yazın")} />
           <FormField label={t(intent === "search" ? "Təxmini büdcə" : "Qiymət")} value={price} onChangeText={setPrice} placeholder="0" keyboardType="decimal-pad" trailing="₼" />
           <SelectField label={t("Şəhər")} value={city ? t(city) : ""} placeholder={t("Seçin")} onPress={() => showPicker(t("Şəhər"), cityOptions, setCity)} />
+          {intent === "lost" ? (
+            <>
+              <FormField label={t("İtmə vaxtı")} value={lostAt} onChangeText={setLostAt} placeholder="dd.mm.yyyy, --:--" />
+              <FormField label={t("Təxmini vaxt")} value={estimatedTime} onChangeText={setEstimatedTime} placeholder="dd.mm.yyyy, --:--" />
+            </>
+          ) : null}
           <View style={styles.field}>
-            <FieldLabel text={t("Elan haqqında məlumat")} />
+            <FieldLabel text={t(intent === "lost" ? "İtkin haqqında məlumat" : "Elan haqqında məlumat")} />
             <TextInput
               value={description}
               onChangeText={(value) => setDescription(value.slice(0, 200))}
@@ -155,6 +168,17 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
             />
             <Text style={styles.counter}>{description.length}/200</Text>
           </View>
+          {intent === "lost" ? (
+            <View style={styles.rewardCard}>
+              <View style={styles.rewardHeader}>
+                <Ionicons name="gift" size={25} color={colors.brand} />
+                <Text style={styles.rewardTitle}>{t("Tapan şəxsə mükafat verilər")}</Text>
+                <Switch value={rewardEnabled} onValueChange={setRewardEnabled} trackColor={{ false: "#AEB4BD", true: "#F6A1AA" }} thumbColor={rewardEnabled ? colors.brand : "#FFFFFF"} accessibilityLabel={t("Mükafat")} />
+              </View>
+              <Text style={styles.rewardHint}>{t("Bu seçimi aktivləşdirsəniz, mükafat məbləğini qeyd edə bilərsiniz.")}</Text>
+              {rewardEnabled ? <FormField label={t("Mükafat məbləği (AZN)")} value={rewardAmount} onChangeText={setRewardAmount} placeholder={t("Məsələn: 300")} keyboardType="decimal-pad" trailing="₼" /> : null}
+            </View>
+          ) : null}
         </View>
 
         <View style={styles.sectionCard}>
@@ -178,13 +202,13 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
         </View>
 
         <View style={styles.sectionCard}>
-          <SectionHeading title={t("Məhsul və ya xidmət üçün məkan təyin edin")} />
+          <SectionHeading title={t(intent === "lost" ? "İtkinin baş verdiyi məkan" : "Məhsul və ya xidmət üçün məkan təyin edin")} />
           <View style={styles.mapPreview}>
             <View style={styles.mapRoadHorizontal} />
             <View style={styles.mapRoadVertical} />
             <View style={styles.mapRoadDiagonal} />
             <Ionicons name="location" size={38} color={colors.brand} />
-            <Text style={styles.mapLabel}>{address ? t(city || "Bakı") + " · " + address : t("Məkan seçin")}</Text>
+            <Text style={styles.mapLabel}>{address ? t(city || "Bakı") + " · " + address : t(intent === "lost" ? "İtkinin baş verdiyi yeri seçin" : "Məkan seçin")}</Text>
           </View>
           <FormField label={t("Ünvan")} value={address} onChangeText={setAddress} placeholder={t("Ünvanı axtarın: Bakı, Nərimanov, Gəncə...")} />
           <Pressable style={styles.mapButton} onPress={() => setMapExpanded((value) => !value)} accessibilityRole="button">
@@ -196,7 +220,7 @@ export function CreateListingScreen({ onBack, intent = "offer" }: CreateListingS
               <View style={styles.mapRoadHorizontal} />
               <View style={styles.mapRoadVertical} />
               <Ionicons name="location" size={40} color={colors.brand} />
-              <Text style={styles.mapExpandedText}>{t("Xəritə ünvan seçildikdə burada göstəriləcək.")}</Text>
+              <Text style={styles.mapExpandedText}>{t(intent === "lost" ? "İtkinin baş verdiyi ünvanı xəritədə seçin." : "Xəritə ünvan seçildikdə burada göstəriləcək.")}</Text>
             </View>
           ) : null}
           <Text style={styles.helper}>{t("Ünvanı yazın və xəritədə göstər düyməsinə toxunun.")}</Text>
@@ -421,7 +445,7 @@ function PrimaryButton({ title, onPress }: { title: string; onPress: () => void 
   );
 }
 
-function ListingPreview({ title, price, city, description, address, phone, onEdit, onSubmit }: {
+function ListingPreview({ title, price, city, description, address, phone, onEdit, onSubmit, intent = "offer" }: {
   title: string;
   price: string;
   city: string;
@@ -430,6 +454,7 @@ function ListingPreview({ title, price, city, description, address, phone, onEdi
   phone: string;
   onEdit: () => void;
   onSubmit: () => void;
+  intent?: "offer" | "search" | "lost";
 }) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
@@ -573,6 +598,10 @@ const styles = StyleSheet.create({
   deleteDay: { width: 34, height: 40, borderRadius: 9, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF4F5" },
   addDayButton: { minHeight: 44, marginTop: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderRadius: 11, borderWidth: 1, borderStyle: "dashed", borderColor: "#C9D6E8", backgroundColor: "#FAFBFC" },
   addDayText: { color: colors.ink, fontSize: 13, fontWeight: "700" },
+  rewardCard: { marginTop: 16, padding: 14, borderRadius: 14, borderWidth: 1, borderColor: "#DDE3EB", backgroundColor: colors.white },
+  rewardHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
+  rewardTitle: { flex: 1, color: colors.ink, fontSize: 14, fontWeight: "700" },
+  rewardHint: { marginTop: 8, marginLeft: 35, marginBottom: 12, color: colors.muted, fontSize: 12, lineHeight: 18 },
   robotRow: { minHeight: 48, alignSelf: "flex-start", marginTop: 14, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 10, borderWidth: 1, borderColor: colors.line, borderRadius: 7 },
   checkbox: { width: 20, height: 20, borderRadius: 4, borderWidth: 1, borderColor: colors.muted, alignItems: "center", justifyContent: "center" },
   checkboxChecked: { backgroundColor: colors.brand, borderColor: colors.brand },
