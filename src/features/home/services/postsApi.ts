@@ -54,7 +54,7 @@ function asString(value: unknown): string | undefined {
 function normalizeImage(value?: string) {
   if (!value) return "";
   if (/^https?:\/\//i.test(value)) return value;
-  return \`https://storage.axtar.az/\${value.replace(/^\/+/, "")}\`;
+  return `https://storage.axtar.az/${value.replace(/^\/+/, "")}`;
 }
 
 function stripHtml(value: string) {
