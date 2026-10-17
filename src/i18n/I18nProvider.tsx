@@ -499,6 +499,13 @@ const translations: Record<string, Translation> = {
   "Avtomobilə baxmaq olar?": { en: "Can I come see the car?", ru: "Можно посмотреть автомобиль?" },
   "MacBook Pro": { en: "MacBook Pro", ru: "MacBook Pro" },
   "PlayStation 4": { en: "PlayStation 4", ru: "PlayStation 4" },
+  "Elanlar yüklənir...": { en: "Loading listings...", ru: "Загрузка объявлений..." },
+  "Elanları yükləmək mümkün olmadı": { en: "Could not load listings", ru: "Не удалось загрузить объявления" },
+  "Yenidən yoxla": { en: "Try again", ru: "Повторить" },
+  "Daha çox elan": { en: "Load more listings", ru: "Загрузить ещё объявления" },
+  "Telefon nömrəsi mövcud deyil": { en: "Phone number is unavailable", ru: "Номер телефона недоступен" },
+  "Elan haqqında ətraflı məlumat əlavə edilməyib.": { en: "No detailed description was provided.", ru: "Подробное описание не добавлено." },
+  "Aktiv": { en: "Active", ru: "Активно" },
   "Xəyyam": { en: "Khayyam", ru: "Хайям" },
 };
 
