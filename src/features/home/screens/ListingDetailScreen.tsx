@@ -32,7 +32,7 @@ export function ListingDetailScreen({ listing, relatedListings: allListings, onB
   const galleryImages = listing.images?.length ? listing.images : [listing.image];
   const related = (allListings ?? listings).filter((item) => item.id !== listing.id).slice(0, 2);
   const phoneNumber = listing.phone ?? (listing.slug ? "" : "+994 55 245 89 79");
-  const phoneUri = phoneNumber.replace(/[^\\d+]/g, "");
+  const phoneUri = phoneNumber.replace(/[^\d+]/g, "");
   const callSeller = () => phoneUri ? openUrl(`tel:${phoneUri}`) : Alert.alert(t("Telefon nömrəsi mövcud deyil"));
   const messageSeller = () => phoneUri ? openUrl(`sms:${phoneUri}`) : Alert.alert(t("Telefon nömrəsi mövcud deyil"));
 
