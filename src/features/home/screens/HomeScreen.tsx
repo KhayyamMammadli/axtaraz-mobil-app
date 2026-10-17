@@ -23,11 +23,12 @@ import { BusinessProfileScreen } from "./BusinessProfileScreen";
 import { AuthScreen } from "./AuthScreen";
 import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
-import { BlogDetailScreen } from "./BlogDetailScreen";
+import { BlogDetailScreen, type BlogPost } from "./BlogDetailScreen";
 import { MessagesScreen } from "./MessagesScreen";
 import { feedTabs, ownershipCover, type Business, type Listing } from "../data/homeData";
 import { fetchOwnerships } from "../services/ownershipsApi";
 import { fetchProducts } from "../services/productsApi";
+import { fetchPosts } from "../services/postsApi";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
 
@@ -36,11 +37,15 @@ type BottomTabId = "home" | "favorites" | "messages" | "profile";
 
 const promoImage = "https://axtar.az/img/hand.svg";
 
-const homeBlogs = [
-  { id: "post-3", category: "Elektronika", title: "Test", excerpt: "test", date: "16.08.2026", listings: "143 uyğun elan", image: "https://storage.axtar.az/uploads/posts/min/2026/08/16/6a81c8c682955-8c473ea6eaaec3447d728283aea346a7.png" },
-  { id: "post-7", category: "Bloq kateqoriyası", title: "test blog 7", excerpt: "SEO", date: "10.06.2026", listings: "259 uyğun elan", image: "https://storage.axtar.az/uploads/posts/min/2026/06/10/6a292ee80429a-a242d5f7bd988b2edbdfeb0b1931e8dd.png" },
-  { id: "post-6", category: "Bloq kateqoriyası", title: "blog test 6", excerpt: "test", date: "10.06.2026", listings: "222 uyğun elan", image: "https://storage.axtar.az/uploads/posts/min/2026/06/10/6a29275c18122-c2d40615727189a2200b6088299fd16b.png" },
-];
+function formatBlogDate(value: string | undefined, language: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const locale = language === "ru" ? "ru-RU" : language === "en" ? "en-GB" : "az-AZ";
+  return date.toLocaleDateString(locale);
+}
+
+
 
 export function HomeScreen() {
   const { t, language } = useI18n();
@@ -49,7 +54,7 @@ export function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [selectedBlog, setSelectedBlog] = useState<(typeof homeBlogs)[number] | null>(null);
+  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const [messagesVisible, setMessagesVisible] = useState(false);
   const [authVisible, setAuthVisible] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -65,6 +70,9 @@ export function HomeScreen() {
   const [businessList, setBusinessList] = useState<Business[]>([]);
   const [businessesLoading, setBusinessesLoading] = useState(true);
   const [businessesError, setBusinessesError] = useState(false);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [blogsLoading, setBlogsLoading] = useState(true);
+  const [blogsError, setBlogsError] = useState(false);
   const businessCardWidth = (Dimensions.get("window").width - 42) / 2;
   const bottomBarTranslateY = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
@@ -110,6 +118,23 @@ export function HomeScreen() {
   useEffect(() => {
     void loadBusinesses();
   }, [loadBusinesses]);
+
+  const loadBlogs = useCallback(async () => {
+    setBlogsLoading(true);
+    try {
+      const result = await fetchPosts(1);
+      setBlogPosts(result.posts);
+      setBlogsError(false);
+    } catch {
+      setBlogsError(true);
+    } finally {
+      setBlogsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadBlogs();
+  }, [loadBlogs]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentY = Math.max(0, event.nativeEvent.contentOffset.y);
@@ -166,7 +191,7 @@ export function HomeScreen() {
     return (
       <BlogDetailScreen
         blog={selectedBlog}
-        images={homeBlogs.map((blog) => blog.image)}
+        images={selectedBlog.images?.length ? selectedBlog.images : [selectedBlog.image]}
         onBack={() => setSelectedBlog(null)}
       />
     );
@@ -386,26 +411,34 @@ export function HomeScreen() {
             <Text style={styles.sectionTitle}>{t("Bloglar")}</Text>
             <Text style={styles.sectionSubtitle}>{t("Daha düzgün qərar verməyiniz üçün faydalı bloglar")}</Text>
           </View>
-          <Pressable style={styles.seeAll} onPress={() => Alert.alert(t("Bloglar"), t("Bloglar növbəti mərhələdə açılacaq."))}>
-            <Text style={styles.seeAllText}>{t("Hamısına bax")}</Text>
-            <Ionicons name="arrow-forward" size={14} color={colors.brand} />
+          <Pressable style={styles.seeAll} onPress={() => void loadBlogs()} accessibilityRole="button">
+            <Text style={styles.seeAllText}>{t("Yenilə")}</Text>
+            <Ionicons name="refresh" size={14} color={colors.brand} />
           </Pressable>
         </View>
         <ScrollView horizontal nestedScrollEnabled directionalLockEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.blogRow}>
-          {homeBlogs.map((blog) => (
+          {blogsLoading && blogPosts.length === 0 ? (
+            <View style={styles.blogLoadState}><ActivityIndicator color={colors.brand} /></View>
+          ) : blogsError && blogPosts.length === 0 ? (
+            <Pressable onPress={() => void loadBlogs()} style={styles.blogLoadState} accessibilityRole="button">
+              <Text style={styles.blogLoadText}>{t("Blogları yükləmək alınmadı")} · {t("Yenidən yoxla")}</Text>
+            </Pressable>
+          ) : blogPosts.length === 0 ? (
+            <View style={styles.blogLoadState}><Text style={styles.blogLoadText}>{t("Blog tapılmadı")}</Text></View>
+          ) : blogPosts.map((blog) => (
             <Pressable key={blog.id} style={styles.blogCard} onPress={() => setSelectedBlog(blog)}>
               <Image source={{ uri: blog.image }} style={styles.blogImage} resizeMode="cover" />
               <View style={styles.blogBody}>
-                <Text style={styles.blogCategory}>{t(blog.category)}</Text>
+                <Text style={styles.blogCategory} numberOfLines={1}>{t(blog.category)}</Text>
                 <Text style={styles.blogTitle} numberOfLines={1}>{t(blog.title)}</Text>
-                <Text style={styles.blogExcerpt} numberOfLines={1}>{t(blog.excerpt)}</Text>
+                <Text style={styles.blogExcerpt} numberOfLines={2}>{t(blog.excerpt)}</Text>
                 <View style={styles.blogMeta}>
-                  <Text style={styles.blogDate}>{blog.date}</Text>
-                  <Text style={styles.blogListings}>{t(blog.listings)}</Text>
+                  <Text style={styles.blogDate}>{formatBlogDate(blog.createdAt, language)}</Text>
+                  <View style={styles.blogViews}><Ionicons name="eye-outline" size={13} color={colors.muted} /><Text style={styles.blogListings}>{blog.viewCount ?? 0}</Text></View>
                 </View>
               </View>
             </Pressable>
-          ))}
+          )) }
         </ScrollView>
         <Text style={styles.footerNote}>{t("Azərbaycanın ən yeni, ən sərfəli və ən yenilikçi elan platforması.")}</Text>
       </ScrollView>
@@ -514,6 +547,9 @@ const styles = StyleSheet.create({
   loadMoreText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
   blogHeading: { marginTop: 25, marginBottom: 4, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   blogRow: { paddingHorizontal: 15, paddingTop: 10, gap: 10 },
+  blogLoadState: { width: 252, minHeight: 206, alignItems: "center", justifyContent: "center", padding: 16, borderRadius: 14, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white },
+  blogLoadText: { color: colors.muted, fontSize: 12, fontWeight: "600", textAlign: "center" },
+  blogViews: { flexDirection: "row", alignItems: "center", gap: 3 },
   blogCard: { width: 252, overflow: "hidden", borderRadius: 14, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white },
   blogImage: { width: "100%", height: 124, backgroundColor: colors.soft },
   blogBody: { padding: 11 },
