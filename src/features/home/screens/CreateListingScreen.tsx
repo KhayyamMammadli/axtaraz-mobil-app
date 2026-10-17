@@ -53,7 +53,7 @@ export function CreateListingScreen({ onBack }: CreateListingScreenProps) {
   const [city, setCity] = useState("");
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
-  const [sameHours, setSameHours] = useState(true);
+  const [sameHours, setSameHours] = useState(false);
   const [sameStart, setSameStart] = useState("09:00");
   const [sameEnd, setSameEnd] = useState("18:00");
   const [days, setDays] = useState<string[]>(weekdays);
@@ -472,7 +472,7 @@ function ListingPreview({ title, price, city, description, address, phone, onEdi
             </View>
             <View style={styles.activeRow}><Ionicons name="checkmark-circle" size={17} color={colors.green} /><Text style={styles.activeText}>{t("Aktivdir")}</Text></View>
             <OutlineAction icon="heart-outline" title={t("İzlə")} />
-            <OutlineAction icon="call" title="+994 " + (phone || "50 000 00 00")} />
+            <OutlineAction icon="call" title={"+994 " + (phone || "50 000 00 00")} />
             <OutlineAction icon="chatbubble" title={t("Mesaj yaz")} />
             <View style={styles.addressCard}>
               <View style={styles.addressHeader}><Text style={styles.addressTitle}>{t("Ünvan")}</Text><Text style={styles.mapLink}>{t("Xəritədə göstər")} →</Text></View>
