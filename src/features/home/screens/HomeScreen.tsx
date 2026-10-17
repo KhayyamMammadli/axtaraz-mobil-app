@@ -54,6 +54,7 @@ export function HomeScreen() {
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
+  const [listingTypeVisible, setListingTypeVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
@@ -400,7 +401,7 @@ export function HomeScreen() {
           <View style={styles.promoCopy}>
             <Text style={styles.promoTitle}>{t("Axtar.az'da elan yerləşdir, satışların artsın.")}</Text>
             <Text style={styles.promoSubtitle}>{t("Yeni alıcılara çatmaq üçün elanını paylaş.")}</Text>
-            <Pressable style={styles.promoButton} onPress={() => Alert.alert(t("Yeni elan"), t("Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq."))}>
+            <Pressable style={styles.promoButton} onPress={() => setListingTypeVisible(true)}>
               <Ionicons name="add" size={17} color={colors.white} />
               <Text style={styles.promoButtonText}>{t("Yeni")}</Text>
             </Pressable>
@@ -486,11 +487,13 @@ export function HomeScreen() {
                   style={[styles.createAction, index === 0 && styles.createActionFeatured]}
                   onPress={() => {
                     setCreateMenuVisible(false);
-                    const message = action.title === "Yeni elan"
-                      ? "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq."
-                      : action.title === "Yeni biznes"
-                        ? "Biznes yaratma demo rejimində aktiv deyil."
-                        : "Blog yaratma demo rejimində aktiv deyil.";
+                    if (action.title === "Yeni elan") {
+                      setListingTypeVisible(true);
+                      return;
+                    }
+                    const message = action.title === "Yeni biznes"
+                      ? "Biznes yaratma demo rejimində aktiv deyil."
+                      : "Blog yaratma demo rejimində aktiv deyil.";
                     Alert.alert(t(action.title), t(message));
                   }}
                   accessibilityRole="button"
@@ -507,6 +510,63 @@ export function HomeScreen() {
               ))}
               <View style={{ height: insets.bottom ? 4 : 10 }} />
             </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={listingTypeVisible}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setListingTypeVisible(false)}
+      >
+        <View style={styles.listingTypeModalRoot}>
+          <Pressable
+            style={styles.listingTypeBackdrop}
+            onPress={() => setListingTypeVisible(false)}
+            accessibilityRole="button"
+            accessibilityLabel={t("Bağla")}
+          />
+          <View style={styles.listingTypeCard}>
+            <View style={styles.listingTypeHeader}>
+              <Pressable
+                onPress={() => {
+                  setListingTypeVisible(false);
+                  setCreateMenuVisible(true);
+                }}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel={t("Geri")}
+              >
+                <Ionicons name="arrow-back" size={23} color={colors.ink} />
+              </Pressable>
+              <Text style={styles.listingTypeHeading}>{t("Yeni elan")}</Text>
+              <View style={styles.listingTypeHeaderSpacer} />
+            </View>
+            {([
+              { title: "Təklif edilir", subtitle: "Məhsul və ya xidmət təklif edirəm", icon: "pricetag" as const },
+              { title: "Axtarılır", subtitle: "Məhsul, xidmət və ya əmlak axtarıram", icon: "search" as const },
+              { title: "İtkin", subtitle: "İtki barədə elan yerləşdirirəm", icon: "alert-circle" as const },
+            ]).map((item, index) => (
+              <Pressable
+                key={item.title}
+                style={[styles.listingTypeRow, index < 2 && styles.listingTypeRowBorder]}
+                onPress={() => {
+                  setListingTypeVisible(false);
+                  Alert.alert(t(item.title), t("Elan yaratma formu növbəti mərhələdə əlavə olunacaq."));
+                }}
+                accessibilityRole="button"
+              >
+                <View style={styles.listingTypeIcon}>
+                  <Ionicons name={item.icon} size={23} color={colors.brand} />
+                </View>
+                <View style={styles.listingTypeCopy}>
+                  <Text style={styles.listingTypeTitle}>{t(item.title)}</Text>
+                  <Text style={styles.listingTypeSubtitle}>{t(item.subtitle)}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.ink} />
+              </Pressable>
+            ))}
           </View>
         </View>
       </Modal>
@@ -638,5 +698,18 @@ const styles = StyleSheet.create({
   createActionCopy: { flex: 1, gap: 3 },
   createActionTitle: { color: colors.ink, fontSize: 14, fontWeight: "700" },
   createActionSubtitle: { color: colors.muted, fontSize: 11 },
+  listingTypeModalRoot: { flex: 1, justifyContent: "center", paddingHorizontal: 22 },
+  listingTypeBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(22, 26, 36, 0.38)" },
+  listingTypeCard: { paddingHorizontal: 18, paddingTop: 8, borderRadius: 28, backgroundColor: colors.white, shadowColor: "#121622", shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.18, shadowRadius: 24, elevation: 18 },
+  listingTypeHeader: { height: 67, flexDirection: "row", alignItems: "center", gap: 18, borderBottomWidth: 1, borderBottomColor: colors.line },
+  listingTypeHeading: { flex: 1, color: colors.ink, fontSize: 19, fontWeight: "700", letterSpacing: -0.3 },
+  listingTypeHeaderSpacer: { width: 23 },
+  listingTypeRow: { minHeight: 112, flexDirection: "row", alignItems: "center", gap: 16 },
+  listingTypeRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.line },
+  listingTypeIcon: { width: 42, alignItems: "center", justifyContent: "center" },
+  listingTypeCopy: { flex: 1, gap: 8 },
+  listingTypeTitle: { color: colors.ink, fontSize: 17, fontWeight: "700" },
+  listingTypeSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 18 },
+
 
 });
