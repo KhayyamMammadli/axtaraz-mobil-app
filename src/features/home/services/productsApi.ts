@@ -40,7 +40,7 @@ export type ProductsPage = {
 
 function formatPrice(value: ApiProduct["price"]) {
   const amount = Number(value ?? 0);
-  if (!Number.isFinite(amount)) return "Razılaşma yolu ilə";
+  if (!Number.isFinite(amount)) return "—";
   return `${Math.round(amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ₼`;
 }
 
