@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   tabsViewport: { height: 56, flexGrow: 0, flexShrink: 0, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
   tabs: { height: 55, flexGrow: 0, flexShrink: 0 },
   tabsContent: { height: 55, paddingHorizontal: 18, flexDirection: "row", alignItems: "center" },
-  tab: { width: 118, height: 55, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "transparent" },
+  tab: { width: 150, height: 55, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", borderBottomWidth: 3, borderBottomColor: "transparent" },
   tabActive: { borderBottomColor: colors.brand },
   tabText: { color: colors.muted, fontSize: 14, fontWeight: "500" },
   tabTextActive: { color: colors.brand },
