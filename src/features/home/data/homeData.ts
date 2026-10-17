@@ -1,11 +1,19 @@
 export type Listing = {
   id: string;
+  slug?: string;
   title: string;
+  description?: string;
   price: string;
   location: string;
   age: string;
   image: string;
+  images?: string[];
   badge?: string;
+  category?: string;
+  viewCount?: number;
+  startedAt?: string;
+  status?: string;
+  phone?: string;
 };
 
 export const categories = [
