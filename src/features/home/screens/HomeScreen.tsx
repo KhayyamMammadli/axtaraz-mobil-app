@@ -5,6 +5,7 @@ import {
   Animated,
   Dimensions,
   Image,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -52,6 +53,7 @@ export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [createMenuVisible, setCreateMenuVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
@@ -451,10 +453,67 @@ export function HomeScreen() {
         }}
       />
       <MenuModal visible={menuVisible} onClose={() => setMenuVisible(false)} />
+      <Modal
+        visible={createMenuVisible}
+        transparent
+        animationType="slide"
+        statusBarTranslucent
+        onRequestClose={() => setCreateMenuVisible(false)}
+      >
+        <View style={styles.createModalRoot}>
+          <Pressable
+            style={styles.createBackdrop}
+            onPress={() => setCreateMenuVisible(false)}
+            accessibilityRole="button"
+            accessibilityLabel={t("Bağla")}
+          />
+          <View style={[styles.createSheetPosition, { bottom: 76 + insets.bottom }]}>
+            <View style={styles.createSheet}>
+              <View style={styles.createHandle} />
+              <View style={styles.createHeadingRow}>
+                <Text style={styles.createHeading}>{t("Nə yaratmaq istəyirsiniz?")}</Text>
+                <Pressable onPress={() => setCreateMenuVisible(false)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("Bağla")}>
+                  <Ionicons name="close" size={21} color={colors.muted} />
+                </Pressable>
+              </View>
+              {([
+                { title: "Yeni elan", icon: "megaphone-outline" as const, subtitle: "Elan yerləşdir" },
+                { title: "Yeni biznes", icon: "storefront-outline" as const, subtitle: "Biznes səhifəsi yarat" },
+                { title: "Yeni blog", icon: "newspaper-outline" as const, subtitle: "Blog yazısı paylaş" },
+              ]).map((action, index) => (
+                <Pressable
+                  key={action.title}
+                  style={[styles.createAction, index === 0 && styles.createActionFeatured]}
+                  onPress={() => {
+                    setCreateMenuVisible(false);
+                    const message = action.title === "Yeni elan"
+                      ? "Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq."
+                      : action.title === "Yeni biznes"
+                        ? "Biznes yaratma demo rejimində aktiv deyil."
+                        : "Blog yaratma demo rejimində aktiv deyil.";
+                    Alert.alert(t(action.title), t(message));
+                  }}
+                  accessibilityRole="button"
+                >
+                  <View style={[styles.createActionIcon, index === 0 && styles.createActionIconFeatured]}>
+                    <Ionicons name={action.icon} size={20} color={index === 0 ? colors.brand : colors.ink} />
+                  </View>
+                  <View style={styles.createActionCopy}>
+                    <Text style={styles.createActionTitle}>{t(action.title)}</Text>
+                    <Text style={styles.createActionSubtitle}>{t(action.subtitle)}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+                </Pressable>
+              ))}
+              <View style={{ height: insets.bottom ? 4 : 10 }} />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <Animated.View style={[styles.bottomBar, { height: 66 + insets.bottom, paddingBottom: insets.bottom, transform: [{ translateY: bottomBarTranslateY }] }]}>
         <BottomItem icon="home" label="Ana səhifə" active={activeBottomTab === "home"} onPress={() => chooseBottomTab("home")} />
         <BottomItem icon="heart" label="Seçilmişlər" active={activeBottomTab === "favorites"} onPress={() => chooseBottomTab("favorites")} />
-        <Pressable style={styles.addButton} onPress={() => Alert.alert(t("Yeni elan"), t("Elan yerləşdirmə növbəti mərhələdə əlavə olunacaq."))} accessibilityRole="button" accessibilityLabel={t("Yeni elan")}>
+        <Pressable style={styles.addButton} onPress={() => setCreateMenuVisible(true)} accessibilityRole="button" accessibilityLabel={t("Yeni elan")} accessibilityState={{ expanded: createMenuVisible }}>
           <Ionicons name="add" size={27} color={colors.brand} />
         </Pressable>
         <BottomItem icon="chatbubble-ellipses" label="Mesajlarım" active={activeBottomTab === "messages"} onPress={() => chooseBottomTab("messages")} />
@@ -565,4 +624,19 @@ const styles = StyleSheet.create({
   bottomLabel: { color: colors.muted, fontSize: 8, fontWeight: "600", maxWidth: "100%" },
   bottomLabelActive: { color: colors.brand, fontWeight: "700" },
   addButton: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF9F7", marginHorizontal: 5, marginTop: -20, borderWidth: 2, borderColor: "#E64B5D" },
+  createModalRoot: { flex: 1, justifyContent: "flex-end" },
+  createBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(22, 26, 36, 0.34)" },
+  createSheetPosition: { position: "absolute", left: 14, right: 14 },
+  createSheet: { paddingHorizontal: 16, paddingTop: 10, borderRadius: 24, backgroundColor: colors.white, shadowColor: "#1A1D25", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.16, shadowRadius: 20, elevation: 16 },
+  createHandle: { alignSelf: "center", width: 38, height: 4, borderRadius: 2, marginBottom: 15, backgroundColor: "#D9DCE3" },
+  createHeadingRow: { minHeight: 30, marginBottom: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  createHeading: { color: colors.ink, fontSize: 16, fontWeight: "700", letterSpacing: -0.2 },
+  createAction: { minHeight: 66, marginBottom: 8, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white },
+  createActionFeatured: { borderColor: "#F0A0AA", backgroundColor: "#FFF7F8" },
+  createActionIcon: { width: 42, height: 42, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: colors.soft },
+  createActionIconFeatured: { backgroundColor: "#FFE8EB" },
+  createActionCopy: { flex: 1, gap: 3 },
+  createActionTitle: { color: colors.ink, fontSize: 14, fontWeight: "700" },
+  createActionSubtitle: { color: colors.muted, fontSize: 11 },
+
 });
