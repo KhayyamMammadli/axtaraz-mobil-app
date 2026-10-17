@@ -26,6 +26,7 @@ import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { BlogDetailScreen, type BlogPost } from "./BlogDetailScreen";
 import { MessagesScreen } from "./MessagesScreen";
+import { CreateListingScreen } from "./CreateListingScreen";
 import { feedTabs, ownershipCover, type Business, type Listing } from "../data/homeData";
 import { fetchOwnerships } from "../services/ownershipsApi";
 import { fetchProducts } from "../services/productsApi";
@@ -55,6 +56,7 @@ export function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
   const [listingTypeVisible, setListingTypeVisible] = useState(false);
+  const [listingCreationVisible, setListingCreationVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
@@ -189,6 +191,17 @@ export function HomeScreen() {
     };
     if (tab !== "home") Alert.alert(t(labels[tab]), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."));
   };
+
+  if (listingCreationVisible) {
+    return (
+      <CreateListingScreen
+        onBack={() => {
+          setListingCreationVisible(false);
+          setTimeout(() => setListingTypeVisible(true), 300);
+        }}
+      />
+    );
+  }
 
   if (selectedBlog) {
     return (
@@ -553,6 +566,10 @@ export function HomeScreen() {
                 style={[styles.listingTypeRow, index < 2 && styles.listingTypeRowBorder]}
                 onPress={() => {
                   setListingTypeVisible(false);
+                  if (item.title === "Təklif edilir") {
+                    setTimeout(() => setListingCreationVisible(true), 300);
+                    return;
+                  }
                   Alert.alert(t(item.title), t("Elan yaratma formu növbəti mərhələdə əlavə olunacaq."));
                 }}
                 accessibilityRole="button"
