@@ -57,7 +57,7 @@ export function HomeScreen() {
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
   const [listingTypeVisible, setListingTypeVisible] = useState(false);
   const [listingCreationVisible, setListingCreationVisible] = useState(false);
-  const [listingIntent, setListingIntent] = useState<"offer" | "search">("offer");
+  const [listingIntent, setListingIntent] = useState<"offer" | "search" | "lost">("offer");
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
@@ -566,8 +566,8 @@ export function HomeScreen() {
                 style={[styles.listingTypeRow, index < 2 && styles.listingTypeRowBorder]}
                 onPress={() => {
                   setListingTypeVisible(false);
-                  if (item.title === "Təklif edilir" || item.title === "Axtarılır") {
-                    setListingIntent(item.title === "Axtarılır" ? "search" : "offer");
+                  if (item.title === "Təklif edilir" || item.title === "Axtarılır" || item.title === "İtkin") {
+                    setListingIntent(item.title === "Axtarılır" ? "search" : item.title === "İtkin" ? "lost" : "offer");
                     setTimeout(() => setListingCreationVisible(true), 300);
                     return;
                   }
