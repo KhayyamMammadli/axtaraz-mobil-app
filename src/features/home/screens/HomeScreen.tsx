@@ -27,6 +27,7 @@ import { ListingDetailScreen } from "./ListingDetailScreen";
 import { BlogDetailScreen, type BlogPost } from "./BlogDetailScreen";
 import { MessagesScreen } from "./MessagesScreen";
 import { CreateListingScreen } from "./CreateListingScreen";
+import { BusinessLandingScreen } from "./BusinessLandingScreen";
 import { feedTabs, ownershipCover, type Business, type Listing } from "../data/homeData";
 import { fetchOwnerships } from "../services/ownershipsApi";
 import { fetchProducts } from "../services/productsApi";
@@ -55,6 +56,7 @@ export function HomeScreen() {
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
+  const [businessLandingVisible, setBusinessLandingVisible] = useState(false);
   const [listingTypeVisible, setListingTypeVisible] = useState(false);
   const [listingCreationVisible, setListingCreationVisible] = useState(false);
   const [listingIntent, setListingIntent] = useState<"offer" | "search" | "lost">("offer");
@@ -192,6 +194,10 @@ export function HomeScreen() {
     };
     if (tab !== "home") Alert.alert(t(labels[tab]), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."));
   };
+
+  if (businessLandingVisible) {
+    return <BusinessLandingScreen onBack={() => setBusinessLandingVisible(false)} />;
+  }
 
   if (listingCreationVisible) {
     return (
@@ -506,10 +512,11 @@ export function HomeScreen() {
                       setTimeout(() => setListingTypeVisible(true), 300);
                       return;
                     }
-                    const message = action.title === "Yeni biznes"
-                      ? "Biznes yaratma demo rejimində aktiv deyil."
-                      : "Blog yaratma demo rejimində aktiv deyil.";
-                    Alert.alert(t(action.title), t(message));
+                    if (action.title === "Yeni biznes") {
+                      setBusinessLandingVisible(true);
+                      return;
+                    }
+                    Alert.alert(t(action.title), t("Blog yaratma demo rejimində aktiv deyil."));
                   }}
                   accessibilityRole="button"
                 >
