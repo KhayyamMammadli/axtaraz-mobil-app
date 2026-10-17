@@ -1,5 +1,6 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Animated,
   Dimensions,
@@ -24,7 +25,8 @@ import { AccountScreen } from "./AccountScreen";
 import { ListingDetailScreen } from "./ListingDetailScreen";
 import { BlogDetailScreen } from "./BlogDetailScreen";
 import { MessagesScreen } from "./MessagesScreen";
-import { businesses, feedTabs, listings, ownershipCover } from "../data/homeData";
+import { businesses, feedTabs, ownershipCover, type Listing } from "../data/homeData";
+import { fetchProducts } from "../services/productsApi";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
 
@@ -45,7 +47,7 @@ export function HomeScreen() {
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<(typeof businesses)[number] | null>(null);
-  const [selectedListing, setSelectedListing] = useState<(typeof listings)[number] | null>(null);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<(typeof homeBlogs)[number] | null>(null);
   const [messagesVisible, setMessagesVisible] = useState(false);
   const [authVisible, setAuthVisible] = useState(false);
@@ -54,11 +56,39 @@ export function HomeScreen() {
   const [activeFeed, setActiveFeed] = useState<FeedTabId>("premium");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomTabId>("home");
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [productListings, setProductListings] = useState<Listing[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [productsError, setProductsError] = useState(false);
+  const [productsPage, setProductsPage] = useState(1);
+  const [productsLastPage, setProductsLastPage] = useState(1);
   const businessCardWidth = (Dimensions.get("window").width - 42) / 2;
   const bottomBarTranslateY = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
   const lastScrollY = useRef(0);
   const bottomBarHidden = useRef(false);
+
+  const loadProducts = useCallback(async (page = 1) => {
+    setProductsLoading(true);
+    try {
+      const result = await fetchProducts(page);
+      setProductListings((current) => {
+        if (page === 1) return result.listings;
+        const knownIds = new Set(current.map((item) => item.id));
+        return [...current, ...result.listings.filter((item) => !knownIds.has(item.id))];
+      });
+      setProductsPage(result.currentPage);
+      setProductsLastPage(result.lastPage);
+      setProductsError(false);
+    } catch {
+      setProductsError(true);
+    } finally {
+      setProductsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadProducts(1);
+  }, [loadProducts]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentY = Math.max(0, event.nativeEvent.contentOffset.y);
@@ -84,9 +114,9 @@ export function HomeScreen() {
 
   const visibleListings = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase(language);
-    if (!normalizedQuery) return listings;
-    return listings.filter((item) => t(item.title).toLocaleLowerCase(language).includes(normalizedQuery));
-  }, [query, language, t]);
+    if (!normalizedQuery) return productListings;
+    return productListings.filter((item) => t(item.title).toLocaleLowerCase(language).includes(normalizedQuery));
+  }, [productListings, query, language, t]);
 
   const toggleSaved = (id: string, saved: boolean) => {
     setSavedIds((current) => saved ? [...current, id] : current.filter((savedId) => savedId !== id));
@@ -122,7 +152,7 @@ export function HomeScreen() {
   }
 
   if (selectedListing) {
-    return <ListingDetailScreen listing={selectedListing} onBack={() => setSelectedListing(null)} onSelectListing={setSelectedListing} />;
+    return <ListingDetailScreen listing={selectedListing} relatedListings={productListings} onBack={() => setSelectedListing(null)} onSelectListing={setSelectedListing} />;
   }
 
   if (selectedBusiness) {
@@ -266,7 +296,20 @@ export function HomeScreen() {
         </ScrollView>
         </View>
 
-        {visibleListings.length > 0 ? (
+        {productsLoading && productListings.length === 0 ? (
+          <View style={styles.emptyState}>
+            <ActivityIndicator color={colors.brand} />
+            <Text style={styles.emptyText}>{t("Elanlar yüklənir...")}</Text>
+          </View>
+        ) : productsError && productListings.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="cloud-offline-outline" size={28} color={colors.subtle} />
+            <Text style={styles.emptyTitle}>{t("Elanları yükləmək mümkün olmadı")}</Text>
+            <Pressable onPress={() => void loadProducts(1)} style={styles.retryButton}>
+              <Text style={styles.retryText}>{t("Yenidən yoxla")}</Text>
+            </Pressable>
+          </View>
+        ) : visibleListings.length > 0 ? (
           <View style={styles.listingGrid}>
             {Array.from({ length: Math.ceil(visibleListings.length / 2) }, (_, rowIndex) => (
               <View key={`listing-row-${rowIndex}`} style={styles.listingRow}>
@@ -283,6 +326,17 @@ export function HomeScreen() {
             <Text style={styles.emptyText}>{t("Axtarış sözünü dəyişib yenidən yoxlayın.")}</Text>
           </View>
         )}
+
+        {productsPage < productsLastPage ? (
+          <Pressable
+            disabled={productsLoading}
+            onPress={() => void loadProducts(productsPage + 1)}
+            style={styles.loadMoreButton}
+          >
+            {productsLoading ? <ActivityIndicator size="small" color={colors.brand} /> : null}
+            <Text style={styles.loadMoreText}>{t(productsLoading ? "Elanlar yüklənir..." : "Daha çox elan")}</Text>
+          </Pressable>
+        ) : null}
 
         <View style={styles.promoCard}>
           <View style={styles.promoStripes}>
@@ -423,6 +477,10 @@ const styles = StyleSheet.create({
   emptyState: { alignItems: "center", justifyContent: "center", marginHorizontal: 15, paddingVertical: 32, borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.soft },
   emptyTitle: { marginTop: 8, color: colors.ink, fontWeight: "700", fontSize: 14 },
   emptyText: { marginTop: 3, color: colors.muted, fontSize: 11 },
+  retryButton: { marginTop: 10, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10, backgroundColor: "#FFF0F2" },
+  retryText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
+  loadMoreButton: { alignSelf: "center", minHeight: 40, marginTop: 16, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: colors.line, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: colors.white },
+  loadMoreText: { color: colors.brand, fontSize: 12, fontWeight: "700" },
   blogHeading: { marginTop: 25, marginBottom: 4, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   blogRow: { paddingHorizontal: 15, paddingTop: 10, gap: 10 },
   blogCard: { width: 252, overflow: "hidden", borderRadius: 14, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white },
