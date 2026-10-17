@@ -47,7 +47,7 @@ export type OwnershipsPage = {
 
 function formatPhone(value?: string | null) {
   if (!value) return undefined;
-  const digits = value.replace(/\\D/g, "");
+  const digits = value.replace(/\D/g, "");
   if (digits.length === 10 && digits.startsWith("0")) {
     return `+994 ${digits.slice(1, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 8)} ${digits.slice(8)}`;
   }
