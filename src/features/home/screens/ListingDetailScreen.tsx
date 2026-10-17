@@ -18,9 +18,9 @@ import { listings, type Listing } from "../data/homeData";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
 
-type Props = { listing: Listing; onBack: () => void; onSelectListing: (listing: Listing) => void };
+type Props = { listing: Listing; relatedListings?: Listing[]; onBack: () => void; onSelectListing: (listing: Listing) => void };
 
-export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props) {
+export function ListingDetailScreen({ listing, relatedListings: allListings, onBack, onSelectListing }: Props) {
   const { t } = useI18n();
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [favorite, setFavorite] = useState(false);
@@ -29,8 +29,12 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
   const [hoursExpanded, setHoursExpanded] = useState(false);
   const [moreVisible, setMoreVisible] = useState(false);
   const insets = useSafeAreaInsets();
-  const galleryImages = [listing.image];
-  const related = listings.filter((item) => item.id !== listing.id).slice(0, 2);
+  const galleryImages = listing.images?.length ? listing.images : [listing.image];
+  const related = (allListings ?? listings).filter((item) => item.id !== listing.id).slice(0, 2);
+  const phoneNumber = listing.phone ?? (listing.slug ? "" : "+994 55 245 89 79");
+  const phoneUri = phoneNumber.replace(/[^\\d+]/g, "");
+  const callSeller = () => phoneUri ? openUrl(`tel:${phoneUri}`) : Alert.alert(t("Telefon nömrəsi mövcud deyil"));
+  const messageSeller = () => phoneUri ? openUrl(`sms:${phoneUri}`) : Alert.alert(t("Telefon nömrəsi mövcud deyil"));
 
   const openUrl = async (url: string) => {
     try {
@@ -94,35 +98,35 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t("Elan haqqında")}</Text>
           <Text style={styles.description} numberOfLines={descriptionExpanded ? undefined : 3}>
-            Keyfiyyətli və etibarlı məhsul. Ətraflı məlumat və qiymət üçün bizimlə əlaqə saxlayın. Bakı şəhəri və ətraf ərazilərə çatdırılma mümkündür.
+            {listing.description || t("Elan haqqında ətraflı məlumat əlavə edilməyib.")}
           </Text>
           <Pressable onPress={() => setDescriptionExpanded((value) => !value)} style={styles.moreTextButton}>
             <Text style={styles.moreText}>{descriptionExpanded ? "Daha az göstər" : "Davamını oxu"}</Text>
             <Ionicons name={descriptionExpanded ? "chevron-up" : "chevron-down"} size={16} color={colors.brand} />
           </Pressable>
           <View style={styles.specGrid}>
-            <Spec icon="pricetag-outline" label="Kateqoriya" value="Biznes və xidmətlər" />
+            <Spec icon="pricetag-outline" label="Kateqoriya" value={listing.category || "Biznes və xidmətlər"} />
             <Spec icon="location-outline" label="Şəhər" value={listing.location} />
             <Spec icon="calendar-outline" label="Yerləşdirilib" value={listing.age} />
-            <Spec icon="eye-outline" label="Baxış sayı" value="50" />
+            <Spec icon="eye-outline" label="Baxış sayı" value={String(listing.viewCount ?? 0)} />
           </View>
         </View>
 
         <View style={styles.statsCard}>
-          <Stat icon="eye-outline" value="50" label="baxış" />
-          <Stat icon="heart-outline" value="25" label="seçilmiş" />
-          <Stat icon="time-outline" value="22 gün" label="aktivdir" />
+          <Stat icon="eye-outline" value={String(listing.viewCount ?? 0)} label="baxış" />
+          <Stat icon="time-outline" value={listing.status === "active" ? t("Aktiv") : listing.status ?? "—"} label="Status" />
+          <Stat icon="calendar-outline" value={listing.age || "—"} label="Yerləşdirilib" />
           <Stat icon="pricetag-outline" value={listing.id} label="elan №" />
         </View>
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t("Əlaqə məlumatları")}</Text>
-          <Pressable onPress={() => openUrl("tel:+994552458979")} style={styles.contactRow}>
+          <Pressable onPress={callSeller} style={styles.contactRow}>
             <View style={[styles.contactIcon, { backgroundColor: "#EAF8F0" }]}><Ionicons name="call" size={19} color="#159B64" /></View>
-            <View style={styles.contactCopy}><Text style={styles.contactLabel}>{t("Telefon")}</Text><Text style={styles.contactValue}>{phoneExpanded ? "+994 55 245 89 79" : "Nömrəni göstər"}</Text></View>
+            <View style={styles.contactCopy}><Text style={styles.contactLabel}>{t("Telefon")}</Text><Text style={styles.contactValue}>{phoneExpanded ? phoneNumber || t("Telefon nömrəsi mövcud deyil") : phoneNumber ? t("Nömrəni göstər") : t("Telefon nömrəsi mövcud deyil")}</Text></View>
             <Ionicons name={phoneExpanded ? "eye-off-outline" : "eye-outline"} size={20} color={colors.muted} />
           </Pressable>
-          <Pressable onPress={() => setPhoneExpanded((value) => !value)} style={styles.revealTap}><Text style={styles.moreText}>{phoneExpanded ? "Nömrəni gizlət" : "Telefon nömrəsini göstər"}</Text></Pressable>
+          <Pressable onPress={() => setPhoneExpanded((value) => !value)} style={styles.revealTap} disabled={!phoneNumber}><Text style={styles.moreText}>{phoneExpanded ? "Nömrəni gizlət" : "Telefon nömrəsini göstər"}</Text></Pressable>
           <Pressable onPress={() => setHoursExpanded((value) => !value)} style={[styles.contactRow, styles.rowDivider]}>
             <View style={[styles.contactIcon, { backgroundColor: "#F2F4F7" }]}><Ionicons name="time-outline" size={20} color={colors.ink} /></View>
             <View style={styles.contactCopy}><Text style={styles.contactLabel}>{t("İş saatları")}</Text><Text style={styles.contactValue}>{t("Həftə içi · 09:00–18:00")}</Text>{hoursExpanded ? <Text style={styles.hoursHint}>{t("Şənbə 10:00–16:00 · Bazar bağlıdır")}</Text> : null}</View>
@@ -130,12 +134,12 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
           </Pressable>
         </View>
 
-        <View style={styles.card}>
+        {!listing.slug ? <View style={styles.card}>
           <View style={styles.ownerTop}><View style={styles.ownerAvatar}><Ionicons name="person" size={22} color={colors.brand} /></View><View style={styles.ownerCopy}><Text style={styles.ownerName}>{t("Alpha Alpha")}</Text><Text style={styles.metaText}>{t("Axtar.az üzvü")}</Text></View><Pressable style={styles.followButton} onPress={() => Alert.alert(t("İzlə"), t("İzləmək üçün hesabınıza daxil olun."))}><Text style={styles.followText}>{t("İzlə")}</Text></Pressable></View>
           <View style={styles.ownerActions}><Text style={styles.metaText}>{t("Digər elanlar: 4")}</Text><Pressable onPress={() => Alert.alert(t("Elanlar"), t("İstifadəçinin digər elanları açılacaq."))}><Text style={styles.moreText}>{t("Hamısına bax")}</Text></Pressable></View>
-        </View>
+        </View> : null}
 
-        <Pressable onPress={() => openUrl("https://maps.google.com/?q=Baku")} style={styles.mapCard}>
+        <Pressable onPress={() => openUrl(`https://maps.google.com/?q=${encodeURIComponent(listing.location)}`)} style={styles.mapCard}>
           <View style={styles.mapPattern}><Ionicons name="location" size={31} color={colors.brand} /></View>
           <View style={styles.mapCopy}><Text style={styles.sectionTitle}>{t("Ünvan")}</Text><Text style={styles.metaText}>{listing.location}, Azərbaycan</Text></View>
           <Ionicons name="open-outline" size={18} color={colors.muted} />
@@ -148,11 +152,11 @@ export function ListingDetailScreen({ listing, onBack, onSelectListing }: Props)
       </ScrollView>
 
       <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 10) }]}>
-        <Pressable onPress={() => openUrl("tel:+994552458979")} style={styles.callButton}><Ionicons name="call" size={19} color="#FFFFFF" /><Text style={styles.callText}>{t("Zəng et")}</Text></Pressable>
-        <Pressable onPress={() => openUrl("sms:+994552458979")} style={styles.messageButton}><Ionicons name="chatbubble" size={18} color={colors.brand} /><Text style={styles.messageText}>{t("Mesaj yaz")}</Text></Pressable>
+        <Pressable onPress={callSeller} style={styles.callButton}><Ionicons name="call" size={19} color="#FFFFFF" /><Text style={styles.callText}>{t("Zəng et")}</Text></Pressable>
+        <Pressable onPress={messageSeller} style={styles.messageButton}><Ionicons name="chatbubble" size={18} color={colors.brand} /><Text style={styles.messageText}>{t("Mesaj yaz")}</Text></Pressable>
       </View>
 
-      <GalleryViewerModal visible={galleryVisible} images={galleryImages} onClose={() => setGalleryVisible(false)} onCall={() => openUrl("tel:+994552458979")} isFavorite={favorite} onToggleFavorite={() => setFavorite((value) => !value)} />
+      <GalleryViewerModal visible={galleryVisible} images={galleryImages} onClose={() => setGalleryVisible(false)} onCall={callSeller} isFavorite={favorite} onToggleFavorite={() => setFavorite((value) => !value)} />
       {moreVisible ? <View style={styles.sheetBackdrop}>
         <Pressable style={StyleSheet.absoluteFill} onPress={() => setMoreVisible(false)} />
         <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 14) }]}>
