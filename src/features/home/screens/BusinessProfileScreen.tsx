@@ -15,11 +15,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme/colors";
 import { GalleryViewerModal } from "../components/GalleryViewerModal";
-import { ownershipCover } from "../data/homeData";
+import { ownershipCover, type Business } from "../data/homeData";
 import { useI18n } from "../../../i18n/I18nProvider";
 
 type Props = {
-  businessName: string;
+  business?: Business;
+  businessName?: string;
   onBack: () => void;
 };
 
@@ -35,11 +36,11 @@ const tabs: TabItem[] = [
 ];
 
 const categories = ["Bütün təkliflər (1)", "Nəqliyyat", "Elektronika"];
-const businessPhone = "+0509956663";
+const fallbackBusinessPhone = "+0509956663";
 const offerImage = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=85";
-const businessGalleryImages = [ownershipCover, offerImage];
+const fallbackBusinessGalleryImages = [ownershipCover, offerImage];
 
-export function BusinessProfileScreen({ businessName, onBack }: Props) {
+export function BusinessProfileScreen({ business, businessName: fallbackBusinessName, onBack }: Props) {
   const { t, language } = useI18n();
   const [activeTab, setActiveTab] = useState<BusinessTab>("about");
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
@@ -50,12 +51,17 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const insets = useSafeAreaInsets();
+  const businessName = business?.name ?? fallbackBusinessName ?? "Biznes";
+  const businessImage = business?.image || ownershipCover;
+  const businessGalleryImages = business?.images?.length ? business.images : fallbackBusinessGalleryImages;
+  const businessPhone = business?.phone ?? fallbackBusinessPhone;
+  const phoneUri = businessPhone.replace(/[^\\d+]/g, "");
 
   const showOffer = useMemo(() => {
     const matchesSearch = !search.trim() || t("BMW").toLocaleLowerCase(language).includes(search.trim().toLocaleLowerCase(language));
     const matchesCategory = selectedCategory !== "Elektronika";
-    return matchesSearch && matchesCategory;
-  }, [search, selectedCategory, language, t]);
+    return !business && matchesSearch && matchesCategory;
+  }, [business, search, selectedCategory, language, t]);
 
   const openLink = async (url: string) => {
     try {
@@ -93,31 +99,41 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.cover}>
-          <View style={styles.coverMark}>
-            <View style={styles.windmill}>
-              <View style={[styles.windmillBlade, styles.bladeTop]} />
-              <View style={[styles.windmillBlade, styles.bladeRight]} />
-              <View style={[styles.windmillBlade, styles.bladeBottom]} />
-              <View style={[styles.windmillBlade, styles.bladeLeft]} />
-              <View style={styles.windmillBase} />
+          {business?.image ? (
+            <Image source={{ uri: business.image }} style={styles.coverImage} resizeMode="cover" />
+          ) : (
+            <View style={styles.coverMark}>
+              <View style={styles.windmill}>
+                <View style={[styles.windmillBlade, styles.bladeTop]} />
+                <View style={[styles.windmillBlade, styles.bladeRight]} />
+                <View style={[styles.windmillBlade, styles.bladeBottom]} />
+                <View style={[styles.windmillBlade, styles.bladeLeft]} />
+                <View style={styles.windmillBase} />
+              </View>
+              <Text style={styles.coverBrand}>Kentus{"\n"}Farm</Text>
             </View>
-            <Text style={styles.coverBrand}>Kentus{"\n"}Farm</Text>
-          </View>
+          )}
         </View>
 
         <View style={styles.profileHeader}>
           <View style={styles.brandAvatar}>
-            <View style={[styles.windmill, styles.avatarWindmill]}>
-              <View style={[styles.windmillBlade, styles.bladeTop]} />
-              <View style={[styles.windmillBlade, styles.bladeRight]} />
-              <View style={[styles.windmillBlade, styles.bladeBottom]} />
-              <View style={[styles.windmillBlade, styles.bladeLeft]} />
-              <View style={styles.windmillBase} />
-            </View>
-            <Text style={styles.avatarBrand}>Kentus{"\n"}Farm</Text>
-            <View style={styles.verified}>
-              <Ionicons name="checkmark" size={13} color="#FFFFFF" />
-            </View>
+            {business?.image ? (
+              <Image source={{ uri: business.image }} style={styles.brandImage} resizeMode="cover" />
+            ) : (
+              <>
+                <View style={[styles.windmill, styles.avatarWindmill]}>
+                  <View style={[styles.windmillBlade, styles.bladeTop]} />
+                  <View style={[styles.windmillBlade, styles.bladeRight]} />
+                  <View style={[styles.windmillBlade, styles.bladeBottom]} />
+                  <View style={[styles.windmillBlade, styles.bladeLeft]} />
+                  <View style={styles.windmillBase} />
+                </View>
+                <Text style={styles.avatarBrand}>Kentus{"\n"}Farm</Text>
+                <View style={styles.verified}>
+                  <Ionicons name="checkmark" size={13} color="#FFFFFF" />
+                </View>
+              </>
+            )}
           </View>
 
           <Pressable
@@ -133,11 +149,9 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
 
           <Text style={styles.businessName}>{businessName}</Text>
           <View style={styles.statsRow}>
-            <Text style={styles.statText}>{t("1 elan")}</Text>
-            <Text style={styles.statDot}>·</Text>
-            <Text style={styles.statText}>{t("202 baxış")}</Text>
-            <Text style={styles.statDot}>·</Text>
-            <Text style={styles.statText}>{isFollowing ? "1 izləyici" : "0 izləyici"}</Text>
+            <Text style={styles.statText}>{business ? t(business.listings) : t("1 elan")}</Text>
+            {business?.category ? <><Text style={styles.statDot}>·</Text><Text style={styles.statText}>{business.category}</Text></> : null}
+            {!business ? <><Text style={styles.statDot}>·</Text><Text style={styles.statText}>{t("202 baxış")}</Text><Text style={styles.statDot}>·</Text><Text style={styles.statText}>{isFollowing ? "1 izləyici" : "0 izləyici"}</Text></> : null}
           </View>
         </View>
 
@@ -171,16 +185,14 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
             <View style={styles.aboutCard}>
               <Text style={styles.cardTitle}>{t("Haqqımızda")}</Text>
               <Text style={styles.aboutText}>
-                Məqsədimiz: keyfiyyətli elektronika və peşəkar xidmət. Mağazamızda məişət texnikası,
-                aksesuarlar və geniş çeşidli avadanlıqlar sizi gözləyir. Öncəliyimiz — məhsulun
-                keyfiyyəti və məmnuniyyətiniz. Xeyirli olsun!
+                {business?.description ?? "Məqsədimiz: keyfiyyətli elektronika və peşəkar xidmət. Mağazamızda məişət texnikası, aksesuarlar və geniş çeşidli avadanlıqlar sizi gözləyir."}
               </Text>
             </View>
             <ContactLine
               icon="call"
               text={businessPhone}
               color="#109B78"
-              onPress={() => openLink("tel:+0509956663")}
+              onPress={() => openLink(`tel:${phoneUri}`)}
             />
             <Pressable
               onPress={() => setHoursExpanded((current) => !current)}
@@ -190,7 +202,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
             >
               <Ionicons name="time-outline" size={23} color="#17213B" />
               <View style={styles.infoCopy}>
-                <Text style={styles.hoursText}>Çərşənbə axşamı, Çərşənbə, Cümə, Şənbə{"\n"}09:00 - 20:00</Text>
+                <Text style={styles.hoursText}>{business?.workDayNames?.length ? business.workDayNames.join(", ") : "Çərşənbə axşamı, Çərşənbə, Cümə, Şənbə"}{business ? "" : "\n09:00 - 20:00"}</Text>
                 {hoursExpanded ? (
                   <View style={styles.hoursList}>
                     <Text style={styles.hoursDetail}>{t("Bazar ertəsi · Bağlı")}</Text>
@@ -205,12 +217,12 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
               <Ionicons name={hoursExpanded ? "chevron-up" : "chevron-down"} size={19} color="#17213B" />
             </Pressable>
             <Pressable
-              onPress={() => openLink("https://maps.google.com/?q=Baku")}
+              onPress={() => openLink(business?.url ?? "https://maps.google.com/?q=Baku")}
               style={styles.infoRow}
               accessibilityRole="button"
             >
-              <Ionicons name="location" size={23} color="#17213B" />
-              <Text style={styles.locationText}>{t("Qeyd edilməyib")}</Text>
+              <Ionicons name={business?.url ? "globe-outline" : "location"} size={23} color="#17213B" />
+              <Text style={styles.locationText}>{business?.url ?? t("Qeyd edilməyib")}</Text>
               <Ionicons name="open-outline" size={19} color="#758097" />
             </Pressable>
 
@@ -268,11 +280,11 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
         ) : null}
       </ScrollView>
 
-      <GalleryViewerModal visible={galleryVisible} images={businessGalleryImages} initialIndex={galleryIndex} onClose={() => setGalleryVisible(false)} onCall={() => openLink("tel:+0509956663")} isFavorite={isSaved} onToggleFavorite={() => setIsSaved((current) => !current)} />
+      <GalleryViewerModal visible={galleryVisible} images={businessGalleryImages} initialIndex={galleryIndex} onClose={() => setGalleryVisible(false)} onCall={() => openLink(`tel:${phoneUri}`) isFavorite={isSaved} onToggleFavorite={() => setIsSaved((current) => !current)} />
 
       <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
-          onPress={() => openLink("tel:+0509956663")}
+          onPress={() => openLink(`tel:${phoneUri}`)
           style={styles.callButton}
           accessibilityRole="button"
           accessibilityLabel={t("Zəng et")}
@@ -281,7 +293,7 @@ export function BusinessProfileScreen({ businessName, onBack }: Props) {
           <Text style={styles.callButtonText}>{t("Zəng et")}</Text>
         </Pressable>
         <Pressable
-          onPress={() => openLink("sms:+0509956663")}
+          onPress={() => openLink(`sms:${phoneUri}`)
           style={styles.messageButton}
           accessibilityRole="button"
           accessibilityLabel={t("Mesaj yaz")}
@@ -463,7 +475,9 @@ const styles = StyleSheet.create({
   topTitle: { flex: 1, marginHorizontal: 14, color: "#17213B", fontSize: 16, fontWeight: "700" },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 20 },
-  cover: { height: 190, alignItems: "center", justifyContent: "center", backgroundColor: "#F0F1F3" },
+  cover: { height: 190, alignItems: "center", justifyContent: "center", backgroundColor: "#F0F1F3", overflow: "hidden" },
+  coverImage: { width: "100%", height: "100%" },
+  brandImage: { width: "100%", height: "100%", borderRadius: 56 },
   coverMark: { flexDirection: "row", alignItems: "center", gap: 20 },
   windmill: { width: 65, height: 65, position: "relative" },
   windmillBlade: { position: "absolute", width: 26, height: 26, backgroundColor: "#F24A16" },
