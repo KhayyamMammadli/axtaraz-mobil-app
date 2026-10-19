@@ -67,7 +67,7 @@ export function LocationFilterModal({
   useEffect(() => {
     if (!visible) return;
     setView("regions");
-    setRegionSearch("");
+    setRegionSearch(selectedRegions.length === 1 && selectedRegions[0] === "Bakı" ? "baki" : "");
     setMetroSearch("");
     setDraftRegions(selectedRegions);
     setDraftMetros(selectedMetros);
@@ -89,6 +89,7 @@ export function LocationFilterModal({
       ? current.filter((item) => item !== region)
       : [...current, region]);
     if (region === "Bakı" && removingSelectedRegion) setDraftMetros([]);
+    if (region === "Bakı" && !removingSelectedRegion && !regionSearch.trim()) setRegionSearch("baki");
   };
 
   const toggleMetro = (station: string) => {
