@@ -18,6 +18,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ListingCard } from "../components/ListingCard";
+import { LocationFilterModal } from "../components/LocationFilterModal";
 import { CatalogModal } from "../components/CatalogModal";
 import { MenuModal } from "../components/MenuModal";
 import { BusinessProfileScreen } from "./BusinessProfileScreen";
@@ -55,6 +56,9 @@ export function HomeScreen() {
   const [query, setQuery] = useState("");
   const [catalogVisible, setCatalogVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [locationVisible, setLocationVisible] = useState(false);
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
+  const [selectedMetros, setSelectedMetros] = useState<string[]>([]);
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
   const [businessLandingVisible, setBusinessLandingVisible] = useState(false);
   const [listingTypeVisible, setListingTypeVisible] = useState(false);
@@ -279,8 +283,12 @@ export function HomeScreen() {
         <View style={styles.searchBox}>
           <Ionicons name="search" size={18} color={colors.muted} />
           <TextInput value={query} onChangeText={setQuery} placeholder={t("Axtar...")} placeholderTextColor={colors.subtle} returnKeyType="search" style={styles.searchInput} accessibilityLabel={t("Elan axtar")} />
-          <Pressable style={styles.locationButton} onPress={() => Alert.alert(t("Bölgələr"), t("Bölgə seçimi növbəti mərhələdə açılacaq."))} accessibilityLabel={t("Bölgə seç")}>
-            <Ionicons name="location-outline" size={19} color={colors.muted} />
+          <Pressable style={styles.locationButton} onPress={() => setLocationVisible(true)} accessibilityRole="button" accessibilityLabel={t("Bölgə seç")}>
+            <Ionicons name="location-outline" size={17} color={colors.muted} />
+            <Text style={styles.locationButtonText} numberOfLines={1}>
+              {selectedRegions.length === 0 ? t("Bölgələr") : selectedRegions.length === 1 ? selectedRegions[0] : selectedRegions.length + " " + t("seçildi")}
+            </Text>
+            <Ionicons name="chevron-down" size={14} color={colors.muted} />
           </Pressable>
         </View>
         <Pressable style={styles.menuButton} accessibilityLabel={t("Menyu")} onPress={() => setMenuVisible(true)}>
@@ -475,6 +483,17 @@ export function HomeScreen() {
         }}
       />
       <MenuModal visible={menuVisible} onClose={() => setMenuVisible(false)} />
+      <LocationFilterModal
+        visible={locationVisible}
+        selectedRegions={selectedRegions}
+        selectedMetros={selectedMetros}
+        onClose={() => setLocationVisible(false)}
+        onApply={(regions, metros) => {
+          setSelectedRegions(regions);
+          setSelectedMetros(metros);
+          setLocationVisible(false);
+        }}
+      />
       <Modal
         visible={createMenuVisible}
         transparent
@@ -626,7 +645,8 @@ const styles = StyleSheet.create({
   header: { height: 66, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#FFF9F7" },
 
   menuButton: { width: 34, height: 38, alignItems: "center", justifyContent: "center" },
-  locationButton: { width: 40, height: 34, alignItems: "center", justifyContent: "center", borderLeftWidth: 1, borderLeftColor: colors.line },
+  locationButton: { width: 112, height: 34, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 4, paddingLeft: 8, borderLeftWidth: 1, borderLeftColor: colors.line },
+  locationButtonText: { flex: 1, minWidth: 0, color: colors.ink, fontSize: 11, fontWeight: "600" },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 120, backgroundColor: "#FFF9F7" },
   searchArea: { paddingHorizontal: 15, paddingTop: 12, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
