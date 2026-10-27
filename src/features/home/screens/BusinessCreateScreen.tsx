@@ -104,8 +104,8 @@ export function BusinessCreateScreen({ onBack }: Props) {
           </View>
         </ScrollView>
         <View style={styles.previewFooter}>
-          <Pressable style={styles.returnButton} onPress={() => setPreviewVisible(false)}><Text style={styles.returnText}>Redaktəyə qayıt</Text></Pressable>
-          <Pressable style={styles.submitButton} onPress={() => Alert.alert("Yoxlamaya göndər", "Məlumatları göndərmək üçün əvvəlcə biznes qeydiyyatını tamamlayın.")}><Text style={styles.submitText}>Yoxlamaya göndər</Text></Pressable>
+          <Pressable style={[styles.returnButton, styles.previewReturnButton]} onPress={() => setPreviewVisible(false)}><Text style={styles.returnText}>Redaktəyə qayıt</Text></Pressable>
+          <Pressable style={[styles.submitButton, styles.previewSubmitButton]} onPress={() => Alert.alert("Yoxlamaya göndər", "Məlumatları göndərmək üçün əvvəlcə biznes qeydiyyatını tamamlayın.")}><Text style={styles.submitText} numberOfLines={1}>Yoxlamaya göndər</Text></Pressable>
         </View>
       </SafeAreaView>
     );
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   checkboxChecked: { backgroundColor: "#3478F6" },
   agreement: { flex: 1, color: "#687891", fontSize: 13, lineHeight: 19, fontWeight: "700" },
   submitButton: { minHeight: ui.buttonHeight, marginTop: 3, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, borderRadius: 10, backgroundColor: "#FF1019", elevation: 5 },
-  submitText: { color: "#FFFFFF", fontSize: 16, fontWeight: "900" },
+  submitText: { color: "#FFFFFF", fontSize: ui.font.button, fontWeight: "900" },
   privacy: { marginTop: 19, color: "#8490A5", fontSize: 12, lineHeight: 19, fontWeight: "700" },
   floatingPreview: { position: "absolute", right: 16, width: 56, height: 56, alignItems: "center", justifyContent: "center", borderRadius: 38, borderWidth: 5, borderColor: "#FFFFFF", backgroundColor: "#FF1732", elevation: 11 },
   previewTop: { height: 62, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: "#E6EAF0", backgroundColor: "#FFFFFF" },
@@ -263,6 +263,8 @@ const styles = StyleSheet.create({
   galleryGrid: { marginTop: 15, flexDirection: "row", flexWrap: "wrap", gap: 12 },
   galleryTile: { width: "48%", aspectRatio: 1, borderRadius: 14, backgroundColor: "#E9EEF6" },
   previewFooter: { paddingHorizontal: 12, paddingVertical: 10, flexDirection: "row", gap: 8, borderTopWidth: 1, borderColor: "#E6EAF0", backgroundColor: "#FFFFFF" },
-  returnButton: { flex: 1, minWidth: 0, minHeight: 50, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 1, borderColor: "#DDE5F1" },
+  returnButton: { minWidth: 0, minHeight: 50, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 1, borderColor: "#DDE5F1" },
   returnText: { color: "#111111", fontSize: ui.font.small, fontWeight: "800" },
+  previewReturnButton: { flex: 0.95, paddingHorizontal: 5 },
+  previewSubmitButton: { flex: 1.15, marginTop: 0, paddingHorizontal: 8 },
 });
