@@ -24,7 +24,7 @@
           "image": "./assets/images/axtar-splash.png",
           "imageWidth": 300,
           "resizeMode": "contain",
-          "backgroundColor": "#F83249"
+          "backgroundColor": "#F4F6FA"
         }
       ]
     ]
