@@ -1,59 +1,31 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  Image,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Image, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/features/home/screens/HomeScreen";
 import { I18nProvider } from "./src/i18n/I18nProvider";
 
-const WORDMARK_WIDTH = 176;
+const WORDMARK_WIDTH = 280;
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const markOpacity = useRef(new Animated.Value(0)).current;
-  const markScale = useRef(new Animated.Value(0.88)).current;
-  const wordmarkProgress = useRef(new Animated.Value(0)).current;
+  const revealProgress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const animation = Animated.sequence([
-      Animated.parallel([
-        Animated.timing(markOpacity, {
-          toValue: 1,
-          duration: 380,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.spring(markScale, {
-          toValue: 1,
-          speed: 16,
-          bounciness: 3,
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.timing(wordmarkProgress, {
-        toValue: 1,
-        duration: 900,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]);
+    const revealAnimation = Animated.timing(revealProgress, {
+      toValue: 1,
+      duration: 1400,
+      useNativeDriver: false,
+    });
+    revealAnimation.start();
 
-    animation.start();
-    const hideTimer = setTimeout(() => setShowSplash(false), 2300);
-
+    const hideTimer = setTimeout(() => setShowSplash(false), 2800);
     return () => {
-      animation.stop();
+      revealAnimation.stop();
       clearTimeout(hideTimer);
     };
-  }, [markOpacity, markScale, wordmarkProgress]);
+  }, [revealProgress]);
 
-  const wordmarkWidth = wordmarkProgress.interpolate({
+  const revealWidth = revealProgress.interpolate({
     inputRange: [0, 1],
     outputRange: [0, WORDMARK_WIDTH],
   });
@@ -61,25 +33,22 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <I18nProvider>
-        <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={showSplash ? "#F4F6FA" : "#FFFFFF"}
+        />
         <View style={styles.root}>
           <HomeScreen />
           {showSplash ? (
             <View style={styles.splashOverlay}>
-              <Animated.Image
-                source={require("./assets/images/axtar-app-icon-foreground.png")}
-                style={[
-                  styles.mark,
-                  { opacity: markOpacity, transform: [{ scale: markScale }] },
-                ]}
-                resizeMode="contain"
-                accessibilityLabel="axtar.az loqosu"
-              />
               <View style={styles.wordmarkWindow}>
-                <Animated.View style={{ width: wordmarkWidth, overflow: "hidden" }}>
-                  <Text numberOfLines={1} style={styles.wordmark}>
-                    axtar.az
-                  </Text>
+                <Animated.View style={{ width: revealWidth, height: 58 }}>
+                  <Image
+                    source={require("./assets/images/axtar-wordmark.png")}
+                    style={styles.wordmark}
+                    resizeMode="contain"
+                    accessibilityLabel="axtar.az"
+                  />
                 </Animated.View>
               </View>
             </View>
@@ -97,27 +66,17 @@ const styles = StyleSheet.create({
     zIndex: 100,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
-  },
-  mark: {
-    width: 124,
-    height: 124,
-    marginBottom: 12,
+    backgroundColor: "#F4F6FA",
   },
   wordmarkWindow: {
     width: WORDMARK_WIDTH,
-    height: 44,
+    height: 58,
     overflow: "hidden",
     alignItems: "flex-start",
     justifyContent: "center",
   },
   wordmark: {
     width: WORDMARK_WIDTH,
-    color: "#F33B43",
-    fontSize: 32,
-    fontWeight: "700",
-    letterSpacing: -1.4,
-    lineHeight: 40,
-    textAlign: "left",
+    height: 50,
   },
 });
