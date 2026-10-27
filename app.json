@@ -13,7 +13,7 @@
       "package": "az.axtar.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/axtar-app-icon-foreground.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FFF9F7"
       }
     },
     "icon": "./assets/images/axtar-app-icon.png",
@@ -21,10 +21,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/axtar-splash.png",
-          "imageWidth": 300,
+          "image": "./assets/images/axtar-app-icon-foreground.png",
+          "imageWidth": 140,
           "resizeMode": "contain",
-          "backgroundColor": "#F4F6FA"
+          "backgroundColor": "#FFF9F7"
         }
       ]
     ]
