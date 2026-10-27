@@ -100,7 +100,7 @@ export function BusinessCreateScreen({ onBack }: Props) {
             </ScrollView>
             <Text style={styles.aboutText}>{draft.about || "Biznesiniz haqqında yazdığınız məlumat burada görünəcək."}</Text>
             <Text style={styles.galleryTitle}>Qalereya</Text>
-            <View style={styles.galleryGrid}>{[1, 2, 3, 4].map((item) => <View key={item} style={styles.galleryTile} />)}</View>
+            <View style={styles.emptyGallery}><Ionicons name="images-outline" size={24} color="#99A4B5" /><Text style={styles.emptyGalleryText}>Qalereya şəkilləri əlavə edilməyib</Text></View>
           </View>
         </ScrollView>
         <View style={styles.previewFooter}>
@@ -260,8 +260,8 @@ const styles = StyleSheet.create({
   previewTab: { paddingVertical: 15, paddingHorizontal: 11, color: "#172653", fontSize: 13, fontWeight: "800" },
   aboutText: { marginTop: 20, color: "#69758B", fontSize: 14, lineHeight: 24 },
   galleryTitle: { marginTop: 26, color: "#172653", fontSize: 18, fontWeight: "900" },
-  galleryGrid: { marginTop: 15, flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  galleryTile: { width: "48%", aspectRatio: 1, borderRadius: 14, backgroundColor: "#E9EEF6" },
+  emptyGallery: { minHeight: 96, marginTop: 12, alignItems: "center", justifyContent: "center", gap: 7, borderRadius: 14, borderWidth: 1, borderColor: "#E2E8F0", backgroundColor: "#F5F7FA" },
+  emptyGalleryText: { color: "#8792A4", fontSize: ui.font.small, fontWeight: "600" },
   previewFooter: { paddingHorizontal: 12, paddingVertical: 10, flexDirection: "row", gap: 8, borderTopWidth: 1, borderColor: "#E6EAF0", backgroundColor: "#FFFFFF" },
   returnButton: { minWidth: 0, minHeight: 50, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 1, borderColor: "#DDE5F1" },
   returnText: { color: "#111111", fontSize: ui.font.small, fontWeight: "800" },
