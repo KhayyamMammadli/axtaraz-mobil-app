@@ -43,7 +43,7 @@ export function BusinessCreateScreen({ onBack }: Props) {
   const select = (label: string, key: "category" | "city", placeholder: string, required = false) => (
     <View style={styles.field}>
       <Text style={styles.label}>{label}{required ? <Text style={styles.required}> *</Text> : null}</Text>
-      <Pressable style={styles.select} onPress={() => Alert.alert(label, key === "category" ? "Kateqoriya seçimi növbəti mərhələdə qoşulacaq." : "Şəhər seçimi növbəti mərhələdə qoşulacaq.")}>
+      <Pressable style={styles.select} onPress={() => Alert.alert(label, "Seçim edin", (key === "category" ? ["Geyim və aksesuar", "Ev və bağ", "Xidmətlər", "Elektronika", "Digər"] : ["Bakı", "Gəncə", "Sumqayıt", "Şəki", "Lənkəran"]).map((option) => ({ text: option, onPress: () => update(key, option) })))}>
         <Text style={[styles.selectText, !draft[key] && styles.placeholder]}>{draft[key] || placeholder}</Text>
         <Ionicons name="chevron-down" size={18} color="#172653" />
       </Pressable>
@@ -119,7 +119,7 @@ export function BusinessCreateScreen({ onBack }: Props) {
         <View style={styles.planTabs}>{["START", "BUSINESS", "PREMIUM"].map((item) => <Pressable key={item} onPress={() => setPlan(item)} style={[styles.planTab, plan === item && styles.planTabActive]}><Text style={[styles.planTabText, plan === item && styles.planTabTextActive]}>{item}</Text></Pressable>)}</View>
         <View style={styles.planCard}>
           <View style={styles.planIcon}><Ionicons name="stats-chart" size={31} color="#F83249" /></View>
-          <View style={styles.planCopy}><Text style={styles.planName}>{plan}</Text><Text style={styles.price}>99 AZN<Text style={styles.period}> / {duration} gün</Text></Text></View>
+          <View style={styles.planCopy}><Text style={styles.planName}>{plan}</Text><Text style={styles.price}>{Math.round(({ START: 49, BUSINESS: 99, PREMIUM: 199 }[plan as "START" | "BUSINESS" | "PREMIUM"] * duration) / 30)} AZN<Text style={styles.period}> / {duration} gün</Text></Text></View>
           <Text style={styles.chosen}>seçili</Text>
           {["Qalereya (30 şəkil)", "Premium görünüş", "Ana səhifədə üstünlük", "Ətraflı statistika", "Prioritet dəstək"].map((item) => <View key={item} style={styles.feature}><Ionicons name="checkmark" size={18} color="#19BE69" /><Text style={styles.featureText}>{item}</Text></View>)}
           <View style={styles.planSelected}><Text style={styles.planSelectedText}>Seçildi  ✓</Text></View>
