@@ -1,56 +1,61 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Image, StatusBar, StyleSheet, View } from "react-native";
+import { Animated, Dimensions, StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/features/home/screens/HomeScreen";
 import { I18nProvider } from "./src/i18n/I18nProvider";
 
-const WORDMARK_WIDTH = 280;
+const SPLASH_DURATION = 2200;
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const revealProgress = useRef(new Animated.Value(0)).current;
+  const translateX = useRef(new Animated.Value(-Dimensions.get("window").width)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const revealAnimation = Animated.timing(revealProgress, {
-      toValue: 1,
-      duration: 1400,
-      useNativeDriver: false,
-    });
+    const revealAnimation = Animated.parallel([
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 450,
+        useNativeDriver: true,
+      }),
+    ]);
     revealAnimation.start();
 
-    const hideTimer = setTimeout(() => setShowSplash(false), 2800);
+    const hideTimer = setTimeout(() => setShowSplash(false), SPLASH_DURATION);
     return () => {
       revealAnimation.stop();
       clearTimeout(hideTimer);
     };
-  }, [revealProgress]);
-
-  const revealWidth = revealProgress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, WORDMARK_WIDTH],
-  });
+  }, [opacity, translateX]);
 
   return (
     <SafeAreaProvider>
       <I18nProvider>
         <StatusBar
           barStyle="dark-content"
-          backgroundColor={showSplash ? "#F4F6FA" : "#FFFFFF"}
+          backgroundColor={showSplash ? "#FFF9F7" : "#FFFFFF"}
         />
         <View style={styles.root}>
           <HomeScreen />
           {showSplash ? (
             <View style={styles.splashOverlay}>
-              <View style={styles.wordmarkWindow}>
-                <Animated.View style={{ width: revealWidth, height: 58 }}>
-                  <Image
-                    source={require("./assets/images/axtar-wordmark.png")}
-                    style={styles.wordmark}
-                    resizeMode="contain"
-                    accessibilityLabel="axtar.az"
-                  />
-                </Animated.View>
-              </View>
+              <Animated.Text
+                style={[
+                  styles.wordmark,
+                  {
+                    opacity,
+                    transform: [{ translateX }],
+                  },
+                ]}
+                accessibilityLabel="Axtar.az"
+              >
+                Axtar.az
+              </Animated.Text>
             </View>
           ) : null}
         </View>
@@ -66,17 +71,12 @@ const styles = StyleSheet.create({
     zIndex: 100,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F4F6FA",
-  },
-  wordmarkWindow: {
-    width: WORDMARK_WIDTH,
-    height: 58,
-    overflow: "hidden",
-    alignItems: "flex-start",
-    justifyContent: "center",
+    backgroundColor: "#FFF9F7",
   },
   wordmark: {
-    width: WORDMARK_WIDTH,
-    height: 50,
+    color: "#FA3A4D",
+    fontSize: 34,
+    fontWeight: "800",
+    letterSpacing: -1,
   },
 });
