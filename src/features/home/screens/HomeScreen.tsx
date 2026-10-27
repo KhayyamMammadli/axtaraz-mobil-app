@@ -29,6 +29,7 @@ import { BlogDetailScreen, type BlogPost } from "./BlogDetailScreen";
 import { MessagesScreen } from "./MessagesScreen";
 import { CreateListingScreen } from "./CreateListingScreen";
 import { BusinessLandingScreen } from "./BusinessLandingScreen";
+import { BusinessCreateScreen } from "./BusinessCreateScreen";
 import { feedTabs, ownershipCover, type Business, type Listing } from "../data/homeData";
 import { fetchOwnerships } from "../services/ownershipsApi";
 import { fetchProducts } from "../services/productsApi";
@@ -61,6 +62,7 @@ export function HomeScreen() {
   const [selectedMetros, setSelectedMetros] = useState<string[]>([]);
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
   const [businessLandingVisible, setBusinessLandingVisible] = useState(false);
+  const [businessCreateVisible, setBusinessCreateVisible] = useState(false);
   const [listingTypeVisible, setListingTypeVisible] = useState(false);
   const [listingCreationVisible, setListingCreationVisible] = useState(false);
   const [listingIntent, setListingIntent] = useState<"offer" | "search" | "lost">("offer");
