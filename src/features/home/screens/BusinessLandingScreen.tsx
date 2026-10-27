@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../../theme/colors";
 import { useI18n } from "../../../i18n/I18nProvider";
 
-type Props = { onBack: () => void };
+type Props = { onBack: () => void; onCreate: () => void };
 type PlanId = "start" | "business" | "premium";
 
 const plans: { id: PlanId; title: string; price: number; icon: keyof typeof Ionicons.glyphMap; color: string; background: string; features: string[] }[] = [
@@ -23,7 +23,7 @@ const faqs = [
   { question: "Texniki dəstək necə olur?", answer: "Dəstək seçdiyiniz paketə uyğun təqdim edilir." },
 ];
 
-export function BusinessLandingScreen({ onBack }: Props) {
+export function BusinessLandingScreen({ onBack, onCreate }: Props) {
   const { t } = useI18n();
   const [duration, setDuration] = useState(30);
   const [selectedPlan, setSelectedPlan] = useState<PlanId>("business");
@@ -124,7 +124,7 @@ export function BusinessLandingScreen({ onBack }: Props) {
           <Text style={styles.ctaText}>{t("Siz də indi qoşulun, biznesinizi internetdə böyüdün, daha çox müştəriyə çatın.")}</Text>
           <Pressable
             style={styles.ctaButton}
-            onPress={() => Alert.alert(t("Biznes yarat"), t("Biznes qeydiyyatı növbəti mərhələdə açılacaq."))}
+            onPress={onCreate}
             accessibilityRole="button"
           >
             <Text style={styles.ctaButtonText}>{t("Biznes yarat")}</Text>
