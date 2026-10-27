@@ -1,37 +1,56 @@
-import { useEffect, useState } from "react";
-import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Image, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/features/home/screens/HomeScreen";
 import { I18nProvider } from "./src/i18n/I18nProvider";
 
+const WORDMARK_WIDTH = 280;
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const reveal = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 1800);
-    return () => clearTimeout(timer);
-  }, []);
+    const revealAnimation = Animated.timing(reveal, {
+      toValue: 1,
+      duration: 1200,
+      useNativeDriver: false,
+    });
+    revealAnimation.start();
+
+    const hideTimer = setTimeout(() => setShowSplash(false), 2600);
+    return () => {
+      revealAnimation.stop();
+      clearTimeout(hideTimer);
+    };
+  }, [reveal]);
+
+  const revealWidth = reveal.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, WORDMARK_WIDTH],
+  });
 
   return (
     <SafeAreaProvider>
       <I18nProvider>
         <StatusBar
-          barStyle={showSplash ? "light-content" : "dark-content"}
-          backgroundColor={showSplash ? "#F83249" : "#ffffff"}
+          barStyle={showSplash ? "dark-content" : "dark-content"}
+          backgroundColor={showSplash ? "#F4F6FA" : "#ffffff"}
         />
         <View style={styles.root}>
           <HomeScreen />
           {showSplash ? (
             <View style={styles.splashOverlay}>
-              <View style={styles.logoBadge}>
-                <Image
-                  source={require("./assets/images/axtar-logo-white.png")}
-                  style={styles.splashLogo}
-                  resizeMode="contain"
-                  accessibilityLabel="Axtar.az loqosu"
-                />
+              <View style={styles.wordmarkWindow}>
+                <Animated.View style={{ width: revealWidth, height: 60 }}>
+                  <Image
+                    source={require("./assets/images/axtar-wordmark.png")}
+                    style={styles.wordmark}
+                    resizeMode="contain"
+                    accessibilityLabel="axtar.az"
+                  />
+                </Animated.View>
               </View>
-              <Text style={styles.splashName}>axtar.az</Text>
             </View>
           ) : null}
         </View>
@@ -47,24 +66,17 @@ const styles = StyleSheet.create({
     zIndex: 100,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F83249",
+    backgroundColor: "#F4F6FA",
   },
-  logoBadge: {
-    width: 176,
-    height: 176,
-    borderRadius: 88,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-    backgroundColor: "rgba(255,255,255,0.10)",
-    alignItems: "center",
+  wordmarkWindow: {
+    width: WORDMARK_WIDTH,
+    height: 60,
+    overflow: "hidden",
+    alignItems: "flex-start",
     justifyContent: "center",
   },
-  splashLogo: { width: 108, height: 108 },
-  splashName: {
-    marginTop: 20,
-    color: "#ffffff",
-    fontSize: 34,
-    fontWeight: "800",
-    letterSpacing: -0.6,
+  wordmark: {
+    width: WORDMARK_WIDTH,
+    height: 54,
   },
 });
