@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,7 +49,7 @@ export function BusinessCreateScreen({ onBack }: Props) {
       </Pressable>
     </View>
   );
-  const section = (id: SectionId, content: React.ReactNode, note?: string) => (
+  const section = (id: SectionId, content: ReactNode, note?: string) => (
     <View style={styles.sectionCard} key={id}>
       <Pressable style={styles.sectionHeader} onPress={() => toggle(id)} accessibilityRole="button" accessibilityState={{ expanded: expanded[id] }}>
         <View style={styles.redMark} />
