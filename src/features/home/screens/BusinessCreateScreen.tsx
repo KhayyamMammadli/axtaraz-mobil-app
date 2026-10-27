@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { ui } from "../../../theme/metrics";
 import { colors } from "../../../theme/colors";
 
 type Props = { onBack: () => void };
@@ -15,6 +16,7 @@ const sectionTitles: Record<SectionId, string> = {
 };
 
 export function BusinessCreateScreen({ onBack }: Props) {
+  const insets = useSafeAreaInsets();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [draft, setDraft] = useState(initialDraft);
   const [expanded, setExpanded] = useState<Record<SectionId, boolean>>({ general: true, visual: true, hours: false, contact: false, subdomain: false, address: false });
@@ -53,8 +55,10 @@ export function BusinessCreateScreen({ onBack }: Props) {
     <View style={styles.sectionCard} key={id}>
       <Pressable style={styles.sectionHeader} onPress={() => toggle(id)} accessibilityRole="button" accessibilityState={{ expanded: expanded[id] }}>
         <View style={styles.redMark} />
-        <Text style={styles.sectionTitle}>{sectionTitles[id]}</Text>
-        {note ? <Text style={styles.sectionNote}>{note}</Text> : null}
+        <View style={styles.sectionHeadingCopy}>
+          <Text style={styles.sectionTitle}>{sectionTitles[id]}</Text>
+          {note ? <Text style={styles.sectionNote}>{note}</Text> : null}
+        </View>
         <Ionicons name={expanded[id] ? "chevron-up" : "chevron-down"} size={20} color="#172653" />
       </Pressable>
       {expanded[id] ? <View style={styles.sectionBody}>{content}</View> : null}
@@ -143,7 +147,7 @@ export function BusinessCreateScreen({ onBack }: Props) {
         <Pressable style={styles.submitButton} onPress={() => Alert.alert("Yoxlamaya göndər", "Form göndərilməzdən əvvəl tələb olunan məlumatları tamamlayın.")}><Ionicons name="send" size={17} color="#FFFFFF" /><Text style={styles.submitText}>Yoxlamaya göndər</Text></Pressable>
         <Text style={styles.privacy}>🔒 Məlumatlarınız admin tərəfindən yoxlanılacaq və təsdiq edildikdən sonra aktiv olacaq</Text>
       </ScrollView>
-      <Pressable style={styles.floatingPreview} onPress={() => setPreviewVisible(true)} accessibilityRole="button" accessibilityLabel="Ön baxış">
+      <Pressable style={[styles.floatingPreview, { bottom: Math.max(insets.bottom, 12) + 18 }]} onPress={() => setPreviewVisible(true)} accessibilityRole="button" accessibilityLabel="Ön baxış">
         <Ionicons name="eye-outline" size={29} color="#FFFFFF" />
       </Pressable>
     </SafeAreaView>
@@ -158,54 +162,55 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#F7F8FA" },
   topBar: { minHeight: 58, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#FFFFFF", borderBottomWidth: 1, borderBottomColor: "#E5EAF2" },
   backButton: { width: 40, height: 40, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "#F4F5F7" },
-  topTitle: { color: "#111827", fontSize: 21, fontWeight: "900", letterSpacing: -0.5 },
-  formContent: { paddingHorizontal: 15, paddingTop: 22, paddingBottom: 110 },
-  stepTitle: { color: "#172653", fontSize: 22, fontWeight: "900" },
-  stepSubtitle: { marginTop: 8, color: "#66758E", fontSize: 14, lineHeight: 20, fontWeight: "700" },
-  planTabs: { height: 65, marginTop: 26, flexDirection: "row", borderRadius: 17, borderWidth: 1, borderColor: "#DEE6F2", backgroundColor: "#FFFFFF", overflow: "hidden" },
+  topTitle: { color: "#111827", fontSize: ui.font.title, fontWeight: "900", letterSpacing: -0.5 },
+  formContent: { paddingHorizontal: ui.space.lg, paddingTop: ui.space.xl, paddingBottom: 100 },
+  stepTitle: { color: "#172653", fontSize: ui.font.title, fontWeight: "900" },
+  stepSubtitle: { marginTop: ui.space.sm, color: "#66758E", fontSize: ui.font.body, lineHeight: 20, fontWeight: "700" },
+  planTabs: { height: 54, marginTop: 20, flexDirection: "row", borderRadius: 17, borderWidth: 1, borderColor: "#DEE6F2", backgroundColor: "#FFFFFF", overflow: "hidden" },
   planTab: { flex: 1, alignItems: "center", justifyContent: "center", borderBottomWidth: 4, borderBottomColor: "transparent" },
   planTabActive: { borderBottomColor: "#4384FF" },
-  planTabText: { color: "#172653", fontSize: 14, fontWeight: "900" },
+  planTabText: { color: "#172653", fontSize: ui.font.small, fontWeight: "900" },
   planTabTextActive: { color: "#3478F6" },
-  planCard: { marginTop: 22, padding: 20, borderRadius: 19, borderWidth: 1.5, borderColor: "#FF4255", backgroundColor: "#F9FFFC" },
-  planIcon: { width: 78, height: 78, marginBottom: 8, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "#FFF0F2" },
-  planCopy: { position: "absolute", left: 132, top: 28 },
-  planName: { color: "#3478F6", fontSize: 22, fontWeight: "900" },
-  price: { marginTop: 4, color: "#172653", fontSize: 24, fontWeight: "900" },
-  period: { color: "#68758A", fontSize: 13, fontWeight: "700" },
+  planCard: { marginTop: ui.space.md, padding: ui.space.lg, borderRadius: ui.radius.card, borderWidth: 1.5, borderColor: "#FF4255", backgroundColor: "#F9FFFC" },
+  planIcon: { width: 56, height: 56, marginBottom: 8, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "#FFF0F2" },
+  planCopy: { position: "absolute", left: 88, top: 22 },
+  planName: { color: "#3478F6", fontSize: ui.font.section, fontWeight: "900" },
+  price: { marginTop: 4, color: "#172653", fontSize: 20, fontWeight: "900" },
+  period: { color: "#68758A", fontSize: ui.font.small, fontWeight: "700" },
   chosen: { position: "absolute", top: 20, right: 19, color: "#FFFFFF", backgroundColor: "#20C56A", borderRadius: 18, paddingHorizontal: 15, paddingVertical: 6, fontSize: 10, fontWeight: "800", overflow: "hidden" },
-  feature: { marginTop: 16, flexDirection: "row", alignItems: "center", gap: 9 },
-  featureText: { color: "#172653", fontSize: 14, fontWeight: "800" },
-  planSelected: { height: 55, marginTop: 26, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 2, borderColor: "#9ABEFF", backgroundColor: "#FFFFFF" },
+  feature: { marginTop: ui.space.md, flexDirection: "row", alignItems: "center", gap: 9 },
+  featureText: { color: "#172653", fontSize: ui.font.body, fontWeight: "800" },
+  planSelected: { height: 48, marginTop: 20, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 2, borderColor: "#9ABEFF", backgroundColor: "#FFFFFF" },
   planSelectedText: { color: "#3478F6", fontSize: 16, fontWeight: "900" },
-  durationRow: { marginTop: 1, marginBottom: 40, flexDirection: "row", justifyContent: "space-between", gap: 6 },
-  duration: { flex: 1, height: 74, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "#DDE5F1", backgroundColor: "#FFFFFF" },
+  durationRow: { marginTop: ui.space.md, marginBottom: 30, flexDirection: "row", justifyContent: "space-between", gap: ui.space.sm },
+  duration: { flex: 1, height: 62, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "#DDE5F1", backgroundColor: "#FFFFFF" },
   durationActive: { borderWidth: 2, borderColor: "#FF4255" },
   durationText: { textAlign: "center", color: "#172653", fontSize: 13, fontWeight: "800" },
   durationTextActive: { color: "#FF4255" },
-  sectionCard: { marginBottom: 18, overflow: "hidden", borderRadius: 19, borderWidth: 1, borderColor: "#DFE7F2", backgroundColor: "#FFFFFF", elevation: 2 },
-  sectionHeader: { minHeight: 72, paddingHorizontal: 17, flexDirection: "row", alignItems: "center", gap: 14, borderBottomWidth: 1, borderBottomColor: "#EDF0F5" },
+  sectionCard: { marginBottom: 14, overflow: "hidden", borderRadius: 19, borderWidth: 1, borderColor: "#DFE7F2", backgroundColor: "#FFFFFF", elevation: 2 },
+  sectionHeader: { minHeight: 60, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 12, borderBottomWidth: 1, borderBottomColor: "#EDF0F5" },
   redMark: { width: 6, height: 38, borderRadius: 4, backgroundColor: "#FF263B" },
-  sectionTitle: { flexShrink: 1, color: "#172653", fontSize: 19, fontWeight: "900" },
-  sectionNote: { flex: 1, color: "#69758B", fontSize: 12, fontWeight: "700" },
-  sectionBody: { paddingHorizontal: 17, paddingTop: 19, paddingBottom: 21 },
+  sectionHeadingCopy: { flex: 1, minWidth: 0 },
+  sectionTitle: { color: "#172653", fontSize: ui.font.section, lineHeight: 23, fontWeight: "900" },
+  sectionNote: { marginTop: 2, color: "#69758B", fontSize: ui.font.caption, lineHeight: 15, fontWeight: "700" },
+  sectionBody: { paddingHorizontal: 15, paddingTop: 16, paddingBottom: 17 },
   field: { marginBottom: 20 },
-  label: { marginBottom: 10, color: "#172653", fontSize: 14, fontWeight: "900" },
+  label: { marginBottom: 8, color: "#172653", fontSize: ui.font.body, fontWeight: "900" },
   required: { color: "#FF3347" },
-  input: { minHeight: 54, paddingHorizontal: 15, borderRadius: 8, borderWidth: 1, borderColor: "#DCE4F0", backgroundColor: "#FFFFFF", color: "#172653", fontSize: 14, fontWeight: "600" },
-  textarea: { height: 178, paddingTop: 16, paddingBottom: 36 },
+  input: { minHeight: ui.controlHeight, paddingHorizontal: 13, borderRadius: 8, borderWidth: 1, borderColor: "#DCE4F0", backgroundColor: "#FFFFFF", color: "#172653", fontSize: 14, fontWeight: "600" },
+  textarea: { height: 150, paddingTop: 14, paddingBottom: 36 },
   counter: { position: "absolute", right: 14, bottom: 9, color: "#9AA5B7", fontSize: 12, fontWeight: "800" },
-  select: { minHeight: 53, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 8, borderWidth: 1, borderColor: "#DCE4F0", backgroundColor: "#FFFFFF" },
+  select: { minHeight: ui.controlHeight, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 8, borderWidth: 1, borderColor: "#DCE4F0", backgroundColor: "#FFFFFF" },
   selectText: { color: "#172653", fontSize: 14, fontWeight: "700" },
   placeholder: { color: "#172653" },
-  uploadRow: { marginBottom: 22, flexDirection: "row", alignItems: "center", gap: 16 },
-  logoPlaceholder: { width: 86, height: 86, alignItems: "center", justifyContent: "center", borderRadius: 48, backgroundColor: "#111111" },
-  uploadBox: { flex: 1, minHeight: 108, alignItems: "center", justifyContent: "center", borderRadius: 9, borderWidth: 1.5, borderStyle: "dashed", borderColor: "#DEE5F0", backgroundColor: "#F9FAFC" },
-  uploadBoxWide: { minHeight: 100, marginBottom: 23, alignItems: "center", justifyContent: "center", borderRadius: 9, borderWidth: 1.5, borderStyle: "dashed", borderColor: "#DEE5F0", backgroundColor: "#F9FAFC" },
+  uploadRow: { marginBottom: 18, flexDirection: "row", alignItems: "center", gap: 16 },
+  logoPlaceholder: { width: 68, height: 68, alignItems: "center", justifyContent: "center", borderRadius: 48, backgroundColor: "#111111" },
+  uploadBox: { flex: 1, minHeight: 88, alignItems: "center", justifyContent: "center", borderRadius: 9, borderWidth: 1.5, borderStyle: "dashed", borderColor: "#DEE5F0", backgroundColor: "#F9FAFC" },
+  uploadBoxWide: { minHeight: 82, marginBottom: 18, alignItems: "center", justifyContent: "center", borderRadius: 9, borderWidth: 1.5, borderStyle: "dashed", borderColor: "#DEE5F0", backgroundColor: "#F9FAFC" },
   uploadTitle: { marginTop: 6, color: "#172653", fontSize: 14, fontWeight: "900" },
   uploadHint: { marginTop: 3, color: "#8B96A8", fontSize: 11, fontWeight: "700" },
   galleryLabel: { marginBottom: 15, color: "#172653", fontSize: 13, fontWeight: "800" },
-  dayRow: { minHeight: 40, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: "#F0F2F6" },
+  dayRow: { minHeight: 36, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: "#F0F2F6" },
   dayText: { color: "#38445A", fontSize: 12, fontWeight: "700" },
   timeText: { color: "#172653", fontSize: 13, fontWeight: "700" },
   addPhone: { minHeight: 48, alignItems: "center", justifyContent: "center", borderRadius: 10, borderWidth: 1, borderStyle: "dashed", borderColor: "#DFE6F0" },
@@ -220,10 +225,10 @@ const styles = StyleSheet.create({
   checkbox: { width: 20, height: 20, alignItems: "center", justifyContent: "center", borderRadius: 4, borderWidth: 1.5, borderColor: "#3478F6" },
   checkboxChecked: { backgroundColor: "#3478F6" },
   agreement: { flex: 1, color: "#687891", fontSize: 13, lineHeight: 19, fontWeight: "700" },
-  submitButton: { minHeight: 61, marginTop: 3, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, borderRadius: 10, backgroundColor: "#FF1019", elevation: 5 },
+  submitButton: { minHeight: ui.buttonHeight, marginTop: 3, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, borderRadius: 10, backgroundColor: "#FF1019", elevation: 5 },
   submitText: { color: "#FFFFFF", fontSize: 16, fontWeight: "900" },
   privacy: { marginTop: 19, color: "#8490A5", fontSize: 12, lineHeight: 19, fontWeight: "700" },
-  floatingPreview: { position: "absolute", right: 21, bottom: 26, width: 72, height: 72, alignItems: "center", justifyContent: "center", borderRadius: 38, borderWidth: 5, borderColor: "#FFFFFF", backgroundColor: "#FF1732", elevation: 11 },
+  floatingPreview: { position: "absolute", right: 16, width: 56, height: 56, alignItems: "center", justifyContent: "center", borderRadius: 38, borderWidth: 5, borderColor: "#FFFFFF", backgroundColor: "#FF1732", elevation: 11 },
   previewTop: { height: 62, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: "#E6EAF0", backgroundColor: "#FFFFFF" },
   previewBack: { flexDirection: "row", alignItems: "center", gap: 2 },
   previewBackText: { color: "#111827", fontSize: 14 },
@@ -257,7 +262,7 @@ const styles = StyleSheet.create({
   galleryTitle: { marginTop: 26, color: "#172653", fontSize: 18, fontWeight: "900" },
   galleryGrid: { marginTop: 15, flexDirection: "row", flexWrap: "wrap", gap: 12 },
   galleryTile: { width: "48%", aspectRatio: 1, borderRadius: 14, backgroundColor: "#E9EEF6" },
-  previewFooter: { padding: 12, flexDirection: "row", gap: 10, borderTopWidth: 1, borderColor: "#E6EAF0", backgroundColor: "#FFFFFF" },
-  returnButton: { flex: 1, minHeight: 54, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 1, borderColor: "#DDE5F1" },
-  returnText: { color: "#111111", fontSize: 14, fontWeight: "800" },
+  previewFooter: { paddingHorizontal: 12, paddingVertical: 10, flexDirection: "row", gap: 8, borderTopWidth: 1, borderColor: "#E6EAF0", backgroundColor: "#FFFFFF" },
+  returnButton: { flex: 1, minWidth: 0, minHeight: 50, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 1, borderColor: "#DDE5F1" },
+  returnText: { color: "#111111", fontSize: ui.font.small, fontWeight: "800" },
 });
