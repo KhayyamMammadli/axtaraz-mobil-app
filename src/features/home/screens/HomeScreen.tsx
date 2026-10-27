@@ -201,8 +201,12 @@ export function HomeScreen() {
     if (tab !== "home") Alert.alert(t(labels[tab]), t("Bu bölmə növbəti mərhələdə əlavə olunacaq."));
   };
 
+  if (businessCreateVisible) {
+    return <BusinessCreateScreen onBack={() => { setBusinessCreateVisible(false); setBusinessLandingVisible(true); }} />;
+  }
+
   if (businessLandingVisible) {
-    return <BusinessLandingScreen onBack={() => setBusinessLandingVisible(false)} />;
+    return <BusinessLandingScreen onBack={() => setBusinessLandingVisible(false)} onCreate={() => { setBusinessLandingVisible(false); setBusinessCreateVisible(true); }} />;
   }
 
   if (listingCreationVisible) {
