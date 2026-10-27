@@ -22,9 +22,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/axtar-splash.png",
-          "imageWidth": 260,
+          "imageWidth": 240,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#F83249"
         }
       ]
     ]
