@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../../theme/colors";
@@ -52,7 +52,12 @@ export function BusinessLandingScreen({ onBack }: Props) {
               <Text style={styles.benefitText}>{t(item)}</Text>
             </View>
           ))}
-          <FakeBusinessPreview />
+          <Image
+            source={require("../../../../assets/images/biznesimg.jpeg")}
+            style={styles.businessPreviewImage}
+            resizeMode="contain"
+            accessibilityLabel={t("Biznes səhifəsinin mobil və kompüter önbaxışı")}
+          />
         </View>
 
         <Text style={styles.sectionTitle}>{t("BİZNES PAKETLƏRİ")}</Text>
@@ -109,13 +114,12 @@ export function BusinessLandingScreen({ onBack }: Props) {
         })}
 
         <View style={styles.ctaCard}>
-          <View style={styles.fakePeople}>
-            {["person", "person", "storefront", "person", "person"].map((icon, index) => (
-              <View key={index} style={[styles.fakeAvatar, index === 2 && styles.fakeStore]}>
-                <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={index === 2 ? 24 : 18} color={index === 2 ? colors.brand : "#738096"} />
-              </View>
-            ))}
-          </View>
+          <Image
+            source={require("../../../../assets/images/imglog.png")}
+            style={styles.customerProofImage}
+            resizeMode="contain"
+            accessibilityLabel={t("Axtar.az istifadəçiləri və rəyləri")}
+          />
           <Text style={styles.ctaTitle}>{t("Artıq 1000+ biznes Axtar.az-da!")}</Text>
           <Text style={styles.ctaText}>{t("Siz də indi qoşulun, biznesinizi internetdə böyüdün, daha çox müştəriyə çatın.")}</Text>
           <Pressable
@@ -145,36 +149,6 @@ export function BusinessLandingScreen({ onBack }: Props) {
   );
 }
 
-function FakeBusinessPreview() {
-  const { t } = useI18n();
-  return (
-    <View style={styles.mockWrap}>
-      <View style={styles.mockLaptop}>
-        <View style={styles.mockCover}>
-          <View style={styles.mockRoom}><View style={styles.mockSofa} /><View style={styles.mockLamp} /><View style={styles.mockPlant} /></View>
-        </View>
-        <View style={styles.mockProfile}>
-          <View style={styles.mockLogo}><Ionicons name="storefront" size={18} color="#F83249" /></View>
-          <View style={styles.mockProfileCopy}><Text style={styles.mockName}>{t("Modern Home")}</Text><Text style={styles.mockMeta}>★ 4.8 · 240 {t("elan")}</Text></View>
-          <View style={styles.mockSmallButton} />
-        </View>
-        <View style={styles.mockStats}><Text style={styles.mockStat}>568 {t("elan")}</Text><Text style={styles.mockStat}>12 845 {t("baxış")}</Text><Text style={styles.mockStat}>312 {t("bəyənmə")}</Text></View>
-        <View style={styles.mockTabs}><Text style={styles.mockTabActive}>{t("Haqqımızda")}</Text><Text style={styles.mockTab}>{t("Məhsullar")}</Text><Text style={styles.mockTab}>{t("Qalereya")}</Text></View>
-        <View style={styles.mockProducts}>{[0,1,2,3].map((item)=><View key={item} style={[styles.mockProduct,{backgroundColor:["#CFB69A","#D6D8DB","#B9C6BB","#B89A83"][item]}]} />)}</View>
-      </View>
-      <View style={styles.mockPhone}>
-        <View style={styles.mockPhoneNotch} />
-        <View style={styles.mockPhoneImage}><View style={styles.mockSofa} /></View>
-        <View style={styles.mockPhoneLogo}><Ionicons name="storefront" size={13} color={colors.brand} /></View>
-        <Text style={styles.mockPhoneName}>{t("Modern Home")}</Text>
-        <Text style={styles.mockPhoneMeta}>★ 4.8 · {t("Premium biznes")}</Text>
-        <View style={styles.mockPhoneLine} /><View style={styles.mockPhoneLineShort} />
-        <View style={styles.mockPhoneAction}><Text style={styles.mockPhoneActionText}>{t("Biznesə bax")}</Text></View>
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
   topBar: { minHeight: 58, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 12, borderBottomWidth: 1, borderBottomColor: colors.line, backgroundColor: colors.white },
@@ -191,36 +165,7 @@ const styles = StyleSheet.create({
   heroText: { marginTop: 14, color: "#65728A", fontSize: 15, lineHeight: 24 },
   benefitRow: { marginTop: 16, flexDirection: "row", alignItems: "center", gap: 10 },
   benefitText: { color: "#283447", fontSize: 14, fontWeight: "700" },
-  mockWrap: { height: 210, marginTop: 26, marginBottom: 26, position: "relative", justifyContent: "center" },
-  mockLaptop: { position: "absolute", left: 0, right: 48, height: 170, padding: 7, borderRadius: 12, backgroundColor: "#1A1B1F", elevation: 3 },
-  mockCover: { height: 69, overflow: "hidden", borderTopLeftRadius: 7, borderTopRightRadius: 7, backgroundColor: "#4E3828", justifyContent: "flex-end" },
-  mockRoom: { flex: 1, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-around", paddingBottom: 10, backgroundColor: "#634C36" },
-  mockSofa: { width: 78, height: 25, borderRadius: 8, backgroundColor: "#C0A788", borderBottomWidth: 6, borderColor: "#8A6F54" },
-  mockLamp: { width: 5, height: 45, backgroundColor: "#D3B489", marginBottom: 8 },
-  mockPlant: { width: 19, height: 37, borderRadius: 12, backgroundColor: "#667858" },
-  mockProfile: { height: 35, paddingHorizontal: 5, flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.white },
-  mockLogo: { width: 25, height: 25, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF0F2" },
-  mockProfileCopy: { flex: 1 },
-  mockName: { color: "#17264B", fontSize: 9, fontWeight: "800" },
-  mockMeta: { color: "#7C8798", fontSize: 6 },
-  mockSmallButton: { width: 47, height: 15, borderRadius: 4, borderWidth: 1, borderColor: "#F83249" },
-  mockStats: { height: 22, paddingHorizontal: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: colors.white },
-  mockStat: { color: "#5D6878", fontSize: 6, fontWeight: "600" },
-  mockTabs: { height: 19, paddingHorizontal: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: colors.white },
-  mockTabActive: { color: "#F83249", fontSize: 6, fontWeight: "800" },
-  mockTab: { color: "#6E7886", fontSize: 6 },
-  mockProducts: { flex: 1, paddingHorizontal: 5, paddingBottom: 4, flexDirection: "row", gap: 5, backgroundColor: colors.white },
-  mockProduct: { flex: 1, borderRadius: 3 },
-  mockPhone: { position: "absolute", right: 1, bottom: 0, width: 92, height: 160, padding: 7, alignItems: "center", borderRadius: 16, borderWidth: 3, borderColor: "#26272B", backgroundColor: colors.white, elevation: 5 },
-  mockPhoneNotch: { width: 28, height: 4, borderRadius: 3, marginBottom: 5, backgroundColor: "#26272B" },
-  mockPhoneImage: { width: "100%", height: 47, overflow: "hidden", alignItems: "center", justifyContent: "center", borderRadius: 5, backgroundColor: "#7E6751" },
-  mockPhoneLogo: { width: 22, height: 22, marginTop: -9, alignItems: "center", justifyContent: "center", borderRadius: 11, backgroundColor: colors.white },
-  mockPhoneName: { color: "#17264B", fontSize: 8, fontWeight: "800" },
-  mockPhoneMeta: { marginTop: 3, color: "#6E7886", fontSize: 6 },
-  mockPhoneLine: { width: "95%", height: 5, marginTop: 8, borderRadius: 3, backgroundColor: "#E8EBEF" },
-  mockPhoneLineShort: { width: "63%", height: 5, marginTop: 4, borderRadius: 3, backgroundColor: "#E8EBEF" },
-  mockPhoneAction: { width: "100%", height: 20, marginTop: "auto", alignItems: "center", justifyContent: "center", borderRadius: 4, backgroundColor: "#F83249" },
-  mockPhoneActionText: { color: colors.white, fontSize: 7, fontWeight: "800" },
+  businessPreviewImage: { width: "100%", aspectRatio: 2, marginTop: 22, marginBottom: 26 },
   sectionTitle: { marginHorizontal: 20, marginTop: 4, marginBottom: 15, color: "#16295D", fontSize: 21, fontWeight: "900", textAlign: "center" },
   durationGrid: { paddingHorizontal: 18, flexDirection: "row", flexWrap: "wrap", gap: 12 },
   durationButton: { width: "47%", minHeight: 47, alignItems: "center", justifyContent: "center", borderRadius: 11, borderWidth: 1, borderColor: "#DCE4EF", backgroundColor: colors.white },
@@ -246,9 +191,7 @@ const styles = StyleSheet.create({
   faqQuestion: { flex: 1, color: "#283447", fontSize: 14, fontWeight: "800" },
   faqAnswer: { marginTop: 12, color: "#65728A", fontSize: 13, lineHeight: 20 },
   ctaCard: { marginTop: 25, paddingHorizontal: 20, paddingVertical: 27, alignItems: "center", backgroundColor: "#FFF3F4" },
-  fakePeople: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 18 },
-  fakeAvatar: { width: 37, height: 37, alignItems: "center", justifyContent: "center", borderRadius: 20, backgroundColor: "#E5EAF1" },
-  fakeStore: { backgroundColor: "#FFE0E4" },
+  customerProofImage: { width: "100%", aspectRatio: 2.62, marginBottom: 18 },
   ctaTitle: { color: "#16295D", fontSize: 25, fontWeight: "900", textAlign: "center" },
   ctaText: { marginTop: 12, color: "#65728A", fontSize: 15, lineHeight: 23, fontWeight: "600", textAlign: "center" },
   ctaButton: { width: "100%", minHeight: 58, marginTop: 24, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, borderRadius: 12, backgroundColor: "#F83249", elevation: 3 },
